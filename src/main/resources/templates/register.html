@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>회원 가입</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="header">
+    <h1>회원 가입</h1>
+</div>
+<div class="navbar">
+    <a th:href="@{/}">홈</a>
+    <a th:href="@{/posts}">게시글 목록</a>
+    <a th:href="@{/login}">로그인</a>
+</div>
+<div class="container">
+    <form th:action="@{/members/register}" method="post">
+        <label for="username">사용자명:</label>
+        <input type="text" id="username" name="username" required />
+
+        <label for="password">비밀번호:</label>
+        <input type="password" id="password" name="password" required />
+
+        <label for="role">역할:</label>
+        <select id="role" name="role">
+            <option value="ROLE_USER">USER</option>
+            <option value="ROLE_ADMIN">ADMIN</option>
+        </select>
+
+        <button type="submit">가입하기</button>
+        <a class="button" th:href="@{/}">취소</a>
+    </form>
+</div>
+<div class="footer">
+    <p>&copy; 2023 Spring Boot Project</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${post != null} ? '게시글 수정' : '게시글 작성'">게시글 작성</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="header">
+    <h1 th:text="${post != null} ? '게시글 수정' : '게시글 작성'">게시글 작성</h1>
+</div>
+<div class="navbar">
+    <a th:href="@{/}">홈</a>
+    <a th:href="@{/posts}">게시글 목록</a>
+    <a th:href="@{/login}">로그인</a>
+    <a th:href="@{/register}">회원가입</a>
+</div>
+<div class="container">
+    <form th:action="${post != null} ? @{/posts/edit/{id}(id=${post.id})} : @{/posts}" method="post" enctype="multipart/form-data">
+        <label for="title">제목:</label>
+        <input type="text" id="title" name="title" th:value="${post?.title}" required/>
+
+        <label for="content">내용:</label>
+        <textarea id="content" name="content" rows="10" required th:text="${post?.content}"></textarea>
+
+        <label for="attachments">파일 첨부:</label>
+        <input type="file" id="attachments" name="attachments" multiple/>
+
+        <button type="submit">저장</button>
+        <a class="button" th:href="@{/posts}">취소</a>
+    </form>
+</div>
+<div class="footer">
+    <p>&copy; 2023 Spring Boot Project</p>
+</div>
+</body>
+</html>

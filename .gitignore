@@ -35,3 +35,10 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### open ai key ###
+/src/main/resources/api-key.properties
+
+### db setting ###
+/src/main/resources/jpa.properties
+/src/main/resources/mysql.properties
