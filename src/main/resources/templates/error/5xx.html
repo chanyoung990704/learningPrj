@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="#{error.5xx.title}">Server Error</title>
+</head>
+<body>
+<h1 th:text="#{error.5xx.content}">Server Error - <span th:text="${status}"></span></h1>
+<p>An unexpected error occurred. Please try again later.</p>
+</body>
+</html>

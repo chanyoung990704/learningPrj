@@ -1,33 +1,36 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>메인 페이지</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+  <meta charset="UTF-8">
+  <title th:text="#{title.index}">Index</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<div class="header">
-    <h1>Welcome to the Spring Boot Project</h1>
+<!-- 상단 배너 -->
+<div class="top-banner">
+  <ul>
+    <!-- 로그인/로그아웃 버튼 -->
+    <li th:if="${#authorization.expression('isAuthenticated()') == false}">
+      <a th:href="@{/login}" th:text="#{button.login}">로그인</a>
+    </li>
+    <li th:if="${#authorization.expression('isAuthenticated()') == true}">
+      <a th:href="@{/logout}" th:text="#{button.logout}">로그아웃</a>
+    </li>
+
+    <!-- 회원가입 및 게시판 -->
+    <li><a th:href="@{/register}" th:text="#{button.register}">회원가입</a></li>
+    <li><a th:href="@{/posts}" th:text="#{button.board}">게시판</a></li>
+  </ul>
 </div>
-<div class="navbar">
-    <a th:href="@{/}">홈</a>
-    <a th:href="@{/posts}">게시글 목록</a>
-    <a th:href="@{/posts/new}">새 게시글</a>
-    <a th:href="@{/login}">로그인</a>
-    <a th:href="@{/members/register}">회원가입</a>
+
+<!-- 메인 콘텐츠 -->
+<div class="main-content">
+  <h1 th:text="#{welcome.message}">Welcome to Our Site!</h1>
 </div>
-<div class="container">
-    <h2>최신 게시글</h2>
-    <ul>
-        <li th:each="post : ${posts}">
-            <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}"></a> - <span th:text="${post.member.username}"></span>
-        </li>
-    </ul>
-    <div th:if="${#lists.isEmpty(posts)}">
-        <p>게시글이 없습니다.</p>
-    </div>
-</div>
+
+<!-- 하단 푸터 -->
 <div class="footer">
-    <p>&copy; 2023 Spring Boot Project</p>
+  <p th:text="#{footer.copyright}">&copy; 2024 Our Site</p>
 </div>
 </body>
 </html>

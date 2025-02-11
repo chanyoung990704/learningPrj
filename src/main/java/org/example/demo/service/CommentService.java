@@ -1,11 +1,6 @@
 package org.example.demo.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.example.demo.domain.Comment;
 
-@Service
-@Transactional(readOnly = true)
-@RequiredArgsConstructor
-public class CommentService {
+public interface CommentService extends BaseService<Comment> {
 }

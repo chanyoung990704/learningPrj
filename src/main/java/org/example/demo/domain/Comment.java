@@ -3,12 +3,10 @@ package org.example.demo.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Objects;
-
 @Entity
 @Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "COMMENT")
+@Table(name = "comments")
 public class Comment extends BaseEntity {
 
     @Id
@@ -24,24 +22,12 @@ public class Comment extends BaseEntity {
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Builder
-    public Comment(String content, Member member) {
+    public Comment(String content, User user) {
         this.content = content;
-        this.member = member;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Comment comment = (Comment) o;
-        return Objects.equals(getId(), comment.getId()) && Objects.equals(getContent(), comment.getContent()) && Objects.equals(getPost(), comment.getPost()) && Objects.equals(getMember(), comment.getMember());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getContent(), getPost(), getMember());
+        this.user = user;
     }
 }

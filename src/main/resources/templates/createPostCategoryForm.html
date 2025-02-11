@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="#{title.category.register}">카테고리 등록</title>
+  <link rel="stylesheet" th:href="@{/css/createPostCategory.css}" />
+</head>
+<body>
+
+<div class="main-content">
+  <h1 th:text="#{title.category.register}">카테고리 등록</h1>
+
+  <form th:action="@{/postcategories/new}" th:object="${requestDTO}" method="post">
+    <div class="form-group">
+      <label for="name" th:text="#{label.category.name}">카테고리 이름</label>
+      <input type="text" id="name" th:field="*{name}" />
+      <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="parent" th:text="#{label.category.parent}">부모 카테고리</label>
+      <select id="parent" th:field="*{parentId}">
+        <option value="" th:text="#{option.none}">없음</option>
+        <option th:each="category : ${categories}"
+                th:value="${category.getId()}"
+                th:text="${category.name}"></option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn-feedback" th:text="#{button.register}">등록</button>
+  </form>
+</div>
+
+</body>
+</html>

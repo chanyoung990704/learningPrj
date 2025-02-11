@@ -6,12 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "POST")
+@Table(name = "posts")
 @Slf4j
 public class Post extends BaseEntity {
 
@@ -27,21 +26,41 @@ public class Post extends BaseEntity {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member; // 게시글 작성자
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user; // 게시글 작성자
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_category_id")
+    private PostCategory category;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FileAttachment> attachments = new ArrayList<>();
+    private List<File> files = new ArrayList<>();
+
+    /**
+     * 빌더 패턴 생성자
+     */
 
     @Builder
-    public Post(String title, String content, Member member) {
+    public Post(String title, String content, User user, PostCategory category, Comment comment, File file) {
         this.title = title;
         this.content = content;
-        this.member = member;
+        this.user = user;
+        this.category = category;
+        // 연관관계
+        if(comment != null) {
+            this.addComment(comment);
+        }
+        if(file != null) {
+            this.addAttachment(file);
+        }
     }
+
+    /**
+     * 연관 관계 메서드
+     */
 
     // 댓글 연관관계
     public void addComment(Comment comment) {
@@ -77,47 +96,35 @@ public class Post extends BaseEntity {
     }
 
     // 파일 연관관계
-    public void addAttachment(FileAttachment attachment) {
+    public void addAttachment(File attachment) {
         StringBuilder error = new StringBuilder();
         if(attachment == null){
             error.append("attachment 객체가 null 값을 가진다.\n");
             log.warn(error.toString());
             throw new IllegalArgumentException(error.toString());
         }
-        if(attachments.contains(attachment)){
+        if(files.contains(attachment)){
             error.append("attachment 객체가 Post의 attachments 컬렉션에 이미 포함되어있음\n");
             log.warn(error.toString());
             throw new IllegalStateException(error.toString());
         }
-        attachments.add(attachment);
+        files.add(attachment);
         attachment.setPost(this);
     }
 
-    public void removeAttachment(FileAttachment attachment) {
+    public void removeAttachment(File attachment) {
         StringBuilder error = new StringBuilder();
         if(attachment == null){
             error.append("attachment 객체가 null 값을 가진다.\n");
             log.warn(error.toString());
             throw new IllegalArgumentException(error.toString());
         }
-        if(!attachments.contains(attachment)){
+        if(!files.contains(attachment)){
             error.append("attachment 객체가 Post의 attachments 컬렉션에 존재하지 않음\n");
             log.warn(error.toString());
             throw new IllegalStateException(error.toString());
         }
-        attachments.remove(attachment);
+        files.remove(attachment);
         attachment.setPost(null);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Post post = (Post) o;
-        return Objects.equals(getId(), post.getId()) && Objects.equals(getTitle(), post.getTitle()) && Objects.equals(getContent(), post.getContent()) && Objects.equals(getMember(), post.getMember()) && Objects.equals(getComments(), post.getComments()) && Objects.equals(getAttachments(), post.getAttachments());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getTitle(), getContent(), getMember(), getComments(), getAttachments());
     }
 }

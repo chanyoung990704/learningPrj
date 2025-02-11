@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="#{error.4xx.title}">Client Error</title>
+</head>
+<body>
+<h1 th:text="#{error.4xx.content}">Client Error - <span th:text="${status}"></span></h1>
+<p th:text="'Message: ' + ${message}"></p>
+<a th:href="@{/}">Return to Home</a>
+</body>
+</html>

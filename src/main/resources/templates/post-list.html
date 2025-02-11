@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="#{title.postList}">Post List</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<!-- 상단 배너 -->
+<div class="top-banner">
+    <ul>
+        <li><a th:href="@{/}" th:text="#{nav.home}">Home</a></li>
+        <li><a th:href="@{/posts}" th:text="#{nav.posts}">Posts</a></li>
+        <li><a th:href="@{/about}" th:text="#{nav.about}">About</a></li>
+    </ul>
+</div>
+
+<div class="post-container">
+    <!-- 제목 -->
+    <h1 th:text="#{post.list.title}">Post List</h1>
+
+    <!-- 검색 폼 -->
+    <div class="search-container">
+        <h3 th:text="#{search.title}">Search Posts</h3>
+        <form th:action="@{/posts/search}" method="get">
+            <!-- 작성자 검색 -->
+            <div class="form-group">
+                <label for="author" th:text="#{label.author}">Author:</label>
+                <input type="text" id="author" name="author" placeholder="" />
+            </div>
+
+            <!-- 게시글 이름 검색 -->
+            <div class="form-group">
+                <label for="title" th:text="#{label.title}">Title:</label>
+                <input type="text" id="title" name="title" placeholder="" />
+            </div>
+
+            <!-- 검색 버튼 -->
+            <button type="submit" class="btn-search" th:text="#{button.search}">Search</button>
+        </form>
+    </div>
+
+    <!-- 게시글 목록 -->
+    <table class="post-table">
+        <thead>
+        <tr>
+            <th th:text="#{post.id}">ID</th>
+            <th th:text="#{post.title}">Title</th>
+            <th th:text="#{post.author}">Author</th>
+            <th th:text="#{post.date}">Date</th>
+            <th th:text="#{post.actions}">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- 게시글 데이터 반복 -->
+        <tr th:each="post : ${posts}">
+            <td th:text="${post.id}">1</td>
+            <td th:text="${post.title}">Sample Title</td>
+            <td th:text="${post.author}">John Doe</td>
+            <td th:text="${#dates.format(post.createdDate, 'yyyy-MM-dd')}">2025-01-01</td>
+            <td>
+                <a th:href="@{/posts/{id}(id=${post.id})}" th:text="#{button.view}">View</a> |
+                <a th:href="@{/posts/edit/{id}(id=${post.id})}" th:text="#{button.edit}">Edit</a> |
+                <a th:href="@{/posts/delete/{id}(id=${post.id})}" th:text="#{button.delete}" onclick="return confirm('#{confirm.delete}')">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- 의견 처리 버튼 -->
+    <div class="feedback-container">
+        <h3 th:text="#{feedback.title}">Feedback</h3>
+        <p th:text="#{feedback.message}">Have feedback? Let us know!</p>
+        <button class="btn-feedback" onclick="alert('#{feedback.alert}')"
+                th:text="#{button.feedback}">
+            Send Feedback
+        </button>
+    </div>
+</div>
+
+<!-- 하단 푸터 -->
+<div class="footer">
+    <p>&copy; 2025 Post List</p>
+</div>
+</body>
+</html>

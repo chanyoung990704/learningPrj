@@ -1,38 +1,88 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>회원 가입</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+  <title th:text="#{title.register}">Register</title>
+  <link rel="stylesheet" th:href="@{/css/register.css}">
+  <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </head>
 <body>
-<div class="header">
-    <h1>회원 가입</h1>
-</div>
-<div class="navbar">
-    <a th:href="@{/}">홈</a>
-    <a th:href="@{/posts}">게시글 목록</a>
-    <a th:href="@{/login}">로그인</a>
-</div>
-<div class="container">
-    <form th:action="@{/members/register}" method="post">
-        <label for="username">사용자명:</label>
-        <input type="text" id="username" name="username" required />
+<div class="register-container">
+  <h1 th:text="#{register.title}">Register</h1>
 
-        <label for="password">비밀번호:</label>
-        <input type="password" id="password" name="password" required />
+  <!-- 회원가입 폼 -->
+  <form th:action="@{/register}" th:object="${registerDTO}" method="post">
 
-        <label for="role">역할:</label>
-        <select id="role" name="role">
-            <option value="ROLE_USER">USER</option>
-            <option value="ROLE_ADMIN">ADMIN</option>
-        </select>
+    <!-- Email -->
+    <div class="form-group">
+      <label for="email" th:text="#{label.email}">Email:</label>
+      <input type="email" id="email" th:field="*{email}" placeholder="Enter your email" required>
+      <p style="color:red" th:errors="*{email}"></p>
+    </div>
 
-        <button type="submit">가입하기</button>
-        <a class="button" th:href="@{/}">취소</a>
-    </form>
-</div>
-<div class="footer">
-    <p>&copy; 2023 Spring Boot Project</p>
+    <!-- Name -->
+    <div class="form-group">
+      <label for="name" th:text="#{label.name}">Name:</label>
+      <input type="text" id="name" th:field="*{username}" placeholder="Enter your name">
+      <p style="color:red" th:errors="*{username}"></p>
+    </div>
+
+    <!-- Password -->
+    <div class="form-group">
+      <label for="password" th:text="#{label.password}">Password:</label>
+      <input type="password" id="password" th:field="*{password}" placeholder="Enter your password" required>
+      <p style="color:red" th:errors="*{password}"></p>
+    </div>
+
+    <!-- Address Fields -->
+
+    <!-- Zip Code -->
+    <div class="form-group">
+      <label for="zipCode" th:text="#{label.zipCode}">우편번호:</label>
+      <input type="text" id="zipCode" th:field="*{address.zipCode}" readonly required />
+      <button type="button" onclick="execDaumPostcode()" th:text="#{button.searchZipCode}">우편번호 찾기</button>
+      <p style="color:red" th:errors="*{address.zipCode}"></p>
+    </div>
+
+    <!-- Street Address -->
+    <div class="form-group">
+      <label for="streetAddress" th:text="#{label.streetAddress}">주소:</label>
+      <input type="text" id="streetAddress" th:field="*{address.streetAddress}" readonly required />
+      <p style="color:red" th:errors="*{address.streetAddress}"></p>
+    </div>
+
+    <!-- Detail Address -->
+    <div class="form-group">
+      <label for="detailAddress" th:text="#{label.detailAddress}">상세 주소:</label>
+      <input type="text" id="detailAddress" th:field="*{address.detailAddress}" placeholder="" required />
+      <p style="color:red" th:errors="*{address.detailAddress}"></p>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" th:text="#{button.register}">Register</button>
+
+  </form>
+
+  <!-- Success Message -->
+  <div class="success-message" th:if="${successMessage}">
+    <p th:text="${successMessage}"></p>
+  </div>
+
+  <!-- Daum Postcode API Script -->
+  <script>
+    function execDaumPostcode() {
+      new daum.Postcode({
+        oncomplete: function(data) {
+          var roadAddr = data.roadAddress; // 도로명 주소
+          var jibunAddr = data.jibunAddress; // 지번 주소
+
+          document.getElementById('zipCode').value = data.zonecode; // 우편번호
+          document.getElementById('streetAddress').value = roadAddr !== '' ? roadAddr : jibunAddr; // 주소
+          document.getElementById('detailAddress').focus(); // 상세주소로 포커스 이동
+        }
+      }).open();
+    }
+  </script>
+
 </div>
 </body>
 </html>

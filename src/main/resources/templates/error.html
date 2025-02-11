@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Error</title>
+</head>
+<body>
+<h1 th:text="#{error.title}">An error occurred!</h1>
+<p th:text="#{error.content}">에러가 발생해 요청을 처리할 수 없습니다.</p>
+<p th:text="${status}">Status</p>
+<p th:text="${error}">Error</p>
+<p th:text="${message}">Message</p>
+</body>
+</html>
