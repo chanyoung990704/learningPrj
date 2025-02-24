@@ -1,4 +1,4 @@
-package org.example.demo.domain;
+package org.example.demo.domain.base;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
@@ -16,10 +16,11 @@ import java.time.LocalDateTime;
 public abstract class BaseEntity {
 
     @CreatedDate
-    @Column(updatable = false)
+    @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt; // 생성 시간
 
     @LastModifiedDate
+    @Column(nullable = false)
     private LocalDateTime updatedAt; // 수정 시간
 
 }

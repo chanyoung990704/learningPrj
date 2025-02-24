@@ -2,12 +2,13 @@ package org.example.demo.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.demo.domain.base.UserAuditableEntity;
 
 @Entity
 @Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "comments")
-public class Comment extends BaseEntity {
+public class Comment extends UserAuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

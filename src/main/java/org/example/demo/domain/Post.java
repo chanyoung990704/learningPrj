@@ -3,6 +3,7 @@ package org.example.demo.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.example.demo.domain.base.UserAuditableEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "posts")
 @Slf4j
-public class Post extends BaseEntity {
+public class Post extends UserAuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
