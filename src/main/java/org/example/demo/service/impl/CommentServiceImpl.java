@@ -2,8 +2,13 @@ package org.example.demo.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.demo.domain.Comment;
+import org.example.demo.domain.Post;
+import org.example.demo.domain.User;
+import org.example.demo.dto.request.CommentToPostRequestDTO;
 import org.example.demo.repository.CommentRepository;
 import org.example.demo.service.CommentService;
+import org.example.demo.service.PostService;
+import org.example.demo.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,12 +20,31 @@ import java.util.List;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
+    private final PostService postService;
+    private final UserService userService;
 
 
     @Override
     @Transactional
     public Long save(Comment object) {
         return commentRepository.save(object).getId();
+    }
+
+    @Transactional
+    @Override
+    public Long save(CommentToPostRequestDTO requestDTO, String email, Long postId) {
+        Post post = postService.findById(postId);
+        User user = userService.findByEmail(email);
+        // 댓글 생성
+        Comment comment = Comment.builder()
+                .content(requestDTO.getContent())
+                .user(user).build();
+
+        // 연관관계 설정
+        post.addComment(comment);
+
+        // 저장
+        return commentRepository.save(comment).getId();
     }
 
     @Override
@@ -32,6 +56,11 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<Comment> findAll() {
         return commentRepository.findAll();
+    }
+
+    @Override
+    public List<Comment> findCommentsByPostIdWithUserAndPost(Long postId){
+        return commentRepository.findCommentsByPostIdWithUserAndPost(postId);
     }
 
     @Override

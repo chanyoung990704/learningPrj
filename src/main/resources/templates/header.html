@@ -1,0 +1,24 @@
+<div class="top-banner" th:fragment="top-banner">
+    <div class="container">
+        <div class="banner-content">
+            <!-- 왼쪽 영역: 로고 및 홈 링크 -->
+            <div class="site-logo">
+                <a th:href="@{/}" class="home-link">
+                    <span class="logo-text">My Site</span>
+                </a>
+            </div>
+
+            <!-- 오른쪽 영역: 네비게이션 메뉴 -->
+            <ul class="nav-menu">
+                <li th:if="${#authorization.expression('isAuthenticated()') == false}">
+                    <a class="auth-btn login-btn" th:href="@{/login}" th:text="#{button.login}">로그인</a>
+                </li>
+                <li th:if="${#authorization.expression('isAuthenticated()') == true}">
+                    <a class="auth-btn logout-btn" th:href="@{/logout}" th:text="#{button.logout}">로그아웃</a>
+                </li>
+                <li><a th:href="@{/register}" th:text="#{button.user.register}">회원가입</a></li>
+                <li><a th:href="@{/posts}" th:text="#{button.board}">게시판</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

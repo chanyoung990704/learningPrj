@@ -1,55 +1,118 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-}
+/* login.css - 로그인 페이지 스타일 */
 
 .login-container {
-    width: 300px;
-    margin: 50px auto;
-    padding: 20px;
+    max-width: 450px;
+    margin: 3rem auto;
+    padding: 2.5rem;
     background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.login-container h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
 }
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 1.5rem;
 }
 
-label {
+.form-group label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.95rem;
 }
 
-input[type="text"], input[type="password"] {
+.form-group input {
     width: 100%;
-    height: 40px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
 }
 
-button[type="submit"] {
+.form-group input:focus {
+    border-color: #0d6efd;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.login-form button {
     width: 100%;
-    height: 40px;
-    background-color: #4CAF50;
+    padding: 0.75rem;
+    background-color: #0d6efd;
     color: white;
-    padding: 10px;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.2s;
 }
 
-button[type="submit"]:hover {
-    background-color: #3e8e41;
+.login-form button:hover {
+    background-color: #0b5ed7;
 }
 
 .success-message {
+    margin-bottom: 1.5rem;
+    padding: 0.75rem;
     background-color: #d4edda;
     color: #155724;
-    border: 1px solid #c3e6cb;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 5px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.error-message {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: #f8d7da;
+    color: #721c24;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.logout-message {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.register-link {
+    margin-top: 2rem;
+    text-align: center;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.register-link p {
+    margin-bottom: 0.5rem;
+    color: #6c757d;
+}
+
+.register-link a {
+    color: #0d6efd;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .login-container {
+        margin: 1.5rem;
+        padding: 1.5rem;
+    }
 }

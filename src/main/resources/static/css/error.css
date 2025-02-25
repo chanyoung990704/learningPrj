@@ -1,31 +1,341 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-}
+/* error.css - 에러 페이지 스타일 */
 
 .error-container {
-    width: 500px;
-    margin: 50px auto;
-    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    padding: 2rem;
+}
+
+.error-content {
+    max-width: 600px;
+    text-align: center;
     background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem;
 }
 
-h1 {
-    color: red;
+.error-icon {
+    margin-bottom: 1.5rem;
 }
 
-p {
-    margin-bottom: 10px;
+.icon-error {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+    height: 80px;
+    background-color: #f8d7da;
+    color: #dc3545;
+    font-size: 3rem;
+    font-weight: bold;
+    border-radius: 50%;
 }
 
-a {
+.error-content h1 {
+    color: #343a40;
+    margin-bottom: 1rem;
+    font-size: 2rem;
+}
+
+.error-message {
+    color: #6c757d;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.error-details {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 4px;
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.error-details p {
+    margin-bottom: 0.5rem;
+    color: #495057;
+}
+
+.error-details strong {
+    color: #343a40;
+}
+
+.error-actions {
+    margin-top: 1.5rem;
+}
+
+.error-actions .btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .error-container {
+        padding: 1rem;
+    }
+
+    .error-content {
+        padding: 1.5rem;
+    }
+
+    .icon-error {
+        width: 60px;
+        height: 60px;
+        font-size: 2.5rem;
+    }
+
+    .error-content h1 {
+        font-size: 1.8rem;
+    }
+}
+/* error.css - 404 에러 페이지 추가 스타일 */
+
+.not-found {
+    padding-top: 2rem;
+    padding-bottom: 2.5rem;
+}
+
+.error-code {
+    font-size: 8rem;
+    font-weight: 700;
+    color: #f8d7da;
+    line-height: 1;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 0 #dc3545;
+}
+
+.not-found h1 {
+    font-size: 2.5rem;
+    color: #343a40;
+    margin-bottom: 1.5rem;
+}
+
+.not-found .error-message {
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-bottom: 2.5rem;
+}
+
+.not-found .btn {
+    background-color: #0d6efd;
+    color: white;
+    padding: 0.75rem 1.75rem;
+    font-size: 1.1rem;
+    border-radius: 4px;
     text-decoration: none;
-    color: blue;
+    transition: background-color 0.2s;
 }
 
-a:hover {
-    color: green;
+.not-found .btn:hover {
+    background-color: #0b5ed7;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .error-code {
+        font-size: 6rem;
+    }
+
+    .not-found h1 {
+        font-size: 2rem;
+    }
+}
+
+/* error.css - 4xx 에러 페이지 추가 스타일 */
+
+.client-error {
+    padding-top: 2rem;
+    padding-bottom: 2.5rem;
+}
+
+.client-error .error-code {
+    font-size: 7rem;
+    font-weight: 700;
+    color: #fff3cd;
+    line-height: 1;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 0 #ffc107;
+}
+
+.client-error h1 {
+    font-size: 2.2rem;
+    color: #343a40;
+    margin-bottom: 1.5rem;
+}
+
+.client-error .error-message {
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin-bottom: 2rem;
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    border-left: 4px solid #ffc107;
+}
+
+.client-error .btn {
+    background-color: #ffc107;
+    color: #212529;
+    padding: 0.75rem 1.75rem;
+    font-size: 1.1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.client-error .btn:hover {
+    background-color: #e0a800;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .client-error .error-code {
+        font-size: 5rem;
+    }
+
+    .client-error h1 {
+        font-size: 1.8rem;
+    }
+}
+/* error.css - 5xx 에러 페이지 추가 스타일 */
+
+.server-error {
+    padding-top: 2rem;
+    padding-bottom: 2.5rem;
+}
+
+.server-error .error-code {
+    font-size: 7rem;
+    font-weight: 700;
+    color: #f8d7da;
+    line-height: 1;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 0 #dc3545;
+}
+
+.server-error h1 {
+    font-size: 2.2rem;
+    color: #343a40;
+    margin-bottom: 1.5rem;
+}
+
+.server-error .error-message {
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin-bottom: 2rem;
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    border-left: 4px solid #dc3545;
+}
+
+.server-error .btn {
+    background-color: #6c757d;
+    color: white;
+    padding: 0.75rem 1.75rem;
+    font-size: 1.1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.server-error .btn:hover {
+    background-color: #5a6268;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .server-error .error-code {
+        font-size: 5rem;
+    }
+
+    .server-error h1 {
+        font-size: 1.8rem;
+    }
+}
+/* error.css - 500 에러 페이지 추가 스타일 */
+
+.server-500 {
+    padding-top: 2rem;
+    padding-bottom: 2.5rem;
+}
+
+.server-500 .error-code {
+    font-size: 7rem;
+    font-weight: 700;
+    color: #f8d7da;
+    line-height: 1;
+    margin-bottom: 1rem;
+    text-shadow: 3px 3px 0 #dc3545;
+}
+
+.server-500 h1 {
+    font-size: 2.2rem;
+    color: #343a40;
+    margin-bottom: 1.5rem;
+}
+
+.server-500 .error-message {
+    font-size: 1.1rem;
+    color: #721c24;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.technical-info {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 2rem;
+    border-left: 4px solid #6c757d;
+    color: #6c757d;
+    font-size: 0.95rem;
+    text-align: left;
+}
+
+.server-500 .error-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.server-500 .btn {
+    background-color: #0d6efd;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.server-500 .btn:hover {
+    background-color: #0b5ed7;
+}
+
+.server-500 .btn-secondary {
+    background-color: #6c757d;
+}
+
+.server-500 .btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .server-500 .error-code {
+        font-size: 5rem;
+    }
+
+    .server-500 h1 {
+        font-size: 1.8rem;
+    }
+
+    .server-500 .error-actions {
+        flex-direction: column;
+    }
 }

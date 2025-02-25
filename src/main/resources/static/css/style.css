@@ -1,130 +1,209 @@
-/* Reset & Global Styles */
+/* 기본 스타일 리셋 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-/* Layout Styles */
-.top-banner {
-    background-color: #333;
-    color: white;
-    padding: 10px;
-    text-align: center;
+a {
+    text-decoration: none;
+    color: #0d6efd;
+    transition: color 0.3s ease;
 }
 
-.top-banner ul {
+a:hover {
+    color: #0a58ca;
+}
+
+ul {
     list-style: none;
-    margin: 0;
-    padding: 0;
-    text-align: center;
 }
 
-.top-banner li {
-    display: inline-block;
-    margin-right: 20px;
+/* 컨테이너 스타일 */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* 헤더 스타일 */
+.top-banner {
+    background-color: #343a40;
+    color: #fff;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.banner-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.site-logo {
+    display: flex;
+    align-items: center;
+}
+
+.home-link {
+    display: flex;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.2rem;
+    transition: color 0.2s;
+}
+
+.home-link:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.logo-text {
+    margin-left: 0.5rem;
+}
+
+.nav-menu {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
 }
 
 .top-banner a {
-    color: white;
-    text-decoration: none;
+    color: #fff;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
 }
 
-.footer {
-    background-color: #333;
-    color: white;
-    padding: 10px;
+.top-banner a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+/* 메인 콘텐츠 스타일 */
+.main-content {
+    flex: 1;
+    padding: 2rem;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
     text-align: center;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
 }
 
-/* Component Styles */
-.post-container {
-    margin-top: 20px;
+.main-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: #212529;
+    font-weight: 600;
 }
 
-.post-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
+/* 푸터 스타일 */
+.footer {
+    background-color: #343a40;
+    color: #f8f9fa;
+    text-align: center;
+    padding: 1.5rem;
+    margin-top: auto;
 }
 
-.post-table thead {
-    background-color: #444;
-    color: white;
+.footer p {
+    font-size: 0.9rem;
+    opacity: 0.8;
 }
 
-.post-table th, .post-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
-}
-
-.post-table tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-.post-table tr:hover {
-    background-color: #ddd;
-}
-
-.search-container {
-    background-color: #f4f4f4;
-    padding: 15px;
-    border-radius: 5px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-}
-
-.form-group {
-    margin-bottom: 10px;
-}
-
-label {
-    display: block;
-}
-
-input[type="text"] {
-    width: calc(100% - 20px);
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
-
-.btn-search {
-    background-color: #333;
+/* 버튼 스타일 */
+.btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #0d6efd;
     color: white;
     border: none;
-    padding: 10px 15px;
+    border-radius: 4px;
     cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s;
 }
 
-.btn-search:hover {
-    background-color: #555;
+.btn:hover {
+    background-color: #0b5ed7;
 }
 
-.feedback-container {
-    margin-top: 20px;
+.btn-secondary {
+    background-color: #6c757d;
 }
 
-.feedback-container h3 {
-    margin-bottom: 10px;
+.btn-secondary:hover {
+    background-color: #5a6268;
 }
 
-.feedback-container p {
-    margin-bottom: 15px;
+.btn-outline {
+    background-color: transparent;
+    border: 1px solid #0d6efd;
+    color: #0d6efd;
 }
 
-.btn-feedback {
-    background-color: #4CAF50;
+.btn-outline:hover {
+    background-color: #0d6efd;
     color: white;
-    border-radius: 5px;
-    border: none;
-    padding: 10px 15px;
 }
 
-.btn-feedback:hover {
-    background-color: #45a049;
+/* 폼 공통 스타일 */
+.form-container,
+.register-container,
+.login-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.form-container h1,
+.register-container h1,
+.login-container h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .banner-content {
+        flex-direction: column;
+        padding: 0.5rem 0;
+    }
+
+    .site-logo {
+        margin-bottom: 1rem;
+    }
+
+    .nav-menu {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .main-content {
+        padding: 1.5rem;
+    }
+
+    .main-content h1 {
+        font-size: 2rem;
+    }
 }

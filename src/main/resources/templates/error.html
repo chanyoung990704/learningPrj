@@ -1,13 +1,38 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Error</title>
+    <meta charset="UTF-8">
+    <title th:text="#{error.title}">Error</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/error.css}">
 </head>
 <body>
-<h1 th:text="#{error.title}">An error occurred!</h1>
-<p th:text="#{error.content}">에러가 발생해 요청을 처리할 수 없습니다.</p>
-<p th:text="${status}">Status</p>
-<p th:text="${error}">Error</p>
-<p th:text="${message}">Message</p>
+<!-- 헤더 포함 -->
+<div th:replace="~{header :: .top-banner}"></div>
+
+<div class="error-container">
+    <div class="error-content">
+        <div class="error-icon">
+            <i class="icon-error">!</i>
+        </div>
+        <h1 th:text="#{error.title}">An error occurred!</h1>
+        <p class="error-message" th:text="#{error.content}">에러가 발생해 요청을 처리할 수 없습니다.</p>
+
+        <!-- 에러 상세 정보 -->
+        <div class="error-details">
+            <p><strong>Status:</strong> <span th:text="${status}">Status</span></p>
+            <p><strong>Error:</strong> <span th:text="${error}">Error</span></p>
+            <p><strong>Message:</strong> <span th:text="${message}">Message</span></p>
+        </div>
+
+        <!-- 홈으로 돌아가기 버튼 -->
+        <div class="error-actions">
+            <a th:href="@{/}" class="btn">홈으로 돌아가기</a>
+        </div>
+    </div>
+</div>
+
+<!-- 푸터 포함 -->
+<div th:replace="~{footer :: .footer}"></div>
 </body>
 </html>

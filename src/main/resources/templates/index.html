@@ -6,31 +6,17 @@
   <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<!-- 상단 배너 -->
-<div class="top-banner">
-  <ul>
-    <!-- 로그인/로그아웃 버튼 -->
-    <li th:if="${#authorization.expression('isAuthenticated()') == false}">
-      <a th:href="@{/login}" th:text="#{button.login}">로그인</a>
-    </li>
-    <li th:if="${#authorization.expression('isAuthenticated()') == true}">
-      <a th:href="@{/logout}" th:text="#{button.logout}">로그아웃</a>
-    </li>
 
-    <!-- 회원가입 및 게시판 -->
-    <li><a th:href="@{/register}" th:text="#{button.register}">회원가입</a></li>
-    <li><a th:href="@{/posts}" th:text="#{button.board}">게시판</a></li>
-  </ul>
-</div>
+<!-- 헤더 포함 (수정된 구문) -->
+<div th:replace="~{header :: .top-banner}"></div>
 
 <!-- 메인 콘텐츠 -->
 <div class="main-content">
   <h1 th:text="#{welcome.message}">Welcome to Our Site!</h1>
 </div>
 
-<!-- 하단 푸터 -->
-<div class="footer">
-  <p th:text="#{footer.copyright}">&copy; 2024 Our Site</p>
-</div>
+<!-- 푸터 포함 (수정된 구문) -->
+<div th:replace="~{footer :: .footer}"></div>
+
 </body>
 </html>
