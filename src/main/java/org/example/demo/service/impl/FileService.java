@@ -2,6 +2,7 @@ package org.example.demo.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.demo.domain.File;
+import org.example.demo.domain.Post;
 import org.example.demo.repository.FileRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,17 @@ public class FileService {
     public List<File> saveFiles(List<MultipartFile> multipartFiles) {
         List<File> files = fileStore.storeFiles(multipartFiles);
         return fileRepository.saveAll(files);
+    }
+
+    /**
+     * 파일 연관관계 세팅
+     * cascade ALL 이기 때문에 따로 저장하지 않아아 됨
+     */
+    @Transactional
+    public List<File> addFileToPost(List<MultipartFile> multipartFiles, Post post) {
+        List<File> files = fileStore.storeFiles(multipartFiles);
+        files.stream().forEach(file -> post.addAttachment(file));
+        return files;
     }
 
     /**

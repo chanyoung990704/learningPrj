@@ -2,6 +2,10 @@ package org.example.demo.service;
 
 import org.example.demo.domain.Post;
 import org.example.demo.dto.request.PostRequestDTO;
+import org.example.demo.dto.request.PostSearchRequestDTO;
+import org.example.demo.dto.response.PostEditResponseDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -12,9 +16,17 @@ public interface PostService extends BaseService<Post> {
 
     List<Post> findPostsWithUser();
 
+    Page<Post> findPostsWithUserAndCategory(Pageable pageable);
+
     Post findPostWithUser(Long id);
 
     List<Post> findPostsWithUserAndCategory();
 
-    Post findPostWithUserAndCategoryAndComments(Long id);
+    Post findPostWithUserAndCategory(Long id);
+
+    Post findPostWithUserAndCategoryAndFiles(Long id);
+
+    Long update(PostEditResponseDTO responseDTO);
+
+    Page<Post> searchPosts(PostSearchRequestDTO requestDTO, Pageable pageable);
 }

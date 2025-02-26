@@ -25,27 +25,6 @@ public class PostCategoryServiceImpl implements PostCategoryService {
     }
 
     @Override
-    public PostCategory findById(Long id) {
-        return postCategoryRepository.findById(id).orElseThrow(() ->
-                new RuntimeException("PostCategory with id " + id + " not found"));
-    }
-
-    @Override
-    public List<PostCategory> findAll() {
-        return postCategoryRepository.findAll();
-    }
-
-    @Override
-    @Transactional
-    public Long deleteById(Long id) {
-        if(!postCategoryRepository.existsById(id)) {
-            throw new RuntimeException("PostCategory with id " + id + " not found");
-        }
-        postCategoryRepository.deleteById(id);
-        return id;
-    }
-
-    @Override
     @Transactional
     public void createCategory(PostCategoryRequestDTO requestDTO) {
         PostCategory parent = getParentCategory(requestDTO.getParentId());
@@ -67,19 +46,40 @@ public class PostCategoryServiceImpl implements PostCategoryService {
         save(newCategory);
     }
 
-    // 사용 안함
     @Override
-    @Transactional
-    public Long update(Long id, PostCategory updatedCategory) {
-        PostCategory existingCategory = findById(id);
-        existingCategory.setName(updatedCategory.getName());
-        return existingCategory.getId();
+    public PostCategory findById(Long id) {
+        return postCategoryRepository.findById(id).orElseThrow(() ->
+                new RuntimeException("PostCategory with id " + id + " not found"));
+    }
+
+    @Override
+    public List<PostCategory> findAll() {
+        return postCategoryRepository.findAll();
     }
 
     @Override
     public PostCategory findByName(String name) {
         return postCategoryRepository.findByName(name).orElseThrow(() ->
                 new RuntimeException("Postcategory with name " + name + " not found"));
+    }
+
+    @Override
+    @Transactional
+    public Long deleteById(Long id) {
+        if(!postCategoryRepository.existsById(id)) {
+            throw new RuntimeException("PostCategory with id " + id + " not found");
+        }
+        postCategoryRepository.deleteById(id);
+        return id;
+    }
+    // 사용 안함
+
+    @Override
+    @Transactional
+    public Long update(Long id, PostCategory updatedCategory) {
+        PostCategory existingCategory = findById(id);
+        existingCategory.setName(updatedCategory.getName());
+        return existingCategory.getId();
     }
 
     private PostCategory getParentCategory(Long parentId) {

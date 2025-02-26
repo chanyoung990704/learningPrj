@@ -10,9 +10,12 @@ import java.util.List;
 
 @Entity
 @Getter @Setter
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 @Table(name = "posts")
 @Slf4j
+@EqualsAndHashCode(callSuper = false)
 public class Post extends UserAuditableEntity {
 
     @Id
@@ -35,29 +38,13 @@ public class Post extends UserAuditableEntity {
     private PostCategory category;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<File> files = new ArrayList<>();
 
-    /**
-     * 빌더 패턴 생성자
-     */
-
-    @Builder
-    public Post(String title, String content, User user, PostCategory category, Comment comment, File file) {
-        this.title = title;
-        this.content = content;
-        this.user = user;
-        this.category = category;
-        // 연관관계
-        if(comment != null) {
-            this.addComment(comment);
-        }
-        if(file != null) {
-            this.addAttachment(file);
-        }
-    }
 
     /**
      * 연관 관계 메서드

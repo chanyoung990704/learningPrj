@@ -13,11 +13,11 @@
 <div class="post-form-container">
     <h1 th:text="#{post.create}">Create a New Post</h1>
 
-    <form th:action="@{/posts/new}" th:object="${postRequestDTO}" method="post" class="post-form">
+    <form th:action="@{/posts}" th:object="${postRequestDTO}" method="post" class="post-form" enctype="multipart/form-data">
         <!-- 제목 입력 -->
         <div class="form-group">
             <label for="title" th:text="#{post.title}">Title:</label>
-            <input type="text" id="title" th:field="*{title}" required placeholder="제목을 입력하세요" />
+            <input type="text" id="title" th:field="*{title}" placeholder="제목을 입력하세요" />
             <p class="error-message" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
         </div>
 
@@ -36,8 +36,27 @@
         <!-- 내용 입력 -->
         <div class="form-group">
             <label for="content" th:text="#{post.content}">Content:</label>
-            <textarea id="content" th:field="*{content}" rows="10" required placeholder="내용을 입력하세요"></textarea>
+            <textarea id="content" th:field="*{content}" rows="10" placeholder="내용을 입력하세요"></textarea>
             <p class="error-message" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></p>
+        </div>
+
+        <!-- 파일 업로드 섹션 -->
+        <div class="form-group file-upload-section">
+            <label for="files" th:text="#{post.attachments}">파일 첨부:</label>
+            <div class="file-upload-container">
+                <input type="file" id="files" th:field="*{files}" multiple class="file-input" />
+                <div class="file-upload-area" id="dropZone">
+                    <div class="file-upload-message">
+                        <i class="file-icon">📎</i>
+                        <p th:text="#{file.drag.message}">파일을 끌어다 놓거나 클릭하여 업로드하세요</p>
+                        <span class="file-info" th:text="#{file.max.size}">최대 10MB, 최대 5개 파일</span>
+                    </div>
+                </div>
+            </div>
+            <div class="selected-files" id="fileList">
+                <!-- 선택된 파일 목록이 여기에 표시됩니다 -->
+            </div>
+            <p class="error-message" th:if="${#fields.hasErrors('files')}" th:errors="*{files}"></p>
         </div>
 
         <!-- 버튼 그룹 -->
@@ -50,5 +69,88 @@
 
 <!-- 푸터 포함 -->
 <div th:replace="~{footer :: .footer}"></div>
+
+<!-- 파일 업로드 관련 JavaScript -->
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('files');
+        const fileList = document.getElementById('fileList');
+
+        // 파일 드래그 앤 드롭 이벤트 처리
+        dropZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            dropZone.classList.add('active');
+        });
+
+        dropZone.addEventListener('dragleave', function() {
+            dropZone.classList.remove('active');
+        });
+
+        dropZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            dropZone.classList.remove('active');
+            fileInput.files = e.dataTransfer.files;
+            updateFileList();
+        });
+
+        // 파일 선택 영역 클릭 시 파일 선택 창 열기
+        dropZone.addEventListener('click', function() {
+            fileInput.click();
+        });
+
+        // 파일 선택 시 목록 업데이트
+        fileInput.addEventListener('change', updateFileList);
+
+        // 파일 목록 업데이트 함수
+        function updateFileList() {
+            fileList.innerHTML = '';
+            if (fileInput.files.length > 0) {
+                const ul = document.createElement('ul');
+                ul.className = 'file-list';
+
+                Array.from(fileInput.files).forEach(function(file, index) {
+                    const li = document.createElement('li');
+                    li.className = 'file-item';
+
+                    // 파일 이름과 크기 표시
+                    const fileInfo = document.createElement('div');
+                    fileInfo.className = 'file-item-info';
+                    fileInfo.innerHTML = `
+                            <span class="file-name">${file.name}</span>
+                            <span class="file-size">${formatFileSize(file.size)}</span>
+                        `;
+
+                    // 삭제 버튼 (참고: 기술적 제한으로 개별 파일 삭제는 추가 로직 필요)
+                    const removeBtn = document.createElement('button');
+                    removeBtn.type = 'button';
+                    removeBtn.className = 'file-remove-btn';
+                    removeBtn.innerHTML = '✕';
+                    removeBtn.dataset.index = index;
+                    removeBtn.addEventListener('click', function() {
+                        // 전체 파일 선택을 초기화하고 파일 입력을 다시 설정해야 함
+                        fileInput.value = '';
+                        updateFileList();
+                    });
+
+                    li.appendChild(fileInfo);
+                    li.appendChild(removeBtn);
+                    ul.appendChild(li);
+                });
+
+                fileList.appendChild(ul);
+            }
+        }
+
+        // 파일 크기 형식화 함수
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    });
+</script>
 </body>
 </html>

@@ -37,8 +37,15 @@ out/
 .vscode/
 
 ### open ai key ###
-/src/main/resources/api-key.properties
+**/resources/api-key.properties
 
 ### db setting ###
-/src/main/resources/jpa.properties
-/src/main/resources/mysql.properties
+**/resources/jpa.properties
+**/resources/mysql.properties
+
+### uploads ###
+**/uploads/**
+
+### etc.. ###
+**/test/**/Main.java
+

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.demo.domain.PostCategory;
 import org.example.demo.dto.request.PostCategoryRequestDTO;
 import org.example.demo.service.PostCategoryService;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -31,16 +32,17 @@ public class PostCategoryController {
     // 카테고리 등록 폼 제공
     @GetMapping("/new")
     public String createForm(Model model) {
-        model.addAttribute("requestDTO", new PostCategoryRequestDTO());
-        return "/post/createPostCategoryForm";
+        model.addAttribute("requestDTO", PostCategoryRequestDTO.builder().build());
+        return "post/createPostCategoryForm";
     }
 
     // 카테고리 등록 처리
     @PostMapping("/new")
+    @CacheEvict(value = "categoriesCache", allEntries = true) // 캐시 삭제
     public String create(@Validated @ModelAttribute("requestDTO") PostCategoryRequestDTO requestDTO, BindingResult result) {
         // 오류 존재 시
         if (result.hasErrors()) {
-            return "/post/createPostCategoryForm";
+            return "post/createPostCategoryForm";
         }
 
         try {
@@ -48,7 +50,7 @@ public class PostCategoryController {
         } catch (IllegalStateException e) {
             // 중복 카테고리 오류 처리
             result.rejectValue("name", "error.duplicatedCategory", e.getMessage());
-            return "/post/createPostCategoryForm";
+            return "post/createPostCategoryForm";
         }
 
         return "redirect:/postcategories/new";

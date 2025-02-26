@@ -26,13 +26,44 @@
     <p>Sample content goes here...</p>
   </div>
 
+  <!-- 첨부 이미지 갤러리 섹션 -->
+  <div class="post-attachments" th:if="${not #lists.isEmpty(post.imageAttachments) || not #lists.isEmpty(post.otherAttachments)}">
+    <h3>첨부 파일</h3>
+
+    <!-- 이미지 갤러리 -->
+    <div class="image-gallery" th:if="${not #lists.isEmpty(post.imageAttachments)}">
+      <div th:each="image : ${post.imageAttachments}" class="gallery-item">
+        <a th:href="@{/posts/uploads/images/{filename}(filename=${image.storedName})}" target="_blank">
+          <img th:src="@{/posts/uploads/images/{filename}(filename=${image.storedName})}"
+               th:alt="${image.originalName}" class="gallery-image">
+        </a>
+        <div class="image-caption" th:text="${image.originalName}">image.jpg</div>
+      </div>
+    </div>
+
+    <!-- 일반 첨부 파일 목록 -->
+    <div class="file-attachments" th:if="${not #lists.isEmpty(post.otherAttachments)}">
+      <h4>다운로드</h4>
+      <ul class="attachment-list">
+        <li th:each="file : ${post.otherAttachments}" class="attachment-item">
+          <a th:href="@{/posts/uploads/files/{id}(id=${file.id})}" class="file-download-link">
+            <span class="file-icon">📎</span>
+            <span class="file-name" th:text="${file.originalName}">file.pdf</span>
+            <span class="file-size" th:text="${#numbers.formatDecimal(file.fileSize / 1024, 0, 2) + ' KB'}">123 KB</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
   <!-- 게시글 액션 버튼 -->
   <div class="post-actions">
     <a th:href="@{/posts}" class="btn btn-secondary">목록으로</a>
     <!-- 작성자만 수정/삭제 가능 (옵션) -->
-    <div th:if="${#authorization.expression('isAuthenticated()') && post.author == #authentication.name}" class="author-actions">
+    <div th:if="${#authorization.expression('isAuthenticated()') && post.email == #authentication.name}" class="author-actions">
       <a th:href="@{/posts/{id}/edit(id=${post.id})}" class="btn btn-edit">수정</a>
-      <form th:action="@{/posts/{id}/delete(id=${post.id})}" method="post" style="display:inline;">
+      <form th:action="@{/posts/{id}(id=${post.id})}" method="post" style="display:inline;">
+        <input type="hidden" name="_method" value="DELETE"/>
         <button type="submit" class="btn btn-delete" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</button>
       </form>
     </div>
@@ -40,44 +71,151 @@
 
   <!-- 댓글 섹션 -->
   <div class="comments-section">
-    <h2>Comments <span class="comments-count" th:text="${#lists.size(comments)}">0</span></h2>
+    <h2 th:text="#{comment.title}">Comments <span class="comments-count" th:text="${#lists.size(post.comments)}">0</span></h2>
 
     <!-- 댓글이 없는 경우 -->
-    <div class="no-comments" th:if="${#lists.isEmpty(comments)}">
+    <div class="no-comments" th:if="${#lists.isEmpty(post.comments)}">
       <p>아직 댓글이 없습니다. 첫 댓글을 작성해보세요!</p>
     </div>
 
     <!-- 댓글 목록 -->
-    <ul class="comments-list" th:if="${!#lists.isEmpty(comments)}">
-      <li th:each="comment : ${comments}" class="comment-item">
+    <ul class="comments-list" th:if="${!#lists.isEmpty(post.comments)}">
+      <li th:each="comment : ${post.comments}" class="comment-item" th:id="'comment-' + ${comment.id}">
         <div class="comment-header">
           <span class="comment-author" th:text="${comment.author}">Commenter Name</span>
           <span class="comment-time" th:text="${#temporals.format(comment.time, 'yyyy.MM.dd HH:mm')}">21:20</span>
+
+          <!-- 댓글 작성자만 수정/삭제 가능 -->
+          <div class="comment-actions" th:if="${#authorization.expression('isAuthenticated()') && comment.email == #authentication.name}">
+            <button class="btn-edit-comment" th:attr="data-comment-id=${comment.id}">수정</button>
+            <form th:action="@{/posts/{postId}/comments/{commentId}(postId=${post.id},commentId=${comment.id})}"
+                  method="post" style="display:inline;">
+              <input type="hidden" name="_method" value="DELETE"/>
+              <button type="submit" class="btn-delete-comment"
+                      onclick="return confirm('댓글을 삭제하시겠습니까?')">삭제</button>
+            </form>
+          </div>
         </div>
-        <div class="comment-content" th:text="${comment.content}">Sample comment content...</div>
+
+        <!-- 댓글 내용 (일반 모드) -->
+        <div class="comment-content" th:id="'comment-content-' + ${comment.id}" th:text="${comment.content}">
+          Sample comment content...
+        </div>
+
+        <!-- 댓글 수정 폼 (편집 모드) -->
+        <div class="comment-edit-form" th:id="'comment-edit-form-' + ${comment.id}" style="display:none;">
+          <form th:action="@{/posts/{postId}/comments/{commentId}(postId=${post.id},commentId=${comment.id})}"
+                method="post" th:object="${commentEditRequest}">
+            <input type="hidden" name="_method" value="PUT"/>
+            <textarea name="content" class="edit-textarea"
+                      th:text="${comment.content}"></textarea>
+            <p class="error-message" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></p>
+            <div class="edit-actions">
+              <button type="button" class="btn-cancel-edit" th:attr="data-comment-id=${comment.id}">취소</button>
+              <button type="submit" class="btn-save-edit">저장</button>
+            </div>
+          </form>
+        </div>
       </li>
     </ul>
-  </div>
 
-  <!-- 댓글 작성 폼 (로그인 사용자만 표시) -->
-  <div class="comment-form" th:if="${#authorization.expression('isAuthenticated()')}">
-    <h3>Write a Comment</h3>
-    <form th:action="@{/posts/{id}/comments(id=${post.id})}" method="post" th:object="${commentToPostRequestDTO}">
-      <!-- 댓글 내용 -->
-      <textarea name="content" placeholder="Write your comment here..." required th:field="*{content}"></textarea>
+    <!-- 댓글 작성 폼 (로그인 사용자만 표시) -->
+    <div class="comment-form" th:if="${#authorization.expression('isAuthenticated()')}">
+      <form th:action="@{/posts/{id}/comments(id=${post.id})}" method="post" th:object="${commentAddRequest}">
+        <!-- 댓글 내용 -->
+        <textarea name="content" th:placeholder="#{comment.placeholder}" placeholder="Write your comment here..." th:field="*{content}"></textarea>
+        <p class="error-message" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></p>
+        <!-- 제출 버튼 -->
+        <button type="submit" class="btn comment-submit-btn" th:text="#{comment.write}">등록</button>
+      </form>
+    </div>
 
-      <!-- 제출 버튼 -->
-      <button type="submit" class="btn comment-submit-btn">등록</button>
-    </form>
-  </div>
+    <!-- 로그인 안내 메시지 (비로그인 사용자에게 표시) -->
+    <div class="login-prompt" th:if="${!#authorization.expression('isAuthenticated()')}">
+      <p>댓글을 작성하려면 <a th:href="@{/login}">로그인</a>이 필요합니다.</p>
+    </div>
+  </div> <!-- comments-section 닫는 태그 추가 -->
+</div>
 
-  <!-- 로그인 안내 메시지 (비로그인 사용자에게 표시) -->
-  <div class="login-prompt" th:if="${!#authorization.expression('isAuthenticated()')}">
-    <p>댓글을 작성하려면 <a th:href="@{/login}">로그인</a>이 필요합니다.</p>
-  </div>
+<!-- 이미지 뷰어 모달 -->
+<div id="imageModal" class="image-modal">
+  <span class="close-modal">&times;</span>
+  <img class="modal-content" id="modalImage">
+  <div id="imageCaption" class="modal-caption"></div>
 </div>
 
 <!-- 푸터 포함 -->
 <div th:replace="~{footer :: .footer}"></div>
+
+<!-- 댓글 수정 스크립트 -->
+<script th:inline="javascript">
+  document.addEventListener('DOMContentLoaded', function() {
+    // 수정 버튼 클릭 시 처리
+    document.querySelectorAll('.btn-edit-comment').forEach(button => {
+      button.addEventListener('click', function() {
+        const commentId = this.getAttribute('data-comment-id');
+        const contentElement = document.getElementById('comment-content-' + commentId);
+        const editFormElement = document.getElementById('comment-edit-form-' + commentId);
+        const textarea = editFormElement.querySelector('textarea');
+
+        // 기존 댓글 내용을 수정 폼의 textarea에 설정
+        textarea.value = contentElement.textContent.trim();
+
+        // 댓글 내용 숨기고 수정 폼 표시
+        contentElement.style.display = 'none';
+        editFormElement.style.display = 'block';
+        // 텍스트 영역에 포커스
+        textarea.focus();
+      });
+    });
+
+    // 취소 버튼 클릭 시 처리
+    document.querySelectorAll('.btn-cancel-edit').forEach(button => {
+      button.addEventListener('click', function() {
+        const commentId = this.getAttribute('data-comment-id');
+        const contentElement = document.getElementById('comment-content-' + commentId);
+        const editFormElement = document.getElementById('comment-edit-form-' + commentId);
+
+        // 수정 폼 숨기고 댓글 내용 표시
+        editFormElement.style.display = 'none';
+        contentElement.style.display = 'block';
+      });
+    });
+  });
+</script>
+
+<!-- 이미지 뷰어 스크립트 -->
+<script th:inline="javascript">
+  document.addEventListener('DOMContentLoaded', function() {
+    // 이미지 모달 관련 요소
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    const captionText = document.getElementById('imageCaption');
+    const closeBtn = document.getElementsByClassName('close-modal')[0];
+
+    // 갤러리 이미지 클릭 시 모달 표시
+    const galleryImages = document.querySelectorAll('.gallery-image');
+    galleryImages.forEach(img => {
+      img.addEventListener('click', function(e) {
+        e.preventDefault();
+        modal.style.display = 'block';
+        modalImg.src = this.src;
+        captionText.innerHTML = this.alt;
+      });
+    });
+
+    // 모달 닫기 버튼
+    closeBtn.addEventListener('click', function() {
+      modal.style.display = 'none';
+    });
+
+    // 모달 영역 밖 클릭 시 닫기
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+  });
+</script>
 </body>
 </html>

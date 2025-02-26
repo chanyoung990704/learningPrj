@@ -10,9 +10,11 @@ import java.util.List;
 
 @Entity
 @Getter @Setter
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 @Table(name = "post_categories")
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @Slf4j
 public class PostCategory extends UserAuditableEntity {
     @Id
@@ -25,25 +27,20 @@ public class PostCategory extends UserAuditableEntity {
     /**
      * 자기참조
      */
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private PostCategory parent;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<PostCategory> children = new ArrayList<>();
 
-    /**
-     * 빌더패턴
-     */
-
-    @Builder
-    public PostCategory(String name) {
-        this.name = name;
-    }
 
     /**
      * 연관관계 메서드
      */
+
     public void addChild(PostCategory child) {
         if (child == null) {
             log.warn("Child Category 객체가 null 값을 가진다.");

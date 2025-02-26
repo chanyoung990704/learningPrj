@@ -1,16 +1,19 @@
 package org.example.demo.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.demo.dto.request.UserRegisterRequestDTO;
 import org.example.demo.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class AuthController {
@@ -33,7 +36,7 @@ public class AuthController {
                            RedirectAttributes redirectAttributes) {
         // 오류 있는 경우
         if(result.hasErrors()){
-            return "/register";
+            return "register";
         }
 
         userService.save(UserRegisterRequestDTO.toUser(registerDto));

@@ -64,6 +64,12 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public Comment findCommentByIdWithUser(Long commentId){
+        return commentRepository.findCommentByIdWithUser(commentId).orElseThrow(() ->
+                new RuntimeException("Comment with id " + commentId + " not found"));
+    }
+
+    @Override
     @Transactional
     public Long deleteById(Long id) {
         if(!commentRepository.existsById(id)) {
@@ -75,10 +81,19 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public Long update(Long id, Comment updatedComment) {
+    public Long update(Long id, Comment object) {
         Comment existingComment = findById(id);
-        if(updatedComment.getContent() != null) {
-            existingComment.setContent(updatedComment.getContent());
+        if(object.getContent() != null) {
+            existingComment.setContent(object.getContent());
+        }
+        return existingComment.getId();    }
+
+    @Transactional
+    @Override
+    public Long update(Long id, CommentToPostRequestDTO updateDto) {
+        Comment existingComment = findById(id);
+        if(updateDto != null && updateDto.getContent() != null) {
+            existingComment.setContent(updateDto.getContent());
         }
         return existingComment.getId();
     }

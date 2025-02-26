@@ -217,3 +217,77 @@
         width: 30%;
     }
 }
+
+
+/* 개선된 페이지네이션 스타일 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.pagination-info {
+    color: #6c757d;
+    font-size: 0.9rem;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+.pagination ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.pagination li {
+    margin: 0 0.25rem;
+}
+
+.pagination li a {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    color: #0d6efd;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.pagination li a:hover {
+    background-color: #e9ecef;
+}
+
+.pagination li.active a {
+    background-color: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+}
+
+.pagination li.disabled a {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #fff;
+    border-color: #dee2e6;
+}
+
+.page-size-selector {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.page-size-selector label {
+    margin-right: 0.5rem;
+}
+
+.page-size-selector select {
+    padding: 0.25rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}

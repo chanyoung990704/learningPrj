@@ -1,27 +1,35 @@
 package org.example.demo.dto.request;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.*;
 import org.example.demo.domain.User;
+import org.example.demo.validator.UniqueEmail;
 
 import javax.validation.constraints.NotNull;
 
 @Data
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class UserRegisterRequestDTO {
 
-    @NotBlank
+    @NotEmpty
     private String username;
 
-    @NotBlank
+    @NotEmpty
+    @Email
+    @UniqueEmail
     private String email;
 
     @NotBlank
     private String password;
 
     @Valid
-    @NotNull
-    private AddressDTO address = new AddressDTO();
+    @Builder.Default
+    private AddressDTO address = AddressDTO.builder().build();
 
     public static User toUser(UserRegisterRequestDTO requestDTO) {
         return User.builder().name(requestDTO.getUsername())

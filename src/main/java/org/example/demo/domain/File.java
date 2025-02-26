@@ -6,8 +6,11 @@ import org.example.demo.domain.base.UserAuditableEntity;
 
 @Entity
 @Getter @Setter
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 @Table(name = "files")
+@EqualsAndHashCode(callSuper = false)
 public class File extends UserAuditableEntity {
 
     @Id
@@ -22,16 +25,12 @@ public class File extends UserAuditableEntity {
     private String originalName; // 원본 파일명
 
     @Column(nullable = false)
-    private String storedName; // 서버 저장 경로
+    private String storedName; // 서버 저장 이름
 
     @Column(nullable = false)
     private Long fileSize; // 파일 크기
 
+    @Column(nullable = false)
+    private String fileType; // 파일 타입
 
-    @Builder
-    public File(String originalName, String storedName, Long fileSize) {
-        this.originalName = originalName;
-        this.storedName = storedName;
-        this.fileSize = fileSize;
-    }
 }

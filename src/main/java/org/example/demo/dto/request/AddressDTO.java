@@ -1,19 +1,23 @@
 package org.example.demo.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.*;
 import org.example.demo.domain.Address;
 
 @Data
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class AddressDTO {
 
-    @NotBlank
+    @NotEmpty
     private String zipCode;
 
-    @NotBlank
+    @NotEmpty
     private String streetAddress;
 
-    @NotBlank
+    @NotEmpty
     private String detailAddress;
 
 

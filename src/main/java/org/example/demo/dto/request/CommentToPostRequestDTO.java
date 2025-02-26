@@ -1,13 +1,15 @@
 package org.example.demo.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.*;
 
 @Data
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@NoArgsConstructor
 public class CommentToPostRequestDTO {
 
+    @NotEmpty
     String content;
+
 }

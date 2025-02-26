@@ -5,7 +5,7 @@ import org.example.demo.dto.request.PostCategoryRequestDTO;
 
 public interface PostCategoryService extends BaseService<PostCategory> {
 
-    PostCategory findByName(String name);
-
     void createCategory(PostCategoryRequestDTO requestDTO);
+
+    PostCategory findByName(String name);
 }

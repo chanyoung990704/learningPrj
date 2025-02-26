@@ -6,8 +6,11 @@ import org.example.demo.domain.base.UserAuditableEntity;
 
 @Entity
 @Getter @Setter
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 @Table(name = "comments")
+@EqualsAndHashCode(callSuper = false)
 public class Comment extends UserAuditableEntity {
 
     @Id
@@ -26,9 +29,4 @@ public class Comment extends UserAuditableEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Builder
-    public Comment(String content, User user) {
-        this.content = content;
-        this.user = user;
-    }
 }

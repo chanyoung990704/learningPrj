@@ -126,3 +126,226 @@
         text-align: center;
     }
 }
+
+/* 파일 업로드 관련 스타일 */
+.file-upload-section {
+    margin-bottom: 2rem;
+}
+
+.file-upload-container {
+    margin-bottom: 1rem;
+}
+
+.file-input {
+    display: none;
+}
+
+.file-upload-area {
+    border: 2px dashed #ced4da;
+    border-radius: 4px;
+    padding: 2rem;
+    text-align: center;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.file-upload-area:hover, .file-upload-area.active {
+    border-color: #0d6efd;
+    background-color: #e9ecef;
+}
+
+.file-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.file-upload-message {
+    color: #6c757d;
+}
+
+.file-info {
+    display: block;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    color: #6c757d;
+}
+
+.selected-files {
+    margin-top: 1rem;
+}
+
+.file-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.file-item-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.file-name {
+    font-weight: 500;
+    color: #495057;
+    word-break: break-all;
+}
+
+.file-size {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.file-remove-btn {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0 0.5rem;
+}
+
+.file-remove-btn:hover {
+    color: #bd2130;
+}
+
+/* 반응형 조정 */
+@media (max-width: 768px) {
+    .file-upload-area {
+        padding: 1.5rem;
+    }
+}
+/* 기존 첨부 파일 섹션 스타일 */
+.existing-files {
+    margin-bottom: 2rem;
+}
+
+.existing-file-list {
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.existing-file-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border-bottom: 1px solid #e9ecef;
+    background-color: #f8f9fa;
+}
+
+.existing-file-item:last-child {
+    border-bottom: none;
+}
+
+.file-preview {
+    width: 50px;
+    height: 50px;
+    margin-right: 1rem;
+    border-radius: 4px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.file-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.file-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    font-size: 1.5rem;
+    color: #6c757d;
+    flex-shrink: 0;
+}
+
+.file-info {
+    flex: 1;
+    overflow: hidden;
+}
+
+.file-name {
+    display: block;
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-size {
+    display: block;
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.file-actions {
+    margin-left: 1rem;
+}
+
+.delete-checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: #dc3545;
+    font-size: 0.9rem;
+}
+
+.delete-file-checkbox {
+    margin-right: 0.5rem;
+}
+
+/* 수정 페이지 특화 스타일 */
+.submit-btn.update-btn {
+    background-color: #17a2b8;
+}
+
+.submit-btn.update-btn:hover {
+    background-color: #138496;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .existing-file-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .file-preview,
+    .file-icon {
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    .file-info {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .file-actions {
+        margin-left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+    }
+}

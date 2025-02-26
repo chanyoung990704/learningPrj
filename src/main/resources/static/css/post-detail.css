@@ -273,3 +273,251 @@
         text-align: center;
     }
 }
+
+/* 첨부 파일 섹션 스타일 */
+.post-attachments {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.post-attachments h3 {
+    font-size: 1.2rem;
+    color: #343a40;
+    margin-bottom: 1rem;
+}
+
+/* 이미지 갤러리 스타일 */
+.image-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.gallery-item {
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.gallery-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.gallery-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.image-caption {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+    color: #6c757d;
+    text-align: center;
+    background-color: #f8f9fa;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 첨부 파일 목록 스타일 */
+.file-attachments {
+    margin-top: 1rem;
+}
+
+.file-attachments h4 {
+    font-size: 1rem;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.attachment-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.attachment-item {
+    margin-bottom: 0.5rem;
+}
+
+.file-download-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    color: #495057;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.file-download-link:hover {
+    background-color: #e9ecef;
+}
+
+.file-icon {
+    margin-right: 0.75rem;
+    font-size: 1.2rem;
+}
+
+.file-name {
+    flex: 1;
+    margin-right: 1rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-size {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+/* 이미지 모달 스타일 */
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.9);
+    padding: 50px;
+}
+
+.modal-content {
+    margin: auto;
+    display: block;
+    max-width: 90%;
+    max-height: 80%;
+    object-fit: contain;
+}
+
+.modal-caption {
+    margin: auto;
+    display: block;
+    width: 80%;
+    text-align: center;
+    color: #ccc;
+    padding: 10px 0;
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .image-gallery {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    .image-modal {
+        padding: 20px;
+    }
+}
+
+/* 댓글 액션 버튼 스타일 */
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.comment-author {
+    font-weight: 600;
+    color: #495057;
+}
+
+.comment-time {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.comment-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-edit-comment,
+.btn-delete-comment {
+    background: none;
+    border: none;
+    font-size: 0.8rem;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+}
+
+.btn-edit-comment:hover {
+    color: #0d6efd;
+}
+
+.btn-delete-comment:hover {
+    color: #dc3545;
+}
+
+/* 댓글 수정 폼 스타일 */
+.comment-edit-form {
+    margin-top: 0.5rem;
+}
+
+.edit-textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    min-height: 80px;
+    margin-bottom: 0.5rem;
+}
+
+.edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.btn-cancel-edit,
+.btn-save-edit {
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.btn-cancel-edit {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+}
+
+.btn-save-edit {
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+}
+
+.btn-cancel-edit:hover {
+    background-color: #5a6268;
+}
+
+.btn-save-edit:hover {
+    background-color: #0b5ed7;
+}
