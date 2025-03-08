@@ -49,13 +49,13 @@ class UniqueEmailValidatorTest {
                 .build();
 
         // 회원 가입 후 영속성 초기화
-        User testUser1 = UserRegisterRequestDTO.toUser(testUserForm);
+        User testUser1 = UserRegisterRequestDTO.toUser(testUserForm, false);
         userRepository.save(testUser1);
         entityManager.flush();
         entityManager.clear();
 
         testUserForm.setUsername("test2");
-        User testUser2 = UserRegisterRequestDTO.toUser(testUserForm);
+        User testUser2 = UserRegisterRequestDTO.toUser(testUserForm, false);
 
         // w & t
         assertFalse(validator.isValid(testUser2.getEmail(), context));

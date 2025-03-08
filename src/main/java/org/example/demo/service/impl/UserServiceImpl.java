@@ -3,8 +3,10 @@ package org.example.demo.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.example.demo.domain.Address;
 import org.example.demo.domain.User;
+import org.example.demo.events.SignUpEvent;
 import org.example.demo.repository.UserRepository;
 import org.example.demo.service.UserService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -26,7 +29,15 @@ public class UserServiceImpl implements UserService {
         validateDuplicateUser(user);
         // 비밀번호 암호화
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user).getId();
+        Long id = userRepository.save(user).getId();
+        // 이벤트 실행
+        eventPublisher.publishEvent(
+                SignUpEvent.builder()
+                        .email(user.getEmail())
+                        .username(user.getName()).build()
+        );
+
+        return id;
     }
 
     @Override

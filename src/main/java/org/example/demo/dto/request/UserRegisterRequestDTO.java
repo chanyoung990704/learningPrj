@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
+import org.example.demo.domain.Role;
 import org.example.demo.domain.User;
 import org.example.demo.validator.UniqueEmail;
 
@@ -31,11 +32,12 @@ public class UserRegisterRequestDTO {
     @Builder.Default
     private AddressDTO address = AddressDTO.builder().build();
 
-    public static User toUser(UserRegisterRequestDTO requestDTO) {
+    public static User toUser(UserRegisterRequestDTO requestDTO, boolean isAdmin) {
         return User.builder().name(requestDTO.getUsername())
                 .email(requestDTO.getEmail())
                 .password(requestDTO.getPassword())
                 .address(AddressDTO.toAddress(requestDTO.getAddress()))
+                .role(isAdmin ? Role.ROLE_ADMIN : Role.ROLE_USER)
                 .build();
     }
 }
