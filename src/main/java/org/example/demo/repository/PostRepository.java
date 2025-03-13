@@ -24,4 +24,6 @@ public interface PostRepository extends JpaRepository<Post, Long>, QueryDslPostR
 
     @Query("SELECT p FROM Post p JOIN FETCH p.user u JOIN FETCH p.category c")
     Page<Post> findPostsWithUserAndCategory(Pageable pageable);
+
+    public static final int DEFAULT_PAGE_SIZE = 10;
 }

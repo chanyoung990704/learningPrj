@@ -13,6 +13,7 @@ import org.example.demo.dto.response.CommentToPostResponseDTO;
 import org.example.demo.dto.response.PostDetailResponseDTO;
 import org.example.demo.dto.response.PostEditResponseDTO;
 import org.example.demo.dto.response.PostListResponseDTO;
+import org.example.demo.repository.PostRepository;
 import org.example.demo.service.CommentService;
 import org.example.demo.service.PostCategoryService;
 import org.example.demo.service.PostService;
@@ -54,8 +55,6 @@ public class PostController {
     private final FileService fileService;
     private final FileStore fileStore;
 
-    public static final int DEFAULT_POST_SIZE = 10;
-
     @GetMapping("/new")
     public String saveForm(@ModelAttribute("postRequestDTO") PostRequestDTO postRequestDTO) {
         return "post/post-form";
@@ -77,7 +76,7 @@ public class PostController {
     @GetMapping
     @TimeTrace
     public String showPostList(@ModelAttribute(value = "searchRequestDTO") PostSearchRequestDTO searchRequestDTO,
-                               @PageableDefault(sort = {"createdAt"}, size = DEFAULT_POST_SIZE, direction = Sort.Direction.DESC) Pageable pageable,
+                               @PageableDefault(sort = {"createdAt"}, size = PostRepository.DEFAULT_PAGE_SIZE, direction = Sort.Direction.DESC) Pageable pageable,
                                Model model) {
 
         // 검색어 페이징
