@@ -24,10 +24,18 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // CSRF 비활성화
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers(HttpMethod.GET, "/posts/{id:[0-9]+}", "/posts").permitAll() // 게시글
-                        .requestMatchers("/", "/register").permitAll() // 공개 URL
-                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // css 파일
-                        .anyRequest().authenticated() // 나머지 요청은 인증 필요
+                        // 게시글 조회 허용
+                        .requestMatchers(HttpMethod.GET, "/posts/{id:[0-9]+}", "/posts").permitAll()
+                        // 게시글 내 이미지 조회 허용
+                        .requestMatchers(HttpMethod.GET, "/posts/uploads/images/{filename}").permitAll()
+                        // 파일 다운로드는 인증 필요
+                        .requestMatchers(HttpMethod.GET, "/posts/uploads/files/{id}").authenticated()
+                        // 공개 URL
+                        .requestMatchers("/", "/register").permitAll()
+                        // 정적 리소스
+                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                        // 나머지 요청은 인증 필요
+                        .anyRequest().authenticated()
                 )
                 .formLogin(login ->
                         login.loginPage("/login")
@@ -36,10 +44,11 @@ public class SecurityConfig {
                 .logout(logout ->
                         logout.logoutSuccessUrl("/")
                                 .permitAll())
-                .httpBasic(withDefaults()); // HTTP Basic 인증 활성화
+                .httpBasic(withDefaults());
 
         return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

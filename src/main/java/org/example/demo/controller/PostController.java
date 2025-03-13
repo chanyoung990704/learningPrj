@@ -212,7 +212,7 @@ public class PostController {
                                 .content(comment.getContent())
                                 .author(comment.getUser().getName())
                                 .email(comment.getUser().getEmail())
-                                .time(comment.getUpdatedAt()).build()).collect(Collectors.toList()))
+                                .time(comment.getCreatedAt()).build()).collect(Collectors.toList()))
                 .imageAttachments(imageFile.get(true))
                 .otherAttachments(imageFile.get(false))
                 .build();
