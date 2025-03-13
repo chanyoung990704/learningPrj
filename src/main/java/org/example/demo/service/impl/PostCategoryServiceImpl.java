@@ -1,5 +1,6 @@
 package org.example.demo.service.impl;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.example.demo.domain.PostCategory;
 import org.example.demo.dto.request.PostCategoryRequestDTO;
@@ -16,7 +17,6 @@ import java.util.List;
 public class PostCategoryServiceImpl implements PostCategoryService {
 
     private final PostCategoryRepository postCategoryRepository;
-
 
     @Override
     @Transactional
