@@ -1,6 +1,5 @@
 package org.example.demo.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import org.example.demo.domain.Address;

@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import org.example.demo.domain.Role;
 import org.example.demo.domain.User;
+import org.example.demo.validator.PasswordMatch;
 import org.example.demo.validator.UniqueEmail;
 
 import javax.validation.constraints.NotNull;
@@ -15,6 +16,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@PasswordMatch(message = "비밀번호가 일치하지 않습니다.")
 public class UserRegisterRequestDTO {
 
     @NotEmpty
@@ -27,6 +29,9 @@ public class UserRegisterRequestDTO {
 
     @NotBlank
     private String password;
+    
+    @NotBlank
+    private String passwordConfirm;
 
     @Valid
     @Builder.Default

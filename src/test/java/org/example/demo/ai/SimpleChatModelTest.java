@@ -40,7 +40,7 @@ public class SimpleChatModelTest {
 
         // Assert response is not empty
         assertNotNull(response);
-        assertFalse(response.getResult().getOutput().getContent().isEmpty());
+        assertFalse(response.getResult().getOutput().getText().isEmpty());
     }
 
     @Test
@@ -59,7 +59,7 @@ public class SimpleChatModelTest {
 
         // Verify response
         assertNotNull(response);
-        assertTrue(response.getResult().getOutput().getContent().contains("Spring AI"));
+        assertTrue(response.getResult().getOutput().getText().contains("Spring AI"));
     }
 
     @Test
@@ -75,7 +75,7 @@ public class SimpleChatModelTest {
 
         // Verify response
         assertNotNull(response);
-        assertFalse(response.getResult().getOutput().getContent().isEmpty());
+        assertFalse(response.getResult().getOutput().getText().isEmpty());
     }
 
     @Test
@@ -118,7 +118,7 @@ public class SimpleChatModelTest {
         ChatResponse response = chatModel.call(prompt);
 
         // 로그로 응답 출력
-        log.info(response.getResult().getOutput().getContent());
+        log.info(response.getResult().getOutput().getText());
 
         // 응답 검증
         assertNotNull(response);
@@ -160,11 +160,11 @@ public class SimpleChatModelTest {
         ChatResponse response = chatModel.call(prompt);
 
         // 로그로 응답 출력
-        log.info(response.getResult().getOutput().getContent());
+        log.info(response.getResult().getOutput().getText());
 
         // 응답 검증
         assertNotNull(response);
-        String content = response.getResult().getOutput().getContent();
+        String content = response.getResult().getOutput().getText();
 
         // 한국어 요약 섹션이 있는지 확인
         assertTrue(content.contains("## 한국어 요약"));

@@ -37,6 +37,18 @@
       <p class="error-message" th:errors="*{password}"></p>
     </div>
 
+    <!-- Password Confirm -->
+    <div class="form-group">
+      <label for="passwordConfirm" th:text="#{label.passwordConfirm}">Password Confirm:</label>
+      <input type="password" id="passwordConfirm" th:field="*{passwordConfirm}" placeholder="Confirm your password" required>
+      <p class="error-message" th:errors="*{passwordConfirm}"></p>
+    </div>
+
+    <!-- 전체 폼 오류 (비밀번호 일치 여부) -->
+    <div class="form-group" th:if="${#fields.hasGlobalErrors()}">
+      <p class="error-message" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+    </div>
+
     <!-- Address Fields -->
     <div class="address-section">
       <h2 th:text="#{label.addressInfo}">주소 정보</h2>

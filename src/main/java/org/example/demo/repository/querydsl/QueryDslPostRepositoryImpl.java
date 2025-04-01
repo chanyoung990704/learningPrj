@@ -31,16 +31,15 @@ public class QueryDslPostRepositoryImpl implements QueryDslPostRepository {
 
     @Override
     public Page<Post> findPostsBySearchWithUserAndCategory(Pageable pageable, PostSearchRequestDTO requestDTO) {
-
-        JPAQuery<Post> query = queryFactory.selectFrom(post)
+        JPAQuery<Post> query = queryFactory
+                .selectFrom(post)
                 .leftJoin(post.category).fetchJoin()
                 .leftJoin(post.user).fetchJoin()
-                .where(containsTitle(requestDTO.getTitle()))
+                .where(createSearchCondition(requestDTO))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
         // 정렬 조건 추가
-
         for (Sort.Order order : pageable.getSort()) {
             PathBuilder<? extends Post> pathBuilder = new PathBuilderFactory().create(post.getType());
             ComparablePath<Comparable> expression = pathBuilder.getComparable(order.getProperty(), Comparable.class);
@@ -49,17 +48,30 @@ public class QueryDslPostRepositoryImpl implements QueryDslPostRepository {
 
         List<Post> posts = query.fetch();
 
-        JPAQuery<Long> countQuery = queryFactory.select(post.count())
+        JPAQuery<Long> countQuery = queryFactory
+                .select(post.count())
                 .from(post)
-                .where(containsTitle(requestDTO.getTitle()));
+                .where(createSearchCondition(requestDTO));
 
         return PageableExecutionUtils.getPage(posts, pageable, countQuery::fetchOne);
     }
 
-    private BooleanExpression containsTitle(String title) {
-        if(!StringUtils.hasText(title)) {
-            return null;
+    private BooleanExpression createSearchCondition(PostSearchRequestDTO requestDTO) {
+        if (!StringUtils.hasText(requestDTO.getSearchText())) {
+            return null;  // 검색어가 없으면 모든 게시글 반환
         }
-        return post.title.contains(title);
+
+        String searchType = requestDTO.getSearchType();
+        String searchText = requestDTO.getSearchText().trim();
+
+        if ("title".equals(searchType)) {
+            return post.title.containsIgnoreCase(searchText);
+        } else if ("author".equals(searchType)) {
+            return post.user.name.containsIgnoreCase(searchText);
+        } else if ("category".equals(searchType)) {
+            return post.category.name.containsIgnoreCase(searchText);
+        }
+
+        return null;  // searchType이 잘못된 경우 모든 게시글 반환
     }
 }

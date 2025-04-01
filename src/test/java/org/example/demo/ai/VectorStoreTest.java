@@ -28,7 +28,7 @@ public class VectorStoreTest {
     static class VectorStoreTestConfig {
         @Bean
         public VectorStore vectorStore(EmbeddingModel embeddingModel) {
-            return new SimpleVectorStore(embeddingModel);
+            return SimpleVectorStore.builder(embeddingModel).build();
         }
     }
 
@@ -50,7 +50,7 @@ public class VectorStoreTest {
 
         // Verify results
         assertFalse(results.isEmpty());
-        assertTrue(results.get(0).getContent().contains("Spring AI"));
+        assertTrue(results.get(0).getText().contains("Spring AI"));
 
     }
 }
