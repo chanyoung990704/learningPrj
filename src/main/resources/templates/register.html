@@ -2,9 +2,13 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title th:text="#{title.register}">Register</title>
   <link rel="stylesheet" th:href="@{/css/style.css}">
   <link rel="stylesheet" th:href="@{/css/register.css}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </head>
 <body>
@@ -15,7 +19,7 @@
   <h1 th:text="#{register.title}">Register</h1>
 
   <!-- 회원가입 폼 -->
-  <form th:action="@{/register}" th:object="${registerDTO}" method="post">
+  <form th:action="@{/register}" th:object="${registerDTO}" method="post" class="register-form">
     <!-- Email -->
     <div class="form-group">
       <label for="email" th:text="#{label.email}">Email:</label>
@@ -58,7 +62,7 @@
         <label for="zipCode" th:text="#{label.zipCode}">우편번호:</label>
         <div class="input-with-button">
           <input type="text" id="zipCode" th:field="*{address.zipCode}" readonly required />
-          <button type="button" class="btn address-btn" onclick="execDaumPostcode()" th:text="#{button.searchZipCode}">우편번호 찾기</button>
+          <button type="button" class="address-btn" onclick="execDaumPostcode()" th:text="#{button.searchZipCode}">우편번호 찾기</button>
         </div>
         <p class="error-message" th:errors="*{address.zipCode}"></p>
       </div>
@@ -73,13 +77,13 @@
       <!-- Detail Address -->
       <div class="form-group">
         <label for="detailAddress" th:text="#{label.detailAddress}">상세 주소:</label>
-        <input type="text" id="detailAddress" th:field="*{address.detailAddress}" placeholder="" required />
+        <input type="text" id="detailAddress" th:field="*{address.detailAddress}" placeholder="Enter your detail address" required />
         <p class="error-message" th:errors="*{address.detailAddress}"></p>
       </div>
     </div>
 
     <!-- Submit Button -->
-    <button type="submit" class="btn submit-btn" th:text="#{button.register}">Register</button>
+    <button type="submit" class="register-btn" th:text="#{button.register}">Register</button>
   </form>
 
   <!-- Success Message -->

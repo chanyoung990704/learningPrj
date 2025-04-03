@@ -10,8 +10,6 @@ import org.example.demo.domain.User;
 import org.example.demo.validator.PasswordMatch;
 import org.example.demo.validator.UniqueEmail;
 
-import javax.validation.constraints.NotNull;
-
 @Data
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

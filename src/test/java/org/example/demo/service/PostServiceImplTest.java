@@ -259,7 +259,7 @@ class PostServiceImplTest {
         postServiceImpl.save(post);
 
         PostSearchRequestDTO searchRequestDTO = PostSearchRequestDTO.builder()
-                .title("Search")
+                .searchText("Search")
                 .build();
 
         em.flush();

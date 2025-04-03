@@ -5,7 +5,6 @@ import org.example.demo.aop.TimeTrace;
 import org.example.demo.domain.Post;
 import org.example.demo.dto.request.PostRequestDTO;
 import org.example.demo.dto.request.PostSearchRequestDTO;
-import org.example.demo.dto.response.PostListResponseDTO;
 import org.example.demo.repository.PostRepository;
 import org.example.demo.service.CommentService;
 import org.example.demo.service.PostService;

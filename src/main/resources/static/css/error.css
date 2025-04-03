@@ -1,97 +1,121 @@
 /* error.css - 에러 페이지 스타일 */
 
 .error-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 60vh;
-    padding: 2rem;
-}
-
-.error-content {
     max-width: 600px;
+    width: 100%;
+    margin: 4rem auto;
+    padding: 3rem;
     text-align: center;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    padding: 2.5rem;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.error-icon {
-    margin-bottom: 1.5rem;
-}
-
-.icon-error {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: 80px;
-    height: 80px;
-    background-color: #f8d7da;
-    color: #dc3545;
-    font-size: 3rem;
-    font-weight: bold;
-    border-radius: 50%;
-}
-
-.error-content h1 {
-    color: #343a40;
+.error-code {
+    font-size: 6rem;
+    font-weight: 700;
+    color: var(--primary-color);
     margin-bottom: 1rem;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.error-title {
     font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
 }
 
 .error-message {
-    color: #6c757d;
-    margin-bottom: 2rem;
     font-size: 1.1rem;
-}
-
-.error-details {
-    background-color: #f8f9fa;
-    padding: 1.5rem;
-    border-radius: 4px;
+    color: var(--secondary-color);
     margin-bottom: 2rem;
-    text-align: left;
-}
-
-.error-details p {
-    margin-bottom: 0.5rem;
-    color: #495057;
-}
-
-.error-details strong {
-    color: #343a40;
+    line-height: 1.6;
 }
 
 .error-actions {
-    margin-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
 }
 
-.error-actions .btn {
+.error-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
     font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+    text-decoration: none;
 }
 
-/* 반응형 스타일 */
-@media (max-width: 768px) {
+.error-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.error-btn.secondary {
+    background: linear-gradient(135deg, var(--secondary-color), #475569);
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
     .error-container {
-        padding: 1rem;
+        background: rgba(30, 41, 59, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .error-content {
-        padding: 1.5rem;
+    .error-title {
+        color: var(--text-light);
     }
 
-    .icon-error {
-        width: 60px;
-        height: 60px;
-        font-size: 2.5rem;
-    }
-
-    .error-content h1 {
-        font-size: 1.8rem;
+    .error-message {
+        color: rgba(255, 255, 255, 0.7);
     }
 }
+
+/* Responsive Styles */
+@media (max-width: 480px) {
+    .error-container {
+        margin: 2rem auto;
+        padding: 2rem;
+    }
+
+    .error-code {
+        font-size: 4rem;
+    }
+
+    .error-title {
+        font-size: 1.5rem;
+    }
+
+    .error-message {
+        font-size: 1rem;
+    }
+
+    .error-actions {
+        flex-direction: column;
+    }
+
+    .error-btn {
+        width: 100%;
+    }
+}
+
 /* error.css - 404 에러 페이지 추가 스타일 */
 
 .not-found {

@@ -1,7 +1,6 @@
 package org.example.demo.ai;
 
 import org.example.demo.SpringBootTestWithProfile;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -17,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTestWithProfile("test")
 public class SimpleChatModelTest {
