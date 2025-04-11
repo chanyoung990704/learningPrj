@@ -22,7 +22,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // CSRF 비활성화
+                // .csrf(csrf -> csrf.disable()) // CSRF 비활성화
                 .authorizeHttpRequests(authz -> authz
                         // 게시글 조회 및 검색 허용
                         .requestMatchers(HttpMethod.GET, "/posts/{id:[0-9]+}", "/posts", "/posts/search").permitAll()
