@@ -8,6 +8,7 @@ import org.example.demo.domain.User;
 import org.example.demo.dto.request.PostRequestDTO;
 import org.example.demo.dto.request.PostSearchRequestDTO;
 import org.example.demo.dto.response.PostEditResponseDTO;
+import org.example.demo.dto.response.PostListResponseDTO;
 import org.example.demo.repository.PostRepository;
 import org.example.demo.service.PostCategoryService;
 import org.example.demo.service.PostService;
@@ -134,6 +135,11 @@ public class PostServiceImpl implements PostService {
     @Override
     public Page<Post> searchPosts(PostSearchRequestDTO searchRequestDTO, Pageable pageable) {
         return postRepository.findPostsBySearchWithUserAndCategory(pageable, searchRequestDTO);
+    }
+
+    @Override
+    public Page<PostListResponseDTO> searchPostsV2(PostSearchRequestDTO requestDTO, Pageable pageable) {
+        return postRepository.findPostsBySearchWithUserAndCategoryV2(pageable, requestDTO);
     }
 
 

@@ -86,17 +86,19 @@ public class PostController {
                 .map(post -> PostListResponseDTO.builder()
                         .id(post.getId())
                         .title(post.getTitle())
-                        .content(post.getContent())
                         .author(post.getUser().getName())
                         .time(post.getUpdatedAt())
-                        .currentPage(postPage.getNumber())
-                        .totalPages(postPage.getTotalPages())
-                        .totalElements(postPage.getTotalElements())
-                        .size(pageable.getPageSize())
                         .category(post.getCategory()).build())
                 .collect(Collectors.toList());
 
+//        Page<PostListResponseDTO> postPage = postService.searchPostsV2(searchRequestDTO, pageable);
+//        List<PostListResponseDTO> responseDTOS = postPage.getContent();
+
         model.addAttribute("posts", responseDTOS);
+        model.addAttribute("currentPage", postPage.getNumber());
+        model.addAttribute("totalPages", postPage.getTotalPages());
+        model.addAttribute("totalElements", postPage.getTotalElements());
+        model.addAttribute("size", pageable.getPageSize());
 
         return "post/post-list";
 

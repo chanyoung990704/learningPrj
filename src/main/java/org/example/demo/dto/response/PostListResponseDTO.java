@@ -13,15 +13,7 @@ public class PostListResponseDTO {
 
     Long id;
     String title;
-    String content;
     String author;
     LocalDateTime time;
     PostCategory category;
-
-    // 페이징
-    int currentPage;
-    int totalPages;
-    long totalElements;
-    int size;
-
 }

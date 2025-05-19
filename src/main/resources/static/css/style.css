@@ -31,18 +31,19 @@ body {
     transition: var(--transition);
 }
 
-/* Modern Link Styles */
+/* Modern Link Styles (General) */
 a {
     text-decoration: none;
     color: var(--primary-color);
     transition: var(--transition);
-    position: relative;
+    position: relative; /* For ::after pseudo-element */
 }
 
 a:hover {
     color: var(--primary-hover);
 }
 
+/* General link underline effect - careful, this applies to ALL <a> tags unless overridden */
 a::after {
     content: '';
     position: absolute;
@@ -100,7 +101,12 @@ a:hover::after {
 
 .home-link:hover {
     transform: translateY(-1px);
-    color: var(--text-light);
+    color: var(--text-light); /* Ensure hover color remains light */
+}
+
+/* Remove general link underline from home-link */
+.home-link::after {
+    display: none;
 }
 
 .logo-text {
@@ -116,19 +122,68 @@ a:hover::after {
     padding: 0;
 }
 
-.top-banner a {
+/* --- MODIFIED SECTION FOR HEADER NAVIGATION ITEMS --- */
+
+/* Common styles for .auth-btn (applied to login <a> and logout <button>) */
+.top-banner .auth-btn {
+    /* Visual properties */
     color: var(--text-light);
     font-weight: 500;
     font-size: 0.95rem;
     padding: 0.5rem 1rem;
     border-radius: var(--border-radius);
     transition: var(--transition);
+    text-decoration: none; /* Explicitly for <a>, good for <button> consistency */
+
+    /* Reset/normalize button styles */
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: inherit; /* Inherit font from body/parent */
+    line-height: inherit; /* Inherit line-height */
+    display: inline-block; /* To behave like a link for padding/layout */
+    text-align: center; /* Ensure text is centered in button */
+    -webkit-appearance: none; /* Remove default system appearance for button */
+    -moz-appearance: none;
+    appearance: none;
 }
 
-.top-banner a:hover {
+.top-banner .auth-btn:hover {
     background-color: rgba(255, 255, 255, 0.1);
     transform: translateY(-1px);
+    color: var(--text-light); /* Ensure hover text color remains light */
 }
+
+/* Remove general link underline from .auth-btn elements */
+.top-banner .auth-btn::after {
+    display: none;
+}
+
+/* Styles for other links in .top-banner that are NOT .auth-btn (e.g., "회원가입", "게시판") */
+.top-banner a:not(.auth-btn) {
+    color: var(--text-light);
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    text-decoration: none; /* Ensure no underline */
+    display: inline-block; /* Consistency */
+}
+
+.top-banner a:not(.auth-btn):hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+    color: var(--text-light); /* Ensure hover text color remains light */
+}
+
+/* Remove general link underline from these other links as well */
+.top-banner a:not(.auth-btn)::after {
+    display: none;
+}
+
+/* --- END OF MODIFIED SECTION --- */
+
 
 /* Main Content Styles */
 .main-content {
@@ -162,7 +217,7 @@ a:hover::after {
     opacity: 0.8;
 }
 
-/* Modern Button Styles */
+/* Modern Button Styles (General .btn, not used by header auth items unless explicitly added) */
 .btn {
     display: inline-flex;
     align-items: center;

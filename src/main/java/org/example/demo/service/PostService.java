@@ -4,6 +4,7 @@ import org.example.demo.domain.Post;
 import org.example.demo.dto.request.PostRequestDTO;
 import org.example.demo.dto.request.PostSearchRequestDTO;
 import org.example.demo.dto.response.PostEditResponseDTO;
+import org.example.demo.dto.response.PostListResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,4 +30,7 @@ public interface PostService extends BaseService<Post> {
     Long update(PostEditResponseDTO responseDTO);
 
     Page<Post> searchPosts(PostSearchRequestDTO requestDTO, Pageable pageable);
+
+    Page<PostListResponseDTO> searchPostsV2(PostSearchRequestDTO requestDTO, Pageable pageable);
+
 }

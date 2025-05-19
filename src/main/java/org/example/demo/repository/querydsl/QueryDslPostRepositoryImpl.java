@@ -2,6 +2,7 @@ package org.example.demo.repository.querydsl;
 
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.ComparablePath;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -11,6 +12,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.example.demo.domain.Post;
 import org.example.demo.dto.request.PostSearchRequestDTO;
+import org.example.demo.dto.response.PostListResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,13 +32,48 @@ public class QueryDslPostRepositoryImpl implements QueryDslPostRepository {
 
     @Override
     public Page<Post> findPostsBySearchWithUserAndCategory(Pageable pageable, PostSearchRequestDTO requestDTO) {
-        JPAQuery<Post> query = queryFactory
+
+        List<Long> postIds = queryFactory
+                .select(post.id)
+                .from(post)
+                .where(createSearchCondition(requestDTO))
+                .orderBy(post.createdAt.desc(), post.id.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        List<Post> posts = queryFactory
                 .selectFrom(post)
+                .leftJoin(post.user).fetchJoin()
+                .leftJoin(post.category).fetchJoin()
+                .where(post.id.in(postIds))
+                .orderBy(post.createdAt.desc(), post.id.desc())
+                .fetch();
+
+        JPAQuery<Long> countQuery = queryFactory
+                .select(post.count())
+                .from(post)
+                .where(createSearchCondition(requestDTO));
+
+        return PageableExecutionUtils.getPage(posts, pageable, countQuery::fetchOne);
+    }
+
+    @Override
+    public Page<PostListResponseDTO> findPostsBySearchWithUserAndCategoryV2(Pageable pageable, PostSearchRequestDTO requestDTO) {
+        JPAQuery<PostListResponseDTO> query = queryFactory
+                .select(Projections.constructor(PostListResponseDTO.class,
+                        post.id,
+                        post.title,
+                        post.user.name,
+                        post.updatedAt,
+                        post.category))
+                .from(post)
                 .leftJoin(post.category).fetchJoin()
                 .leftJoin(post.user).fetchJoin()
                 .where(createSearchCondition(requestDTO))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
+
 
         // 정렬 조건 추가
         for (Sort.Order order : pageable.getSort()) {
@@ -45,7 +82,7 @@ public class QueryDslPostRepositoryImpl implements QueryDslPostRepository {
             query.orderBy(new OrderSpecifier<Comparable>(order.isAscending() ? Order.ASC : Order.DESC, expression));
         }
 
-        List<Post> posts = query.fetch();
+        List<PostListResponseDTO> posts = query.fetch();
 
         JPAQuery<Long> countQuery = queryFactory
                 .select(post.count())

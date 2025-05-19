@@ -14,7 +14,12 @@
                     <a class="auth-btn login-btn" th:href="@{/login}" th:text="#{button.login}">로그인</a>
                 </li>
                 <li th:if="${#authorization.expression('isAuthenticated()') == true}">
-                    <a class="auth-btn logout-btn" th:href="@{/logout}" th:text="#{button.logout}">로그아웃</a>
+                    <!-- 로그아웃 버튼을 POST 요청을 보내는 form으로 변경 -->
+                    <form th:action="@{/logout}" method="post" style="display: inline;">
+                        <!-- CSRF 토큰을 포함해야 합니다. -->
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <button type="submit" class="auth-btn logout-btn" th:text="#{button.logout}">로그아웃</button>
+                    </form>
                 </li>
                 <li><a th:href="@{/register}" th:text="#{button.user.register}">회원가입</a></li>
                 <li><a th:href="@{/posts}" th:text="#{button.board}">게시판</a></li>
