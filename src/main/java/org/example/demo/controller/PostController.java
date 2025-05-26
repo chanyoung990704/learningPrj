@@ -15,6 +15,7 @@ import org.example.demo.dto.response.CommentToPostResponseDTO;
 import org.example.demo.dto.response.PostDetailResponseDTO;
 import org.example.demo.dto.response.PostEditResponseDTO;
 import org.example.demo.dto.response.PostListResponseDTO;
+import org.example.demo.oauth2.CustomOAuth2User;
 import org.example.demo.repository.PostRepository;
 import org.example.demo.service.CommentService;
 import org.example.demo.service.PostService;
@@ -28,6 +29,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -59,7 +61,7 @@ public class PostController {
     }
 
     @PostMapping
-    public String save(@AuthenticationPrincipal UserDetails userDetails,
+    public String save(@AuthenticationPrincipal Object principal,
                        @Validated @ModelAttribute("postRequestDTO") PostRequestDTO postRequestDTO, BindingResult bindingResult,
                        HttpServletResponse response) throws IOException {
 
@@ -67,7 +69,19 @@ public class PostController {
             return "post/post-form";
         }
 
-        Long postId = postService.save(postRequestDTO, userDetails.getUsername(), postRequestDTO.getCategoryId());
+        // principal 타입에 따라 다르게 처리
+        String email;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof CustomOAuth2User) {
+            email = ((CustomOAuth2User) principal).getEmail();
+        } else if (principal instanceof OAuth2User) {
+            email = (String) ((OAuth2User) principal).getAttribute("email");
+        } else {
+            throw new IllegalArgumentException("지원하지 않는 인증 타입입니다: " + principal.getClass().getName());
+        }
+
+        Long postId = postService.save(postRequestDTO, email, postRequestDTO.getCategoryId());
         return "redirect:/posts/" + postId;
     }
 

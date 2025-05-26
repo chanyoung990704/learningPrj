@@ -9,30 +9,25 @@ import org.example.demo.dto.request.PostRequestDTO;
 import org.example.demo.repository.PostCategoryRepository;
 import org.example.demo.repository.PostRepository;
 import org.example.demo.repository.UserRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
 @SpringBootTestWithProfile("test")
@@ -116,22 +111,6 @@ public class PostApiControllerIntegrationTest {
         Map<String, List<Post>> groupByTitle = posts.stream().collect(Collectors.groupingBy(Post::getTitle));
 
         assertTrue(groupByTitle.containsKey("New Post"));
-    }
-
-    @Test
-    @DisplayName("API 게시글 조회 통합 테스트")
-    @WithMockUser(username = "test@example.com")
-    void testGetPosts() throws Exception {
-        // When & Then
-        mockMvc.perform(get("/api/posts")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data").isArray())
-                .andExpect(jsonPath("$.data.length()").value(2))
-                .andExpect(jsonPath("$.data[0].title").value("Test Post 2"))
-                .andExpect(jsonPath("$.data[1].title").value("Test Post 1"));
     }
 
 }

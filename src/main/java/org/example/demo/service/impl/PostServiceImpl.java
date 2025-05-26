@@ -1,7 +1,6 @@
 package org.example.demo.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.example.demo.domain.File;
 import org.example.demo.domain.Post;
 import org.example.demo.domain.PostCategory;
 import org.example.demo.domain.User;

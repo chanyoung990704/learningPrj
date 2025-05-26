@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <!-- 로그 레벨 설정 - 디버그 로그 제거 -->
+    <logger name="org.springframework.security" level="INFO"/>
+    <logger name="org.springframework.security.oauth2" level="INFO"/>
+    <logger name="org.example.demo.oauth2" level="INFO"/>
+    <logger name="org.example.demo.controller" level="INFO"/>
+    
+    <!-- 웹 필터 로깅 제거 -->
+    <logger name="org.springframework.security.web.FilterChainProxy" level="ERROR"/>
+    <logger name="org.springframework.security.web.access" level="ERROR"/>
+    <logger name="org.springframework.security.web.context" level="ERROR"/>
+    <logger name="org.springframework.security.web.authentication" level="ERROR"/>
+    
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>

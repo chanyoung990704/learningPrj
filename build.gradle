@@ -47,6 +47,7 @@ dependencies {
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
     // **Spring AI Dependencies**
     implementation platform("org.springframework.ai:spring-ai-bom:1.0.0-SNAPSHOT")

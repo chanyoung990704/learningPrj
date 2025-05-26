@@ -20,7 +20,7 @@
         <!-- 홈으로 돌아가기 버튼 -->
         <div class="error-actions">
             <a th:href="@{/}" class="btn btn-primary" th:text="#{button.home}">홈으로 돌아가기</a>
-            <a th:href="javascript:history.back()" class="btn btn-secondary" th:text="#{button.back}">이전 페이지로</a>
+            <a href="#" onclick="history.back()" class="btn btn-secondary" th:text="#{button.back}">이전 페이지로</a>
         </div>
     </section>
 </main>

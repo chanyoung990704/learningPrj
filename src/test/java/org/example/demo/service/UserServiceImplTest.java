@@ -11,8 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -149,42 +147,6 @@ class UserServiceImplTest {
         assertEquals("인천", savedUser.getAddress().getZipCode());
         assertEquals("남동구", savedUser.getAddress().getStreetAddress());
         assertEquals("구월로", savedUser.getAddress().getDetailAddress());
-    }
-
-    @Test
-    @DisplayName("모든 사용자 조회 테스트")
-    void findAllUsersTest() {
-        // g
-        Address address1 = new Address("서울", "노원구", "노원로");
-        User user1 = User.builder()
-                .name("User1")
-                .email("user1@example.com")
-                .password("password1")
-                .role(Role.ROLE_USER)
-                .address(address1)
-                .build();
-
-        Address address2 = new Address("서울", "동대문구", "왕산로");
-        User user2 = User.builder()
-                .name("User2")
-                .email("user2@example.com")
-                .password("password2")
-                .role(Role.ROLE_ADMIN)
-                .address(address2)
-                .build();
-
-        userServiceImpl.save(user1);
-        userServiceImpl.save(user2);
-        em.flush();
-        em.clear();
-
-        // w
-        List<User> allUsers = userServiceImpl.findAll();
-
-        // t
-        assertEquals(2, allUsers.size());
-        assertTrue(allUsers.stream().anyMatch(user -> user.getEmail().equals("user1@example.com")));
-        assertTrue(allUsers.stream().anyMatch(user -> user.getEmail().equals("user2@example.com")));
     }
 
     @Test

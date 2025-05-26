@@ -37,7 +37,15 @@ public class QUser extends EntityPathBase<User> {
 
     public final StringPath password = createString("password");
 
+    public final StringPath profileImage = createString("profileImage");
+
+    public final StringPath provider = createString("provider");
+
+    public final StringPath providerId = createString("providerId");
+
     public final EnumPath<Role> role = createEnum("role", Role.class);
+
+    public final BooleanPath socialAccount = createBoolean("socialAccount");
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;

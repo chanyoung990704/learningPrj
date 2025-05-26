@@ -6,10 +6,12 @@ import org.example.demo.domain.Comment;
 import org.example.demo.domain.Post;
 import org.example.demo.dto.request.CommentToPostRequestDTO;
 import org.example.demo.dto.response.PostDetailResponseDTO;
+import org.example.demo.oauth2.CustomOAuth2User;
 import org.example.demo.service.CommentService;
 import org.example.demo.service.PostService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,7 +31,7 @@ public class CommentController {
      * 게시글 댓글 작성
      */
     @PostMapping("/posts/{postId}/comments")
-    public String addCommentToPost(@PathVariable("postId") Long id, @AuthenticationPrincipal UserDetails userDetails, Model model,
+    public String addCommentToPost(@PathVariable("postId") Long id, @AuthenticationPrincipal Object principal, Model model,
                                    @Validated @ModelAttribute("commentAddRequest") CommentToPostRequestDTO commentAddDTO, BindingResult bindingResult) {
         // 오류 확인
         if (bindingResult.hasErrors()) {
@@ -40,7 +42,20 @@ public class CommentController {
 
             return "post/post-detail";
         }
-        commentService.save(commentAddDTO, userDetails.getUsername(), id);
+        
+        // principal 타입에 따라 다르게 처리
+        String email;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof CustomOAuth2User) {
+            email = ((CustomOAuth2User) principal).getEmail();
+        } else if (principal instanceof OAuth2User) {
+            email = (String) ((OAuth2User) principal).getAttribute("email");
+        } else {
+            throw new IllegalArgumentException("지원하지 않는 인증 타입입니다: " + principal.getClass().getName());
+        }
+        
+        commentService.save(commentAddDTO, email, id);
         return "redirect:/posts/{postId}";
     }
 

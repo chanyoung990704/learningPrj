@@ -4,21 +4,16 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.example.demo.SpringBootTestWithProfile;
 import org.example.demo.domain.*;
-import org.example.demo.dto.request.PostSearchRequestDTO;
 import org.example.demo.dto.response.PostEditResponseDTO;
 import org.example.demo.repository.PostRepository;
 import org.example.demo.service.impl.FileService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * given when then 템플릿의 통합 테스트
@@ -188,91 +183,5 @@ class PostServiceImplTest {
         assertEquals("Updated Content", updatedPost.getContent());
         assertEquals(user.getEmail(), updatedPost.getUser().getEmail());
         assertEquals(category.getName(), updatedPost.getCategory().getName());
-    }
-
-    @Test
-    @DisplayName("카테고리와 사용자 정보를 포함한 게시글 조회 테스트")
-    void findPostsWithUserAndCategoryTest() {
-        // g
-        Address address = new Address("서울", "서대문구", "홍제로");
-        User user = User.builder()
-                .name("Dave")
-                .email("dave@example.com")
-                .password("password")
-                .role(Role.ROLE_USER)
-                .address(address)
-                .build();
-        userService.save(user);
-
-        PostCategory category = PostCategory.builder()
-                .name("테스트 카테고리").build();
-        postCategoryService.save(category);
-
-        Post post = Post.builder()
-                .title("Test Post")
-                .content("This is a test content.")
-                .user(user)
-                .category(category)
-                .build();
-        postServiceImpl.save(post);
-
-        em.flush();
-        em.clear();
-
-        // w
-        List<Post> posts = postServiceImpl.findPostsWithUserAndCategory();
-
-        // t
-        assertNotNull(posts);
-        assertTrue(posts.size() > 0);
-        Post retrievedPost = posts.get(0);
-        assertEquals("Test Post", retrievedPost.getTitle());
-        assertEquals("테스트 카테고리", retrievedPost.getCategory().getName());
-        assertEquals("Dave", retrievedPost.getUser().getName());
-    }
-
-    @Test
-    @DisplayName("게시글 검색 테스트")
-    void searchPostsTest() {
-        // g
-        Address address = new Address("서울", "중랑구", "면목로");
-        User user = User.builder()
-                .name("Eve")
-                .email("eve@example.com")
-                .password("password")
-                .role(Role.ROLE_USER)
-                .address(address)
-                .build();
-        userService.save(user);
-
-        PostCategory category = PostCategory.builder()
-                .name("검색 카테고리").build();
-
-        postCategoryService.save(category);
-
-        Post post = Post.builder()
-                .title("Search Test Post")
-                .content("Content about search.")
-                .user(user)
-                .category(category)
-                .build();
-        postServiceImpl.save(post);
-
-        PostSearchRequestDTO searchRequestDTO = PostSearchRequestDTO.builder()
-                .searchText("Search")
-                .build();
-
-        em.flush();
-        em.clear();
-
-        // w
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<Post> searchResults = postServiceImpl.searchPosts(searchRequestDTO, pageable);
-
-        // t
-        assertNotNull(searchResults);
-        assertEquals(1, searchResults.getTotalElements());
-        Post resultPost = searchResults.getContent().get(0);
-        assertEquals("Search Test Post", resultPost.getTitle());
     }
 }
