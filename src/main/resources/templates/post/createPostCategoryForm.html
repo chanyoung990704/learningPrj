@@ -1,34 +1,28 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <title th:text="#{title.category.register}">카테고리 등록</title>
-  <link rel="stylesheet" th:href="@{/css/createPostCategory.css}" />
-</head>
+<head th:replace="~{header :: head-common}"></head>
 <body>
-
-<div class="main-content">
-  <h1 th:text="#{title.category.register}">카테고리 등록</h1>
-
-  <form th:action="@{/postcategories/new}" th:object="${requestDTO}" method="post">
-    <div class="form-group">
-      <label for="name" th:text="#{label.category.name}">카테고리 이름</label>
-      <input type="text" id="name" th:field="*{name}" />
-      <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
-    </div>
-
-    <div class="form-group">
-      <label for="parent" th:text="#{label.category.parent}">부모 카테고리</label>
-      <select id="parent" th:field="*{parentId}">
-        <option value="" th:text="#{option.none}">없음</option>
-        <option th:each="category : ${categories}"
-                th:value="${category.getId()}"
-                th:text="${category.name}"></option>
-      </select>
-    </div>
-
-    <button type="submit" class="btn-feedback" th:text="#{button.register}">등록</button>
-  </form>
-</div>
-
+<div th:replace="~{header :: top-banner}"></div>
+<main class="main-content category-form-page">
+    <h1 th:text="#{title.category.register}">카테고리 등록</h1>
+    <form th:action="@{/postcategories/new}" th:object="${requestDTO}" method="post" class="styled-form">
+        <div class="form-group">
+            <label for="name" th:text="#{label.category.name}">카테고리 이름</label>
+            <input type="text" id="name" th:field="*{name}" th:placeholder="#{placeholder.category.name}" />
+            <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+        </div>
+        <div class="form-group">
+            <label for="parent" th:text="#{label.category.parent}">부모 카테고리</label>
+            <select id="parent" th:field="*{parentId}">
+                <option value="" th:text="#{option.none}">없음</option>
+                <option th:each="category : ${categories}" th:value="${category.getId()}" th:text="${category.name}"></option>
+            </select>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" th:text="#{button.register}">등록</button>
+        </div>
+    </form>
+</main>
+<div th:replace="~{footer :: footer}"></div>
 </body>
 </html>

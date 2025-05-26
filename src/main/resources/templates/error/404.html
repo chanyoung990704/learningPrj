@@ -1,29 +1,19 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{error.404.title}">Page Not Found</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/error.css}">
-</head>
+<head th:replace="~{header :: head-common}"></head>
 <body>
 <!-- 헤더 포함 -->
-<div th:replace="~{header :: .top-banner}"></div>
+<div th:replace="~{header :: top-banner}"></div>
 
 <div class="error-container">
     <div class="error-content not-found">
-        <div class="error-code">404</div>
-        <h1 th:text="#{error.404.content}">Page Not Found</h1>
-        <p class="error-message">The page you are looking for does not exist.</p>
-
-        <!-- 홈으로 돌아가기 버튼 -->
-        <div class="error-actions">
-            <a th:href="@{/}" class="btn">Go to Home</a>
-        </div>
+        <h1>404</h1>
+        <div th:text="${message}">페이지를 찾을 수 없습니다.</div>
+        <a th:href="@{/}" class="btn btn-primary">홈으로</a>
     </div>
 </div>
 
 <!-- 푸터 포함 -->
-<div th:replace="~{footer :: .footer}"></div>
+<div th:replace="~{footer :: footer}"></div>
 </body>
 </html>

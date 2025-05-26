@@ -1,29 +1,74 @@
-<div class="top-banner" th:fragment="top-banner">
-    <div class="container">
-        <div class="banner-content">
-            <!-- 왼쪽 영역: 로고 및 홈 링크 -->
-            <div class="site-logo">
-                <a th:href="@{/}" class="home-link">
-                    <span class="logo-text">My Site</span>
-                </a>
-            </div>
+<head th:fragment="head-common">
+    <meta charset="UTF-8">
+    <title th:text="${title} ?: #{title.default}">사이트</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/error.css}">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="stylesheet" th:href="@{/css/register.css}">
+    <link rel="stylesheet" th:href="@{/css/post-list.css}">
+    <link rel="stylesheet" th:href="@{/css/post-detail.css}">
+    <link rel="stylesheet" th:href="@{/css/post-form.css}">
+    <link rel="stylesheet" th:href="@{/css/createPostCategory.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
+</head>
 
-            <!-- 오른쪽 영역: 네비게이션 메뉴 -->
-            <ul class="nav-menu">
-                <li th:if="${#authorization.expression('isAuthenticated()') == false}">
-                    <a class="auth-btn login-btn" th:href="@{/login}" th:text="#{button.login}">로그인</a>
-                </li>
-                <li th:if="${#authorization.expression('isAuthenticated()') == true}">
-                    <!-- 로그아웃 버튼을 POST 요청을 보내는 form으로 변경 -->
-                    <form th:action="@{/logout}" method="post" style="display: inline;">
-                        <!-- CSRF 토큰을 포함해야 합니다. -->
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                        <button type="submit" class="auth-btn logout-btn" th:text="#{button.logout}">로그아웃</button>
-                    </form>
-                </li>
-                <li><a th:href="@{/register}" th:text="#{button.user.register}">회원가입</a></li>
-                <li><a th:href="@{/posts}" th:text="#{button.board}">게시판</a></li>
-            </ul>
+<div class="nav-container" th:fragment="top-banner">
+    <nav class="nav-bar">
+        <div class="nav-logo">
+            <a th:href="@{/}" class="nav-link logo-text">
+                <span class="nav-icon">🌊</span> <span class="nav-text" th:text="#{site.name}">MySite</span>
+            </a>
         </div>
-    </div>
+        <ul class="nav-menu">
+            <li><button id="theme-toggle-btn" class="nav-link" type="button" th:title="#{button.theme.toggle.title}" title="테마 변경">🌙</button></li>
+            <li th:if="${#authorization.expression('isAuthenticated()') == false}">
+                <a class="nav-link" th:href="@{/login}" th:text="#{button.login}">로그인</a>
+            </li>
+            <li th:if="${#authorization.expression('isAuthenticated()') == true}">
+                <form th:action="@{/logout}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="nav-link" th:text="#{button.logout}">로그아웃</button>
+                </form>
+            </li>
+            <li><a class="nav-link" th:href="@{/register}" th:text="#{button.user.register}">회원가입</a></li>
+            <li><a class="nav-link" th:href="@{/posts}" th:text="#{button.board}">게시판</a></li>
+        </ul>
+    </nav>
 </div>
+
+<script th:fragment="theme-script">
+document.addEventListener('DOMContentLoaded', function() {
+    const root = document.documentElement;
+    const btn = document.getElementById('theme-toggle-btn');
+    
+    if (!btn) return; // 버튼이 없으면 실행하지 않음
+    
+    function setTheme(mode) {
+        if (mode === 'dark') {
+            root.classList.add('dark');
+            btn.textContent = '☀️';
+            localStorage.setItem('theme', 'dark');
+        } else {
+            root.classList.remove('dark');
+            btn.textContent = '🌙';
+            localStorage.setItem('theme', 'light');
+        }
+    }
+    
+    btn.addEventListener('click', function() {
+        setTheme(root.classList.contains('dark') ? 'light' : 'dark');
+    });
+    
+    // 초기 테마 적용
+    const saved = localStorage.getItem('theme');
+    if(saved) {
+        setTheme(saved);
+    } else {
+        // 사용자 시스템 설정에 따라 기본 테마 설정
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            setTheme('dark');
+        }
+    }
+});
+</script>

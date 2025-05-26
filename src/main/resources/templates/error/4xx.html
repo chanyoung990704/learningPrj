@@ -1,19 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{error.4xx.title}">Client Error</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/error.css}">
-</head>
+<head th:replace="~{header :: head-common}"></head>
 <body>
 <!-- 헤더 포함 -->
-<div th:replace="~{header :: .top-banner}"></div>
+<div th:replace="~{header :: top-banner}"></div>
 
 <div class="error-container">
     <div class="error-content client-error">
+        <h1 th:text="#{error.4xx.title}">Client Error</h1>
         <div class="error-code" th:text="${status}">4xx</div>
-        <h1 th:text="#{error.4xx.content}">Client Error</h1>
+        <div th:text="#{error.4xx.content}">Client Error</div>
         <p class="error-message" th:text="'Message: ' + ${message}">Error message details</p>
 
         <!-- 홈으로 돌아가기 버튼 -->
@@ -24,6 +20,6 @@
 </div>
 
 <!-- 푸터 포함 -->
-<div th:replace="~{footer :: .footer}"></div>
+<div th:replace="~{footer :: footer}"></div>
 </body>
 </html>

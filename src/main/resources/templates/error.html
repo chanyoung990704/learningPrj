@@ -1,39 +1,34 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="#{error.title}">Error</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/error.css}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
+<head th:replace="~{header :: head-common}"></head>
 <body>
 <!-- 헤더 포함 -->
-<div th:replace="~{header :: .top-banner}"></div>
+<div th:replace="~{header :: top-banner}"></div>
 
-<div class="error-container">
-    <div class="error-code" th:text="${status}">404</div>
-    <h1 class="error-title" th:text="#{error.title}">An error occurred!</h1>
-    <p class="error-message" th:text="#{error.content}">에러가 발생해 요청을 처리할 수 없습니다.</p>
+<main class="main-content error-page">
+    <section class="error-container">
+        <h1 class="error-title" th:text="${status} ?: #{error.title}">오류</h1>
+        <p class="error-message" th:text="${message} ?: #{error.content}">에러가 발생해 요청을 처리할 수 없습니다.</p>
 
-    <!-- 에러 상세 정보 -->
-    <div class="error-details">
-        <p><strong>Status:</strong> <span th:text="${status}">Status</span></p>
-        <p><strong>Error:</strong> <span th:text="${error}">Error</span></p>
-        <p><strong>Message:</strong> <span th:text="${message}">Message</span></p>
-    </div>
+        <!-- 에러 상세 정보 -->
+        <div class="error-details">
+            <p><strong th:text="#{error.details.status.label}">Status:</strong> <span th:text="${status} ?: #{error.details.status.default}">Status</span></p>
+            <p><strong th:text="#{error.details.error.label}">Error:</strong> <span th:text="${error} ?: #{error.details.error.default}">Error</span></p>
+            <p><strong th:text="#{error.details.message.label}">Message:</strong> <span th:text="${message} ?: #{error.details.message.default}">Message</span></p>
+        </div>
 
-    <!-- 홈으로 돌아가기 버튼 -->
-    <div class="error-actions">
-        <a th:href="@{/}" class="error-btn">홈으로 돌아가기</a>
-        <a th:href="javascript:history.back()" class="error-btn secondary">이전 페이지로</a>
-    </div>
-</div>
+        <!-- 홈으로 돌아가기 버튼 -->
+        <div class="error-actions">
+            <a th:href="@{/}" class="btn btn-primary" th:text="#{button.home}">홈으로 돌아가기</a>
+            <a th:href="javascript:history.back()" class="btn btn-secondary" th:text="#{button.back}">이전 페이지로</a>
+        </div>
+    </section>
+</main>
 
 <!-- 푸터 포함 -->
-<div th:replace="~{footer :: .footer}"></div>
+<div th:replace="~{footer :: footer}"></div>
+
+<!-- 테마 스크립트 -->
+<div th:replace="~{header :: theme-script}"></div>
 </body>
 </html>

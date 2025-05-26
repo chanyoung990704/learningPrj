@@ -33,4 +33,6 @@ public interface PostService extends BaseService<Post> {
 
     Page<PostListResponseDTO> searchPostsV2(PostSearchRequestDTO requestDTO, Pageable pageable);
 
+    Page<PostListResponseDTO> getPostList(PostSearchRequestDTO requestDTO, Pageable pageable);
+
 }

@@ -1,114 +1,208 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title th:text="#{title.register}">Register</title>
-  <link rel="stylesheet" th:href="@{/css/style.css}">
-  <link rel="stylesheet" th:href="@{/css/register.css}">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<head th:replace="~{header :: head-common}">
+  <!-- Daum Postcode API Script 추가 -->
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </head>
 <body>
 <!-- 헤더 포함 -->
-<div th:replace="~{header :: .top-banner}"></div>
+<div th:replace="~{header :: top-banner}"></div>
 
-<div class="register-container">
-  <h1 th:text="#{register.title}">Register</h1>
+<main class="main-content form-page">
+  <section class="form-section">
+    <h2 class="form-title" th:text="#{register.title}">Register</h2>
 
-  <!-- 회원가입 폼 -->
-  <form th:action="@{/register}" th:object="${registerDTO}" method="post" class="register-form">
-    <!-- Email -->
-    <div class="form-group">
-      <label for="email" th:text="#{label.email}">Email:</label>
-      <input type="email" id="email" th:field="*{email}" placeholder="Enter your email" required>
-      <p class="error-message" th:errors="*{email}"></p>
-    </div>
+    <!-- 회원가입 폼 -->
+    <form th:action="@{/register}" th:object="${registerDTO}" method="post" class="styled-form">
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email" th:text="#{label.email}">Email:</label>
+        <input type="email" id="email" th:field="*{email}" class="input" th:placeholder="#{placeholder.email}" required>
+        <p class="error-message" th:errors="*{email}"></p>
+      </div>
 
-    <!-- Name -->
-    <div class="form-group">
-      <label for="name" th:text="#{label.name}">Name:</label>
-      <input type="text" id="name" th:field="*{username}" placeholder="Enter your name">
-      <p class="error-message" th:errors="*{username}"></p>
-    </div>
+      <!-- Name -->
+      <div class="form-group">
+        <label for="name" th:text="#{label.name}">Name:</label>
+        <input type="text" id="name" th:field="*{username}" class="input" th:placeholder="#{placeholder.name}">
+        <p class="error-message" th:errors="*{username}"></p>
+      </div>
 
-    <!-- Password -->
-    <div class="form-group">
-      <label for="password" th:text="#{label.password}">Password:</label>
-      <input type="password" id="password" th:field="*{password}" placeholder="Enter your password" required>
-      <p class="error-message" th:errors="*{password}"></p>
-    </div>
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password" th:text="#{label.password}">Password:</label>
+        <input type="password" id="password" th:field="*{password}" class="input" th:placeholder="#{label.password.placeholder}" required>
+        <p class="error-message" th:errors="*{password}"></p>
+      </div>
 
-    <!-- Password Confirm -->
-    <div class="form-group">
-      <label for="passwordConfirm" th:text="#{label.passwordConfirm}">Password Confirm:</label>
-      <input type="password" id="passwordConfirm" th:field="*{passwordConfirm}" placeholder="Confirm your password" required>
-      <p class="error-message" th:errors="*{passwordConfirm}"></p>
-    </div>
+      <!-- Password Confirm -->
+      <div class="form-group">
+        <label for="passwordConfirm" th:text="#{label.passwordConfirm}">Password Confirm:</label>
+        <input type="password" id="passwordConfirm" th:field="*{passwordConfirm}" class="input" th:placeholder="#{placeholder.passwordConfirm}" required>
+        <p class="error-message" th:errors="*{passwordConfirm}"></p>
+      </div>
 
-    <!-- 전체 폼 오류 (비밀번호 일치 여부) -->
-    <div class="form-group" th:if="${#fields.hasGlobalErrors()}">
-      <p class="error-message" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
-    </div>
+      <!-- Address Fields -->
+      <div class="address-section">
+        <h3 th:text="#{label.addressInfo}">주소 정보</h3>
 
-    <!-- Address Fields -->
-    <div class="address-section">
-      <h2 th:text="#{label.addressInfo}">주소 정보</h2>
-
-      <!-- Zip Code -->
-      <div class="form-group zip-code-group">
-        <label for="zipCode" th:text="#{label.zipCode}">우편번호:</label>
-        <div class="input-with-button">
-          <input type="text" id="zipCode" th:field="*{address.zipCode}" readonly required />
-          <button type="button" class="address-btn" onclick="execDaumPostcode()" th:text="#{button.searchZipCode}">우편번호 찾기</button>
+        <!-- Zip Code -->
+        <div class="form-group zip-code-group">
+          <label for="zipCode" th:text="#{label.zipCode}">우편번호:</label>
+          <div class="input-with-button">
+            <input type="text" id="zipCode" th:field="*{address.zipCode}" class="input" readonly required />
+            <button type="button" class="address-btn" th:text="#{button.searchZipCode}">우편번호 찾기</button>
+          </div>
+          <p class="error-message" th:errors="*{address.zipCode}"></p>
         </div>
-        <p class="error-message" th:errors="*{address.zipCode}"></p>
+
+        <!-- Street Address -->
+        <div class="form-group">
+          <label for="streetAddress" th:text="#{label.streetAddress}">주소:</label>
+          <input type="text" id="streetAddress" th:field="*{address.streetAddress}" class="input" readonly required />
+          <p class="error-message" th:errors="*{address.streetAddress}"></p>
+        </div>
+
+        <!-- Detail Address -->
+        <div class="form-group">
+          <label for="detailAddress" th:text="#{label.detailAddress}">상세 주소:</label>
+          <input type="text" id="detailAddress" th:field="*{address.detailAddress}" class="input" th:placeholder="#{placeholder.detailAddress}" required />
+          <p class="error-message" th:errors="*{address.detailAddress}"></p>
+        </div>
       </div>
 
-      <!-- Street Address -->
-      <div class="form-group">
-        <label for="streetAddress" th:text="#{label.streetAddress}">주소:</label>
-        <input type="text" id="streetAddress" th:field="*{address.streetAddress}" readonly required />
-        <p class="error-message" th:errors="*{address.streetAddress}"></p>
+      <!-- 전체 폼 오류 (비밀번호 일치 여부) -->
+      <div class="form-group" th:if="${#fields.hasGlobalErrors()}">
+        <p class="error-message" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
       </div>
 
-      <!-- Detail Address -->
-      <div class="form-group">
-        <label for="detailAddress" th:text="#{label.detailAddress}">상세 주소:</label>
-        <input type="text" id="detailAddress" th:field="*{address.detailAddress}" placeholder="Enter your detail address" required />
-        <p class="error-message" th:errors="*{address.detailAddress}"></p>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-lg" th:text="#{button.register}">Register</button>
       </div>
+    </form>
+
+    <!-- Success Message -->
+    <div class="success-message" th:if="${successMessage}">
+      <p th:text="${successMessage}"></p>
     </div>
 
-    <!-- Submit Button -->
-    <button type="submit" class="register-btn" th:text="#{button.register}">Register</button>
-  </form>
+    <!-- Daum Postcode API Script -->
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script>
+      function execDaumPostcode() {
+        const btn = document.querySelector('.address-btn');
+        const originalText = btn.textContent;
 
-  <!-- Success Message -->
-  <div class="success-message" th:if="${successMessage}">
-    <p th:text="${successMessage}"></p>
-  </div>
-
-  <!-- Daum Postcode API Script -->
-  <script>
-    function execDaumPostcode() {
-      new daum.Postcode({
-        oncomplete: function(data) {
-          var roadAddr = data.roadAddress; // 도로명 주소
-          var jibunAddr = data.jibunAddress; // 지번 주소
-
-          document.getElementById('zipCode').value = data.zonecode; // 우편번호
-          document.getElementById('streetAddress').value = roadAddr !== '' ? roadAddr : jibunAddr; // 주소
-          document.getElementById('detailAddress').focus(); // 상세주소로 포커스 이동
+        // API 로드 확인
+        if (typeof daum === 'undefined' || typeof daum.Postcode === 'undefined') {
+          alert('주소 검색 서비스를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+          return;
         }
-      }).open();
-    }
-  </script>
-</div>
+
+        // 로딩 상태 표시
+        btn.textContent = '검색 중...';
+        btn.disabled = true;
+
+        new daum.Postcode({
+          oncomplete: function(data) {
+            try {
+              // 도로명 주소의 노출 규칙에 따라 주소를 표시
+              var roadAddr = data.roadAddress;
+              var extraRoadAddr = '';
+
+              // 법정동명이 있을 경우 추가 (법정리, 동/로/가 단위 제외)
+              if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+                extraRoadAddr += data.bname;
+              }
+              // 건물명이 있고, 공동주택일 경우 추가
+              if (data.buildingName !== '' && data.apartment === 'Y') {
+                extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+              }
+              // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만듦
+              if (extraRoadAddr !== '') {
+                extraRoadAddr = ' (' + extraRoadAddr + ')';
+              }
+
+              // 우편번호와 주소 정보를 해당 필드에 넣음
+              document.getElementById('zipCode').value = data.zonecode;
+              document.getElementById('streetAddress').value = roadAddr + extraRoadAddr;
+
+              // 상세주소 입력 필드로 포커스 이동
+              document.getElementById('detailAddress').focus();
+
+            } catch (error) {
+              console.error('주소 정보 처리 중 오류:', error);
+              alert('주소 정보를 처리하는 중 오류가 발생했습니다.');
+            } finally {
+              // 버튼 상태 복원
+              btn.textContent = originalText;
+              btn.disabled = false;
+            }
+          },
+          // 사용자가 주소 검색을 취소했을 때
+          onclose: function(state) {
+            // 버튼 상태 복원
+            btn.textContent = originalText;
+            btn.disabled = false;
+
+            if (state === 'COMPLETE_CLOSE') {
+              console.log('주소 검색이 완료되었습니다.');
+            } else if (state === 'FORCE_CLOSE') {
+              console.log('주소 검색이 취소되었습니다.');
+            }
+          },
+          // 에러 발생 시
+          onerror: function(error) {
+            console.error('주소 검색 중 오류가 발생했습니다:', error);
+            alert('주소 검색 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+
+            // 버튼 상태 복원
+            btn.textContent = originalText;
+            btn.disabled = false;
+          }
+        }).open({
+          // 팝업 옵션 설정
+          popupTitle: '주소 찾기',
+          autoClose: true,
+          popupKey: 'registerPopup'
+        });
+      }
+
+      // DOM이 완전히 로드된 후 실행
+      document.addEventListener('DOMContentLoaded', function() {
+        // 주소 검색 버튼에 이벤트 리스너 추가
+        const searchBtn = document.querySelector('.address-btn');
+        if (searchBtn) {
+          searchBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            execDaumPostcode();
+          });
+        }
+
+        // API 스크립트 로드 확인
+        const checkApiLoad = setInterval(function() {
+          if (typeof daum !== 'undefined' && typeof daum.Postcode !== 'undefined') {
+            console.log('Daum Postcode API가 성공적으로 로드되었습니다.');
+            clearInterval(checkApiLoad);
+          }
+        }, 100);
+
+        // 10초 후에도 로드되지 않으면 경고
+        setTimeout(function() {
+          if (typeof daum === 'undefined' || typeof daum.Postcode === 'undefined') {
+            console.warn('Daum Postcode API 로드에 실패했습니다.');
+          }
+          clearInterval(checkApiLoad);
+        }, 10000);
+      });
+    </script>
+  </section>
+</main>
 
 <!-- 푸터 포함 -->
-<div th:replace="~{footer :: .footer}"></div>
+<div th:replace="~{footer :: footer}"></div>
+
+<!-- 테마 스크립트 -->
+<div th:replace="~{header :: theme-script}"></div>
 </body>
 </html>

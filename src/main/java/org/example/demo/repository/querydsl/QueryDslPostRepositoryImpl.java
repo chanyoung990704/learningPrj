@@ -3,22 +3,23 @@ package org.example.demo.repository.querydsl;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.ComparablePath;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.PathBuilderFactory;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.example.demo.domain.Post;
 import org.example.demo.dto.request.PostSearchRequestDTO;
 import org.example.demo.dto.response.PostListResponseDTO;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -30,32 +31,62 @@ public class QueryDslPostRepositoryImpl implements QueryDslPostRepository {
 
     private final JPAQueryFactory queryFactory;
 
+    @PersistenceContext
+    private EntityManager em;
+
     @Override
     public Page<Post> findPostsBySearchWithUserAndCategory(Pageable pageable, PostSearchRequestDTO requestDTO) {
+        String searchText = requestDTO.getSearchText();
+        if (searchText == null || searchText.trim().isEmpty()) {
+            // 투 쿼리 방식: 1차로 id만 조회
+            List<Long> postIds = queryFactory
+                    .select(post.id)
+                    .from(post)
+                    .orderBy(post.updatedAt.desc(), post.id.desc())
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .fetch();
+            if (postIds.isEmpty()) {
+                return new PageImpl<>(List.of(), pageable, 0);
+            }
+            // 2차로 id in (...)으로 연관 엔티티까지 fetch join
+            List<Post> posts = queryFactory
+                    .selectFrom(post)
+                    .leftJoin(post.user).fetchJoin()
+                    .leftJoin(post.category).fetchJoin()
+                    .where(post.id.in(postIds))
+                    .orderBy(post.updatedAt.desc(), post.id.desc())
+                    .fetch();
+            long total = queryFactory.select(post.count()).from(post).fetchOne();
+            return new PageImpl<>(posts, pageable, total);
+        }
 
-        List<Long> postIds = queryFactory
-                .select(post.id)
-                .from(post)
-                .where(createSearchCondition(requestDTO))
-                .orderBy(post.createdAt.desc(), post.id.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+        // 네이티브 쿼리로 풀텍스트 검색
+        String sql = "SELECT * FROM posts WHERE MATCH(title) AGAINST (? IN BOOLEAN MODE) ORDER BY created_at DESC, id DESC LIMIT ? OFFSET ?";
+        List<Post> posts = em.createNativeQuery(sql, Post.class)
+                .setParameter(1, searchText)
+                .setParameter(2, pageable.getPageSize())
+                .setParameter(3, pageable.getOffset())
+                .getResultList();
 
-        List<Post> posts = queryFactory
-                .selectFrom(post)
-                .leftJoin(post.user).fetchJoin()
-                .leftJoin(post.category).fetchJoin()
-                .where(post.id.in(postIds))
-                .orderBy(post.createdAt.desc(), post.id.desc())
-                .fetch();
+        if (!posts.isEmpty()) {
+            List<Long> postIds = posts.stream().map(Post::getId).collect(java.util.stream.Collectors.toList());
+            // This query ensures that user and category are fetched for the posts loaded by the native query
+            queryFactory
+                    .selectFrom(post)
+                    .leftJoin(post.user).fetchJoin()
+                    .leftJoin(post.category).fetchJoin()
+                    .where(post.id.in(postIds))
+                    .fetch();
+        }
 
-        JPAQuery<Long> countQuery = queryFactory
-                .select(post.count())
-                .from(post)
-                .where(createSearchCondition(requestDTO));
+        // count 쿼리
+        String countSql = "SELECT COUNT(*) FROM posts WHERE MATCH(title) AGAINST (? IN BOOLEAN MODE)";
+        Number total = (Number) em.createNativeQuery(countSql)
+                .setParameter(1, searchText)
+                .getSingleResult();
 
-        return PageableExecutionUtils.getPage(posts, pageable, countQuery::fetchOne);
+        return new PageImpl<>(posts, pageable, total.longValue());
     }
 
     @Override
@@ -68,12 +99,16 @@ public class QueryDslPostRepositoryImpl implements QueryDslPostRepository {
                         post.updatedAt,
                         post.category))
                 .from(post)
-                .leftJoin(post.category).fetchJoin()
-                .leftJoin(post.user).fetchJoin()
-                .where(createSearchCondition(requestDTO))
+                .leftJoin(post.category)
+                .leftJoin(post.user)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
+        // 검색어 조건 추가
+        String searchText = requestDTO.getSearchText();
+        if (searchText != null && !searchText.trim().isEmpty()) {
+            query.where(post.title.contains(searchText));
+        }
 
         // 정렬 조건 추가
         for (Sort.Order order : pageable.getSort()) {
@@ -86,28 +121,13 @@ public class QueryDslPostRepositoryImpl implements QueryDslPostRepository {
 
         JPAQuery<Long> countQuery = queryFactory
                 .select(post.count())
-                .from(post)
-                .where(createSearchCondition(requestDTO));
+                .from(post);
+
+        // 검색어 조건 추가 (count 쿼리에도 동일하게 적용)
+        if (searchText != null && !searchText.trim().isEmpty()) {
+            countQuery.where(post.title.contains(searchText));
+        }
 
         return PageableExecutionUtils.getPage(posts, pageable, countQuery::fetchOne);
-    }
-
-    private BooleanExpression createSearchCondition(PostSearchRequestDTO requestDTO) {
-        if (!StringUtils.hasText(requestDTO.getSearchText())) {
-            return null;  // 검색어가 없으면 모든 게시글 반환
-        }
-
-        String searchType = requestDTO.getSearchType();
-        String searchText = requestDTO.getSearchText().trim();
-
-        if ("title".equals(searchType)) {
-            return post.title.containsIgnoreCase(searchText);
-        } else if ("author".equals(searchType)) {
-            return post.user.name.containsIgnoreCase(searchText);
-        } else if ("category".equals(searchType)) {
-            return post.category.name.containsIgnoreCase(searchText);
-        }
-
-        return null;  // searchType이 잘못된 경우 모든 게시글 반환
     }
 }

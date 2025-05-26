@@ -7,7 +7,5 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class PostSearchRequestDTO {
-    @Builder.Default
-    private String searchType = "title";  // "title", "author", "category"
     private String searchText;
 }

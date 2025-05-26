@@ -77,22 +77,8 @@ public class PostController {
                                @PageableDefault(sort = {"createdAt"}, size = PostRepository.DEFAULT_PAGE_SIZE, direction = Sort.Direction.DESC) Pageable pageable,
                                Model model) {
 
-        // 검색어 페이징
-        Page<Post> postPage = postService.searchPosts(searchRequestDTO, pageable);
-        List<Post> posts = postPage.getContent();
-
-        // Response 변환
-        List<PostListResponseDTO> responseDTOS = posts.stream()
-                .map(post -> PostListResponseDTO.builder()
-                        .id(post.getId())
-                        .title(post.getTitle())
-                        .author(post.getUser().getName())
-                        .time(post.getUpdatedAt())
-                        .category(post.getCategory()).build())
-                .collect(Collectors.toList());
-
-//        Page<PostListResponseDTO> postPage = postService.searchPostsV2(searchRequestDTO, pageable);
-//        List<PostListResponseDTO> responseDTOS = postPage.getContent();
+        Page<PostListResponseDTO> postPage = postService.getPostList(searchRequestDTO, pageable);
+        List<PostListResponseDTO> responseDTOS = postPage.getContent();
 
         model.addAttribute("posts", responseDTOS);
         model.addAttribute("currentPage", postPage.getNumber());

@@ -1,152 +1,85 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{post.list}">Post List</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/post-list.css}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
+<head th:replace="~{header :: head-common}"></head>
 <body>
-<div th:replace="~{header :: .top-banner}"></div>
-
-<div class="post-list-container">
-    <h1 th:text="#{post.list}">Post List</h1>
-
-    <!-- 검색 및 필터 영역 -->
+<div th:replace="~{header :: top-banner}"></div>
+<main class="main-content post-list-page">
+    <h1 th:text="#{post.list}">게시글 목록</h1>
     <div class="post-controls">
-        <div class="search-bar">
-            <form th:action="@{/posts}" method="get">
-                <input type="hidden" name="page" value="0">
-                <input type="hidden" name="size" th:value="${size}">
-                <div class="search-container">
-                    <div class="search-icon"><i class="fas fa-search"></i></div>
-                    <input type="text" name="searchText" th:value="${searchRequestDTO?.searchText ?: ''}" placeholder="검색어를 입력하세요" class="search-input">
-                    <div class="search-dropdown">
-                        <button type="button" class="dropdown-toggle">
-                            <span class="selected-option" th:text="${searchRequestDTO?.searchType == 'title' ? '제목' : searchRequestDTO?.searchType == 'author' ? '작성자' : searchRequestDTO?.searchType == 'category' ? '카테고리' : '제목'}">제목</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="dropdown-content">
-                            <div class="search-options">
-                                <div class="search-option" data-value="title" th:classappend="${searchRequestDTO?.searchType == 'title' || searchRequestDTO?.searchType == null || searchRequestDTO?.searchType == ''} ? 'selected'">제목</div>
-                                <div class="search-option" data-value="author" th:classappend="${searchRequestDTO?.searchType == 'author'} ? 'selected'">작성자</div>
-                                <div class="search-option" data-value="category" th:classappend="${searchRequestDTO?.searchType == 'category'} ? 'selected'">카테고리</div>
-                            </div>
-                            <input type="hidden" name="searchType" th:value="${searchRequestDTO != null && searchRequestDTO.searchType != null && searchRequestDTO.searchType != '' ? searchRequestDTO.searchType : 'title'}">
-                        </div>
-                    </div>
-                    <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
-                </div>
-            </form>
-        </div>
-        <div class="post-actions">
-            <a th:href="@{/posts/new}" class="btn write-btn" th:text="#{button.post.write}">글쓰기</a>
-        </div>
+        <form th:action="@{/posts}" method="get" class="search-bar">
+            <input type="hidden" name="page" value="0">
+            <input type="hidden" name="size" th:value="${size}">
+            <div class="search-container">
+                <input type="text" name="searchText" th:value="${searchRequestDTO?.searchText ?: ''}" th:placeholder="#{post.search.placeholder}" class="search-input" autocomplete="off">                <button type="submit" class="btn btn-secondary" th:text="#{button.search}">검색</button>
+                <a th:href="@{/posts/new}" class="btn btn-primary" th:text="#{button.post.write}">글쓰기</a>
+            </div>
+        </form>
     </div>
-
-    <!-- 게시글 리스트 테이블 -->
     <div class="table-responsive">
         <table class="post-table">
-            <thead><tr><th>Category</th><th>Title</th><th>Author</th><th>Time</th></tr></thead>
+            <thead>
+                <tr>
+                    <th th:text="#{post.category}">카테고리</th>
+                    <th th:text="#{post.title}">제목</th>
+                    <th th:text="#{post.author}">작성자</th>
+                    <th th:text="#{post.time}">작성일</th>
+                </tr>
+            </thead>
             <tbody>
-            <tr th:each="post : ${posts}">
-                <td class="category" th:text="${post.category.getName()}">Category</td>
-                <td class="title"><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">Title</a></td>
-                <td class="author" th:text="${post.author}">Author</td>
-                <td class="time" th:text="${#temporals.format(post.time, 'yyyy-MM-dd HH:mm')}">Time</td>
-            </tr>
+                <tr th:each="post : ${posts}">
+                    <td th:text="${post.category.getName()}">카테고리</td>
+                    <td><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">제목</a></td>
+                    <td th:text="${post.author}">작성자</td>
+                    <td th:text="${#temporals.format(post.time, 'yyyy-MM-dd HH:mm')}">작성일</td>
+                </tr>
             </tbody>
         </table>
     </div>
-
     <div class="no-posts" th:if="${#lists.isEmpty(posts)}">
         <p th:text="#{post.empty}">등록된 게시글이 없습니다.</p>
     </div>
-
-    <!-- 페이지네이션 -->
     <div class="pagination" th:if="${totalPages > 0}">
         <div class="pagination-info">
-            <span th:text="${'총 ' + totalElements + '개 항목 중 ' + (currentPage * size + 1) + '-' + ((currentPage * size + size) > totalElements ? totalElements : (currentPage * size + size)) + '번째 항목'}"></span>
+            <span th:text="#{pagination.info.items(${currentPage * size + 1}, ${((currentPage * size + size) > totalElements ? totalElements : (currentPage * size + size))}, ${totalElements})}"></span>
         </div>
         <ul>
             <li th:classappend="${currentPage == 0} ? 'disabled'">
-                <a th:href="@{/posts(page=0, size=${size}, searchType=${searchRequestDTO?.searchType ?: 'title'}, searchText=${searchRequestDTO?.searchText ?: ''})}">&laquo;</a>
+                <a th:href="@{/posts(page=0, size=${size}, searchText=${searchRequestDTO?.searchText ?: ''})}">&laquo;</a>
             </li>
             <li th:classappend="${currentPage == 0} ? 'disabled'">
-                <a th:href="@{/posts(page=${currentPage - 1}, size=${size}, searchType=${searchRequestDTO?.searchType ?: 'title'}, searchText=${searchRequestDTO?.searchText ?: ''})}">&lt;</a>
+                <a th:href="@{/posts(page=${currentPage - 1}, size=${size}, searchText=${searchRequestDTO?.searchText ?: ''})}">&lt;</a>
             </li>
             <li th:each="i : ${#numbers.sequence(currentPage - 2 > 0 ? currentPage - 2 : 0, currentPage + 2 < totalPages ? currentPage + 2 : totalPages - 1)}"
                 th:classappend="${currentPage == i} ? 'active'">
-                <a th:href="@{/posts(page=${i}, size=${size}, searchType=${searchRequestDTO?.searchType ?: 'title'}, searchText=${searchRequestDTO?.searchText ?: ''})}" th:text="${i + 1}"></a>
+                <a th:href="@{/posts(page=${i}, size=${size}, searchText=${searchRequestDTO?.searchText ?: ''})}" th:text="${i + 1}"></a>
             </li>
             <li th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                <a th:href="@{/posts(page=${currentPage + 1}, size=${size}, searchType=${searchRequestDTO?.searchType ?: 'title'}, searchText=${searchRequestDTO?.searchText ?: ''})}">&gt;</a>
+                <a th:href="@{/posts(page=${currentPage + 1}, size=${size}, searchText=${searchRequestDTO?.searchText ?: ''})}">&gt;</a>
             </li>
             <li th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                <a th:href="@{/posts(page=${totalPages - 1}, size=${size}, searchType=${searchRequestDTO?.searchType ?: 'title'}, searchText=${searchRequestDTO?.searchText ?: ''})}">&raquo;</a>
+                <a th:href="@{/posts(page=${totalPages - 1}, size=${size}, searchText=${searchRequestDTO?.searchText ?: ''})}">&raquo;</a>
             </li>
         </ul>
     </div>
-</div>
-
-<div th:replace="~{footer :: .footer}"></div>
+</main>
+<div th:replace="~{footer :: footer}"></div>
 
 <script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', () => {
-        const dropdownToggle = document.querySelector('.dropdown-toggle');
-        const dropdownContent = document.querySelector('.dropdown-content');
-        const searchContainer = document.querySelector('.search-container');
         const searchInput = document.querySelector('.search-input');
-        const searchOptions = document.querySelectorAll('.search-option');
-        const selectedOptionText = document.querySelector('.selected-option');
-        const searchTypeInput = document.querySelector('input[name="searchType"]');
-        const searchForm = document.querySelector('form');
+        const searchForm = document.querySelector('form.search-bar');
 
-        if (!searchTypeInput.value) {
-            searchTypeInput.value = 'title';
-            searchOptions.forEach(opt => opt.classList.remove('selected'));
-            document.querySelector('.search-option[data-value="title"]').classList.add('selected');
-            selectedOptionText.textContent = '제목';
-        }
+        if (searchInput && searchForm) {
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
 
-        searchForm.addEventListener('submit', () => {
-            if (!searchTypeInput.value) searchTypeInput.value = 'title';
-        });
-
-        dropdownToggle.addEventListener('click', e => {
-            e.stopPropagation();
-            dropdownToggle.classList.toggle('active');
-            dropdownContent.classList.toggle('show');
-        });
-
-        document.addEventListener('click', e => {
-            if (!searchContainer.contains(e.target)) {
-                dropdownToggle.classList.remove('active');
-                dropdownContent.classList.remove('show');
-            }
-        });
-
-        searchOptions.forEach(opt => {
-            opt.addEventListener('click', () => {
-                searchOptions.forEach(o => o.classList.remove('selected'));
-                opt.classList.add('selected');
-                selectedOptionText.textContent = opt.textContent;
-                searchTypeInput.value = opt.dataset.value;
-                dropdownToggle.classList.remove('active');
-                dropdownContent.classList.remove('show');
-                searchInput.focus();
+                    if (searchInput.value.trim() !== '') {
+                        searchForm.submit();
+                    }
+                }
             });
-        });
-
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault(); // 기본 폼 제출 동작 방지
-                searchForm.action = '/posts'; // action 속성을 명시적으로 설정
-                searchForm.submit(); // 폼 제출
-            }
-        });
-
+        }
     });
 
     function changePageSize(size) {
@@ -156,5 +89,6 @@
         window.location.href = url.toString();
     }
 </script>
+<div th:replace="~{header :: theme-script}"></div>
 </body>
 </html>

@@ -85,23 +85,14 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post findPostWithUserAndCategory(Long id){
-        Post post = findPostWithUser(id);
-        // 지연로딩
-        post.getCategory().getName();
-
-        return post;
+        return postRepository.findByIdWithUserAndCategory(id).orElseThrow(() ->
+                new RuntimeException("Post with id " + id + " not found"));
     }
 
     @Override
     public Post findPostWithUserAndCategoryAndFiles(Long id){
-        Post post = findPostWithUser(id);
-        // 지연로딩
-        post.getCategory().getName();
-        for (File file : post.getFiles()) {
-            file.getOriginalName();
-        }
-
-        return post;
+        return postRepository.findByIdWithUserAndCategoryAndFiles(id).orElseThrow(() ->
+                new RuntimeException("Post with id " + id + " not found"));
     }
 
     @Override
@@ -135,6 +126,19 @@ public class PostServiceImpl implements PostService {
     @Override
     public Page<Post> searchPosts(PostSearchRequestDTO searchRequestDTO, Pageable pageable) {
         return postRepository.findPostsBySearchWithUserAndCategory(pageable, searchRequestDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<PostListResponseDTO> getPostList(PostSearchRequestDTO requestDTO, Pageable pageable) {
+        Page<Post> postPage = postRepository.findPostsBySearchWithUserAndCategory(pageable, requestDTO);
+        return postPage.map(post -> new PostListResponseDTO(
+                post.getId(),
+                post.getTitle(),
+                post.getUser() != null ? post.getUser().getName() : null, // Handle potential null user
+                post.getUpdatedAt(), // Assuming 'time' in DTO maps to updatedAt
+                post.getCategory()
+        ));
     }
 
     @Override
