@@ -27,86 +27,89 @@ public class CommentController {
     private final CommentService commentService;
     private final PostService postService;
 
+    // ====== 댓글 작성 ======
     /**
      * 게시글 댓글 작성
      */
     @PostMapping("/posts/{postId}/comments")
     public String addCommentToPost(@PathVariable("postId") Long id, @AuthenticationPrincipal Object principal, Model model,
                                    @Validated @ModelAttribute("commentAddRequest") CommentToPostRequestDTO commentAddDTO, BindingResult bindingResult) {
-        // 오류 확인
         if (bindingResult.hasErrors()) {
-            // 모델에 게시글 정보 담기
             putPostDetail(id, model);
-            // 댓글 수정을 위한 폼 모델
-            model.addAttribute("commentEditRequest", CommentToPostRequestDTO.builder().build());
-
+            registerCommentFormAttributes(model, false);
             return "post/post-detail";
         }
-        
-        // principal 타입에 따라 다르게 처리
-        String email;
-        if (principal instanceof UserDetails) {
-            email = ((UserDetails) principal).getUsername();
-        } else if (principal instanceof CustomOAuth2User) {
-            email = ((CustomOAuth2User) principal).getEmail();
-        } else if (principal instanceof OAuth2User) {
-            email = (String) ((OAuth2User) principal).getAttribute("email");
-        } else {
-            throw new IllegalArgumentException("지원하지 않는 인증 타입입니다: " + principal.getClass().getName());
-        }
-        
+        String email = extractEmailFromPrincipal(principal);
         commentService.save(commentAddDTO, email, id);
         return "redirect:/posts/{postId}";
     }
 
+    // ====== 댓글 삭제 ======
     /**
      * 게시글 댓글 삭제
      */
-
     @VerifyCommentOwner
     @DeleteMapping("/posts/{postId}/comments/{commentId}")
     public String deleteCommentToPost(@PathVariable("postId") Long postId, @PathVariable("commentId") Long commentId) {
-        // 삭제
         commentService.deleteById(commentId);
         return "redirect:/posts/{postId}";
     }
 
+    // ====== 댓글 수정 ======
     /**
      * 게시글 댓글 수정
      */
-
     @VerifyCommentOwner
     @PutMapping("/posts/{postId}/comments/{commentId}")
     public String updateCommentToPost(@PathVariable("postId") Long postId, @PathVariable("commentId") Long commentId, Model model,
                                       @Validated @ModelAttribute("commentEditRequest") CommentToPostRequestDTO editDTO, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {
             putPostDetail(postId, model);
-            // 댓글 작성을 위한 폼 모델
-            model.addAttribute("commentAddRequest", CommentToPostRequestDTO.builder().build());
-
+            registerCommentFormAttributes(model, true);
             return "post/post-detail";
         }
-
-        // 수정
         commentService.update(commentId, editDTO);
-
         return "redirect:/posts/" + postId;
     }
 
+    // ====== 내부 유틸 ======
     /**
      * 게시글 ID의 내용 모델에 추가
      * @param postId
      * @param model
      */
-
     private void putPostDetail(Long postId, Model model) {
-        // 게시글 가져오기
         Post post = postService.findPostWithUserAndCategoryAndFiles(postId);
-        // 게시글 댓글 가져오기
         List<Comment> comments = commentService.findCommentsByPostIdWithUserAndPost(post.getId());
-        // Response DTO 변환
         PostDetailResponseDTO postResponseDTO = PostController.getPostDetailResponseDTO(post, comments);
-
         model.addAttribute("post", postResponseDTO);
+    }
+
+    /**
+     * principal에서 이메일 추출
+     */
+    private String extractEmailFromPrincipal(Object principal) {
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        } else if (principal instanceof CustomOAuth2User) {
+            return ((CustomOAuth2User) principal).getEmail();
+        } else if (principal instanceof OAuth2User) {
+            return (String) ((OAuth2User) principal).getAttribute("email");
+        } else {
+            throw new IllegalArgumentException("지원하지 않는 인증 타입입니다: " + principal.getClass().getName());
+        }
+    }
+
+    /**
+     * 댓글 작성/수정 폼 모델 등록
+     * @param model
+     * @param isEdit true면 댓글작성 폼, false면 댓글수정 폼을 추가
+     */
+    private void registerCommentFormAttributes(Model model, boolean isEdit) {
+        if (isEdit) {
+            model.addAttribute("commentAddRequest", CommentToPostRequestDTO.builder().build());
+        } else {
+            model.addAttribute("commentEditRequest", CommentToPostRequestDTO.builder().build());
+        }
     }
 }
