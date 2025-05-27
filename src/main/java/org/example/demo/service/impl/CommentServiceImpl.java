@@ -9,6 +9,8 @@ import org.example.demo.repository.CommentRepository;
 import org.example.demo.service.CommentService;
 import org.example.demo.service.PostService;
 import org.example.demo.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,6 +63,11 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<Comment> findCommentsByPostIdWithUserAndPost(Long postId){
         return commentRepository.findCommentsByPostIdWithUserAndPost(postId);
+    }
+
+    @Override
+    public Page<Comment> findCommentsByPostIdWithUserAndPost(Long postId, Pageable pageable) {
+        return commentRepository.findCommentsByPostIdWithUserAndPost(postId, pageable);
     }
 
     @Override

@@ -6,12 +6,15 @@ import org.example.demo.domain.Comment;
 import org.example.demo.domain.Post;
 import org.example.demo.dto.request.CommentToPostRequestDTO;
 import org.example.demo.dto.response.PostDetailResponseDTO;
-import org.example.demo.oauth2.CustomOAuth2User;
 import org.example.demo.service.CommentService;
 import org.example.demo.service.PostService;
+import org.example.demo.util.PostDetailUtil;
+import org.example.demo.util.SecurityUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -39,7 +42,7 @@ public class CommentController {
             registerCommentFormAttributes(model, false);
             return "post/post-detail";
         }
-        String email = extractEmailFromPrincipal(principal);
+        String email = SecurityUtils.extractEmailFromPrincipal(principal);
         commentService.save(commentAddDTO, email, id);
         return "redirect:/posts/{postId}";
     }
@@ -79,25 +82,8 @@ public class CommentController {
      * @param model
      */
     private void putPostDetail(Long postId, Model model) {
-        Post post = postService.findPostWithUserAndCategoryAndFiles(postId);
-        List<Comment> comments = commentService.findCommentsByPostIdWithUserAndPost(post.getId());
-        PostDetailResponseDTO postResponseDTO = PostController.getPostDetailResponseDTO(post, comments);
-        model.addAttribute("post", postResponseDTO);
-    }
-
-    /**
-     * principal에서 이메일 추출
-     */
-    private String extractEmailFromPrincipal(Object principal) {
-        if (principal instanceof UserDetails) {
-            return ((UserDetails) principal).getUsername();
-        } else if (principal instanceof CustomOAuth2User) {
-            return ((CustomOAuth2User) principal).getEmail();
-        } else if (principal instanceof OAuth2User) {
-            return (String) ((OAuth2User) principal).getAttribute("email");
-        } else {
-            throw new IllegalArgumentException("지원하지 않는 인증 타입입니다: " + principal.getClass().getName());
-        }
+        // 댓글 추가/수정 실패 시 첫 페이지의 댓글을 표시
+        PostDetailUtil.putPostDetailToModel(postId, postService, commentService, model, 0);
     }
 
     /**

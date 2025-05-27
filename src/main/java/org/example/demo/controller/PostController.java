@@ -15,12 +15,13 @@ import org.example.demo.dto.response.CommentToPostResponseDTO;
 import org.example.demo.dto.response.PostDetailResponseDTO;
 import org.example.demo.dto.response.PostEditResponseDTO;
 import org.example.demo.dto.response.PostListResponseDTO;
-import org.example.demo.oauth2.CustomOAuth2User;
 import org.example.demo.repository.PostRepository;
 import org.example.demo.service.CommentService;
 import org.example.demo.service.PostService;
 import org.example.demo.service.impl.FileService;
 import org.example.demo.service.impl.FileStore;
+import org.example.demo.util.PostDetailUtil;
+import org.example.demo.util.SecurityUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
@@ -28,8 +29,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -55,6 +54,7 @@ public class PostController {
     private final FileService fileService;
     private final FileStore fileStore;
 
+    // ====== 게시글 폼 및 저장 ======
     @GetMapping("/new")
     public String saveForm(@ModelAttribute("postRequestDTO") PostRequestDTO postRequestDTO) {
         return "post/post-form";
@@ -64,72 +64,42 @@ public class PostController {
     public String save(@AuthenticationPrincipal Object principal,
                        @Validated @ModelAttribute("postRequestDTO") PostRequestDTO postRequestDTO, BindingResult bindingResult,
                        HttpServletResponse response) throws IOException {
-
         if (bindingResult.hasErrors()) {
             return "post/post-form";
         }
-
-        // principal 타입에 따라 다르게 처리
-        String email;
-        if (principal instanceof UserDetails) {
-            email = ((UserDetails) principal).getUsername();
-        } else if (principal instanceof CustomOAuth2User) {
-            email = ((CustomOAuth2User) principal).getEmail();
-        } else if (principal instanceof OAuth2User) {
-            email = (String) ((OAuth2User) principal).getAttribute("email");
-        } else {
-            throw new IllegalArgumentException("지원하지 않는 인증 타입입니다: " + principal.getClass().getName());
-        }
-
+        String email = SecurityUtils.extractEmailFromPrincipal(principal);
         Long postId = postService.save(postRequestDTO, email, postRequestDTO.getCategoryId());
         return "redirect:/posts/" + postId;
     }
 
+    // ====== 게시글 목록 ======
     @GetMapping
     @TimeTrace
     public String showPostList(@ModelAttribute(value = "searchRequestDTO") PostSearchRequestDTO searchRequestDTO,
                                @PageableDefault(sort = {"createdAt"}, size = PostRepository.DEFAULT_PAGE_SIZE, direction = Sort.Direction.DESC) Pageable pageable,
                                Model model) {
-
         Page<PostListResponseDTO> postPage = postService.getPostList(searchRequestDTO, pageable);
         model.addAttribute("posts", postPage);
         return "post/post-list";
-
     }
 
+    // ====== 게시글 상세 ======
     @GetMapping("/{postId}")
-    public String showPostDetail(@PathVariable("postId") Long postId, Model model) {
-        // 게시글 가져오기
-        Post post = postService.findPostWithUserAndCategoryAndFiles(postId);
-        // 게시글 댓글 가져오기
-        List<Comment> comments = commentService.findCommentsByPostIdWithUserAndPost(post.getId());
-        // Response DTO 변환
-        PostDetailResponseDTO postResponseDTO = getPostDetailResponseDTO(post, comments);
-
-        model.addAttribute("post", postResponseDTO);
-        // 댓글 등록을 위한 폼 모델
-        model.addAttribute("commentAddRequest", CommentToPostRequestDTO.builder().build());
-        // 댓글 수정을 위한 폼 모델
-        model.addAttribute("commentEditRequest", CommentToPostRequestDTO.builder().build());
+    public String showPostDetail(@PathVariable("postId") Long postId, 
+                                 @RequestParam(value = "commentPage", defaultValue = "0") int commentPage,
+                                 Model model) {
+        PostDetailResponseDTO postResponseDTO = PostDetailUtil.putPostDetailToModel(postId, postService, commentService, model, commentPage);
+        registerPostDetailModelAttributes(model, postResponseDTO);
         return "post/post-detail";
     }
 
+    // ====== 게시글 수정 ======
     @GetMapping("/{postId}/edit")
     @VerifyPostOwner
     public String editForm(@PathVariable("postId") Long postId, Model model) {
-
         Post post = postService.findPostWithUserAndCategoryAndFiles(postId);
-
-        PostEditResponseDTO postEditResponseDTO = PostEditResponseDTO.builder()
-                .id(post.getId())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .category(post.getCategory())
-                .attachments(post.getFiles())
-                .build();
-
+        PostEditResponseDTO postEditResponseDTO = toPostEditResponseDTO(post);
         model.addAttribute("postEditResponseDTO", postEditResponseDTO);
-
         return "post/post-edit";
     }
 
@@ -139,17 +109,14 @@ public class PostController {
                            @Validated @ModelAttribute("postEditResponseDTO") PostEditResponseDTO responseDTO,
                            BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-            // MultipartFile은 값이 초기화 되기 때문에 명시적으로 초기화문 선언
             responseDTO.getNewAttachments().clear();
             return "/post/post-edit";
         }
-
-        // 게시글 업데이트
         postService.update(responseDTO);
-
         return "redirect:/posts/" + postId;
     }
 
+    // ====== 게시글 삭제 ======
     @DeleteMapping("/{postId}")
     @VerifyPostOwner
     public String deletePost(@PathVariable("postId") Long postId) {
@@ -157,6 +124,7 @@ public class PostController {
         return "redirect:/posts";
     }
 
+    // ====== 파일/이미지 다운로드 ======
     @ResponseBody
     @GetMapping("/uploads/images/{filename}")
     public Resource downloadImage(@PathVariable("filename") String filename) throws MalformedURLException {
@@ -167,30 +135,40 @@ public class PostController {
     @GetMapping("/uploads/files/{id}")
     public Resource downloadFile(@PathVariable("id") Long id,
                                  HttpServletResponse response) throws MalformedURLException {
-        // 파일 가져오기
         File file = fileService.getFile(id);
-
         UrlResource resource = new UrlResource("file:" + fileStore.getFullPath(file.getStoredName()));
-
-        // 응답 헤더 설정
-        String encodedOriginFileName = UriUtils.encode(file.getOriginalName(), StandardCharsets.UTF_8);
-        String contentDisposition = "attachment; filename=\"" +
-                encodedOriginFileName + "\"";
+        String contentDisposition = buildContentDispositionHeader(file.getOriginalName());
         response.setHeader("Content-Disposition", contentDisposition);
-
         return resource;
     }
 
+    // ====== 내부 변환/유틸 ======
+    private void registerPostDetailModelAttributes(Model model, PostDetailResponseDTO postResponseDTO) {
+        model.addAttribute("post", postResponseDTO);
+        model.addAttribute("commentAddRequest", CommentToPostRequestDTO.builder().build());
+        model.addAttribute("commentEditRequest", CommentToPostRequestDTO.builder().build());
+    }
+
+    // extractEmailFromPrincipal 메서드는 SecurityUtils 클래스로 이동됨
+
+    private PostEditResponseDTO toPostEditResponseDTO(Post post) {
+        return PostEditResponseDTO.builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .category(post.getCategory())
+                .attachments(post.getFiles())
+                .build();
+    }
+
+    private String buildContentDispositionHeader(String originalFileName) {
+        String encodedOriginFileName = UriUtils.encode(originalFileName, StandardCharsets.UTF_8);
+        return "attachment; filename=\"" + encodedOriginFileName + "\"";
+    }
+
     public static PostDetailResponseDTO getPostDetailResponseDTO(Post post, List<Comment> comments) {
-        /**
-         * 첨부 파일 구분
-         */
         Map<Boolean, List<File>> imageFile = post.getFiles().stream()
                 .collect(Collectors.partitioningBy(file -> file.getFileType().startsWith("image")));
-
-        /**
-         * Entity -> DTO 변환
-         */
         PostDetailResponseDTO postDetailResponseDTO = PostDetailResponseDTO.builder()
                 .id(post.getId())
                 .title(post.getTitle())
@@ -209,8 +187,6 @@ public class PostController {
                 .imageAttachments(imageFile.get(true))
                 .otherAttachments(imageFile.get(false))
                 .build();
-
-
         return postDetailResponseDTO;
     }
 }

@@ -66,16 +66,19 @@
 
   <!-- 댓글 섹션 -->
   <div class="comments-section">
-    <h2 th:text="#{comment.title}">Comments <span class="comments-count" th:text="${#lists.size(post.comments)}">0</span></h2>
+    <h2>
+      <span th:text="#{comment.title}">Comments</span>
+      <span class="comments-count" th:text="${commentPage.totalElements}">0</span>
+    </h2>
 
     <!-- 댓글이 없는 경우 -->
-    <div class="no-comments" th:if="${#lists.isEmpty(post.comments)}">
+    <div class="no-comments" th:if="${commentPage.empty}">
       <p th:text="#{comment.empty}">아직 댓글이 없습니다. 첫 댓글을 작성해보세요!</p>
     </div>
 
     <!-- 댓글 목록 -->
-    <ul class="comments-list" th:if="${!#lists.isEmpty(post.comments)}">
-      <li th:each="comment : ${post.comments}" class="comment-item" th:id="'comment-' + ${comment.id}">
+    <ul class="comments-list" th:if="${!commentPage.empty}">
+      <li th:each="comment : ${commentPage.content}" class="comment-item" th:id="'comment-' + ${comment.id}">
         <div class="comment-header">
           <span class="comment-author" th:text="${comment.author} ?: #{comment.author.unknown}">Commenter Name</span>
           <span class="comment-time" th:text="${#temporals.format(comment.time, 'yyyy.MM.dd HH:mm')}">21:20</span>
@@ -113,6 +116,30 @@
         </div>
       </li>
     </ul>
+
+    <!-- 페이지네이션 UI -->
+    <div class="comment-pagination" th:if="${commentPage.totalPages > 1}">
+      <ul class="pagination">
+        <!-- 이전 페이지 -->
+        <li class="page-item" th:classappend="${commentPage.first} ? 'disabled'">
+          <a class="page-link" th:href="@{/posts/{id}(id=${post.id},commentPage=${commentPage.number - 1})}" 
+            th:text="#{pagination.prev}" aria-label="Previous">이전</a>
+        </li>
+        
+        <!-- 페이지 번호 -->
+        <li class="page-item" th:each="pageNumber : ${#numbers.sequence(0, commentPage.totalPages - 1)}"
+            th:classappend="${pageNumber == commentPage.number} ? 'active'">
+          <a class="page-link" th:href="@{/posts/{id}(id=${post.id},commentPage=${pageNumber})}" 
+            th:text="${pageNumber + 1}">1</a>
+        </li>
+        
+        <!-- 다음 페이지 -->
+        <li class="page-item" th:classappend="${commentPage.last} ? 'disabled'">
+          <a class="page-link" th:href="@{/posts/{id}(id=${post.id},commentPage=${commentPage.number + 1})}" 
+            th:text="#{pagination.next}" aria-label="Next">다음</a>
+        </li>
+      </ul>
+    </div>
 
     <!-- 댓글 작성 폼 (로그인 사용자만 표시) -->
     <div class="comment-form" th:if="${#authorization.expression('isAuthenticated()')}">

@@ -2,6 +2,8 @@ package org.example.demo.service;
 
 import org.example.demo.domain.Comment;
 import org.example.demo.dto.request.CommentToPostRequestDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -11,6 +13,8 @@ public interface CommentService extends BaseService<Comment> {
     Long save(CommentToPostRequestDTO requestDTO, String email, Long postId);
 
     List<Comment> findCommentsByPostIdWithUserAndPost(Long postId);
+
+    Page<Comment> findCommentsByPostIdWithUserAndPost(Long postId, Pageable pageable);
 
     Comment findCommentByIdWithUser(Long commentId);
 
