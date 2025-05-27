@@ -92,14 +92,7 @@ public class PostController {
                                Model model) {
 
         Page<PostListResponseDTO> postPage = postService.getPostList(searchRequestDTO, pageable);
-        List<PostListResponseDTO> responseDTOS = postPage.getContent();
-
-        model.addAttribute("posts", responseDTOS);
-        model.addAttribute("currentPage", postPage.getNumber());
-        model.addAttribute("totalPages", postPage.getTotalPages());
-        model.addAttribute("totalElements", postPage.getTotalElements());
-        model.addAttribute("size", pageable.getPageSize());
-
+        model.addAttribute("posts", postPage);
         return "post/post-list";
 
     }

@@ -8,7 +8,7 @@
     <div class="post-controls">
         <form th:action="@{/posts}" method="get" class="search-bar">
             <input type="hidden" name="page" value="0">
-            <input type="hidden" name="size" th:value="${size}">
+            <input type="hidden" name="size" th:value="${posts.size}">
             <div class="search-container">
                 <input type="text" name="searchText" th:value="${searchRequestDTO?.searchText ?: ''}" th:placeholder="#{post.search.placeholder}" class="search-input" autocomplete="off">                <button type="submit" class="btn btn-secondary" th:text="#{button.search}">검색</button>
                 <a th:href="@{/posts/new}" class="btn btn-primary" th:text="#{button.post.write}">글쓰기</a>
@@ -26,7 +26,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="post : ${posts}">
+                <tr th:each="post : ${posts.content}">
                     <td th:text="${post.category.getName()}">카테고리</td>
                     <td><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">제목</a></td>
                     <td th:text="${post.author}">작성자</td>
@@ -35,29 +35,29 @@
             </tbody>
         </table>
     </div>
-    <div class="no-posts" th:if="${#lists.isEmpty(posts)}">
+    <div class="no-posts" th:if="${#lists.isEmpty(posts.content)}">
         <p th:text="#{post.empty}">등록된 게시글이 없습니다.</p>
     </div>
-    <div class="pagination" th:if="${totalPages > 0}">
+    <div class="pagination" th:if="${posts.totalPages > 0}">
         <div class="pagination-info">
-            <span th:text="#{pagination.info.items(${currentPage * size + 1}, ${((currentPage * size + size) > totalElements ? totalElements : (currentPage * size + size))}, ${totalElements})}"></span>
+            <span th:text="#{pagination.info.items(${posts.number * posts.size + 1}, ${((posts.number * posts.size + posts.size) > posts.totalElements ? posts.totalElements : (posts.number * posts.size + posts.size))}, ${posts.totalElements})}"></span>
         </div>
         <ul>
-            <li th:classappend="${currentPage == 0} ? 'disabled'">
-                <a th:href="@{/posts(page=0, size=${size}, searchText=${searchRequestDTO?.searchText ?: ''})}">&laquo;</a>
+            <li th:classappend="${posts.number == 0} ? 'disabled'">
+                <a th:href="@{/posts(page=0, size=${posts.size}, searchText=${searchRequestDTO?.searchText ?: ''})}">&laquo;</a>
             </li>
-            <li th:classappend="${currentPage == 0} ? 'disabled'">
-                <a th:href="@{/posts(page=${currentPage - 1}, size=${size}, searchText=${searchRequestDTO?.searchText ?: ''})}">&lt;</a>
+            <li th:classappend="${posts.number == 0} ? 'disabled'">
+                <a th:href="@{/posts(page=${posts.number - 1}, size=${posts.size}, searchText=${searchRequestDTO?.searchText ?: ''})}">&lt;</a>
             </li>
-            <li th:each="i : ${#numbers.sequence(currentPage - 2 > 0 ? currentPage - 2 : 0, currentPage + 2 < totalPages ? currentPage + 2 : totalPages - 1)}"
-                th:classappend="${currentPage == i} ? 'active'">
-                <a th:href="@{/posts(page=${i}, size=${size}, searchText=${searchRequestDTO?.searchText ?: ''})}" th:text="${i + 1}"></a>
+            <li th:each="i : ${#numbers.sequence(posts.number - 2 > 0 ? posts.number - 2 : 0, posts.number + 2 < posts.totalPages ? posts.number + 2 : posts.totalPages - 1)}"
+                th:classappend="${posts.number == i} ? 'active'">
+                <a th:href="@{/posts(page=${i}, size=${posts.size}, searchText=${searchRequestDTO?.searchText ?: ''})}" th:text="${i + 1}"></a>
             </li>
-            <li th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                <a th:href="@{/posts(page=${currentPage + 1}, size=${size}, searchText=${searchRequestDTO?.searchText ?: ''})}">&gt;</a>
+            <li th:classappend="${posts.number == posts.totalPages - 1} ? 'disabled'">
+                <a th:href="@{/posts(page=${posts.number + 1}, size=${posts.size}, searchText=${searchRequestDTO?.searchText ?: ''})}">&gt;</a>
             </li>
-            <li th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                <a th:href="@{/posts(page=${totalPages - 1}, size=${size}, searchText=${searchRequestDTO?.searchText ?: ''})}">&raquo;</a>
+            <li th:classappend="${posts.number == posts.totalPages - 1} ? 'disabled'">
+                <a th:href="@{/posts(page=${posts.totalPages - 1}, size=${posts.size}, searchText=${searchRequestDTO?.searchText ?: ''})}">&raquo;</a>
             </li>
         </ul>
     </div>
