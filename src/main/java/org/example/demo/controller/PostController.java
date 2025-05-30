@@ -165,28 +165,4 @@ public class PostController {
         String encodedOriginFileName = UriUtils.encode(originalFileName, StandardCharsets.UTF_8);
         return "attachment; filename=\"" + encodedOriginFileName + "\"";
     }
-
-    public static PostDetailResponseDTO getPostDetailResponseDTO(Post post, List<Comment> comments) {
-        Map<Boolean, List<File>> imageFile = post.getFiles().stream()
-                .collect(Collectors.partitioningBy(file -> file.getFileType().startsWith("image")));
-        PostDetailResponseDTO postDetailResponseDTO = PostDetailResponseDTO.builder()
-                .id(post.getId())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .time(post.getUpdatedAt())
-                .category(post.getCategory())
-                .author(post.getUser().getName())
-                .email(post.getUser().getEmail())
-                .comments(comments.stream().map(comment ->
-                        CommentToPostResponseDTO.builder()
-                                .id(comment.getId())
-                                .content(comment.getContent())
-                                .author(comment.getUser().getName())
-                                .email(comment.getUser().getEmail())
-                                .time(comment.getCreatedAt()).build()).collect(Collectors.toList()))
-                .imageAttachments(imageFile.get(true))
-                .otherAttachments(imageFile.get(false))
-                .build();
-        return postDetailResponseDTO;
-    }
 }

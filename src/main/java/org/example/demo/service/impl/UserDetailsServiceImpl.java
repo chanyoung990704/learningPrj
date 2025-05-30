@@ -2,15 +2,14 @@ package org.example.demo.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.demo.domain.User;
+import org.example.demo.domain.Role;
 import org.example.demo.repository.UserRepository;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.example.demo.security.CustomUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional
@@ -22,12 +21,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email On Authorization: " + email));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-        return new org.springframework.security.core.userdetails.User(
+        return new CustomUserDetails(
+                user.getId(),
                 user.getEmail(),
                 user.getPassword(),
-                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().getRole()))
+                user.getName(),
+                user.getRole()
         );
     }
 }

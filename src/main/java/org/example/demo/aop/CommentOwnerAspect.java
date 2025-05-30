@@ -7,13 +7,11 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.example.demo.domain.Comment;
-import org.example.demo.oauth2.CustomOAuth2User;
+import org.example.demo.security.CustomUserDetails;
 import org.example.demo.service.CommentService;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -39,13 +37,9 @@ public class CommentOwnerAspect {
         Object principal = authentication.getPrincipal();
         String email;
         
-        // 사용자 인증 유형에 따라 이메일 추출
-        if (principal instanceof UserDetails) {
-            email = ((UserDetails) principal).getUsername();
-        } else if (principal instanceof CustomOAuth2User) {
-            email = ((CustomOAuth2User) principal).getEmail();
-        } else if (principal instanceof OAuth2User) {
-            email = (String) ((OAuth2User) principal).getAttribute("email");
+        // CustomUserDetails를 통해 이메일 추출
+        if (principal instanceof CustomUserDetails) {
+            email = ((CustomUserDetails) principal).getEmail();
         } else {
             throw new AccessDeniedException("지원하지 않는 인증 유형입니다: " + principal.getClass().getName());
         }

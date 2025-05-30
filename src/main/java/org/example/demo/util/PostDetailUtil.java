@@ -1,15 +1,12 @@
 package org.example.demo.util;
 
-import org.example.demo.controller.PostController;
-import org.example.demo.domain.Comment;
 import org.example.demo.domain.File;
 import org.example.demo.domain.Post;
-import org.example.demo.dto.response.CommentToPostResponseDTO;
+import org.example.demo.dto.response.CommentListResponseDTO;
 import org.example.demo.dto.response.PostDetailResponseDTO;
 import org.example.demo.service.CommentService;
 import org.example.demo.service.PostService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -40,28 +37,7 @@ public class PostDetailUtil {
         // 페이지 객체 생성 (최신순으로 10개)
         Pageable pageable = PageRequest.of(commentPageNumber, 10, Sort.by(Sort.Direction.DESC, "createdAt", "id"));
         // 페이징된 댓글 목록 조회
-        Page<Comment> commentPage = commentService.findCommentsByPostIdWithUserAndPost(post.getId(), pageable);
-        
-        // Comment 엔티티를 CommentToPostResponseDTO로 변환
-        List<CommentToPostResponseDTO> commentDtos = commentPage.getContent().stream()
-            .map(comment -> CommentToPostResponseDTO.builder()
-                .id(comment.getId())
-                .content(comment.getContent())
-                .author(comment.getUser().getName())
-                .email(comment.getUser().getEmail())
-                .time(comment.getCreatedAt())
-                .build())
-            .collect(Collectors.toList());
-            
-        // 변환된 CommentToPostResponseDTO 목록을 포함한 Page 객체 생성
-        Page<CommentToPostResponseDTO> commentDtoPage = new PageImpl<>(
-            commentDtos, 
-            commentPage.getPageable(), 
-            commentPage.getTotalElements()
-        );
-        
-        // 변환된 DTO를 모델에 추가
-        model.addAttribute("commentPage", commentDtoPage);
+        Page<CommentListResponseDTO> commentDtoPage = commentService.findCommentsListByPostId(postId, pageable);
         
         // 파일 분류 (이미지/기타)
         Map<Boolean, List<File>> imageFile = post.getFiles().stream()
@@ -76,7 +52,7 @@ public class PostDetailUtil {
             .category(post.getCategory())
             .author(post.getUser().getName())
             .email(post.getUser().getEmail())
-            .comments(commentDtos)
+            .comments(commentDtoPage)
             .imageAttachments(imageFile.get(true))
             .otherAttachments(imageFile.get(false))
             .build();

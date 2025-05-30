@@ -5,6 +5,7 @@ import org.example.demo.domain.Comment;
 import org.example.demo.domain.Post;
 import org.example.demo.domain.User;
 import org.example.demo.dto.request.CommentToPostRequestDTO;
+import org.example.demo.dto.response.CommentListResponseDTO;
 import org.example.demo.repository.CommentRepository;
 import org.example.demo.service.CommentService;
 import org.example.demo.service.PostService;
@@ -68,6 +69,11 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Page<Comment> findCommentsByPostIdWithUserAndPost(Long postId, Pageable pageable) {
         return commentRepository.findCommentsByPostIdWithUserAndPost(postId, pageable);
+    }
+
+    @Override
+    public Page<CommentListResponseDTO> findCommentsListByPostId(Long postId, Pageable pageable) {
+        return commentRepository.findCommentDTOsByPostId(postId, pageable);
     }
 
     @Override

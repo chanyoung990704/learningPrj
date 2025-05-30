@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.demo.domain.Post;
 import org.example.demo.dto.request.PostSearchRequestDTO;
 import org.example.demo.dto.response.PostListResponseDTO;
+import org.example.demo.repository.PostCategoryRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +22,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.example.demo.domain.QPost.post;
 
@@ -30,6 +34,7 @@ import static org.example.demo.domain.QPost.post;
 public class QueryDslPostRepositoryImpl implements QueryDslPostRepository {
 
     private final JPAQueryFactory queryFactory;
+    private final PostCategoryRepository postCategoryRepository;
 
     @PersistenceContext
     private EntityManager em;
@@ -130,4 +135,63 @@ public class QueryDslPostRepositoryImpl implements QueryDslPostRepository {
 
         return PageableExecutionUtils.getPage(posts, pageable, countQuery::fetchOne);
     }
+
+    @Override
+    public Page<PostListResponseDTO> findPostsListBySearchWithUserAndCategory(Pageable pageable, PostSearchRequestDTO requestDTO) {
+        String searchText = requestDTO.getSearchText();
+        if (searchText == null || searchText.trim().isEmpty()) {
+            List<PostListResponseDTO> posts = queryFactory
+                    .select(Projections.constructor(PostListResponseDTO.class,
+                            post.id,
+                            post.title,
+                            post.user.name,
+                            post.updatedAt,
+                            post.category.name
+                    ))
+                    .from(post)
+                    .leftJoin(post.user)
+                    .leftJoin(post.category)
+                    .orderBy(post.updatedAt.desc(), post.id.desc())
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .fetch();
+
+            long total = queryFactory.select(post.count()).from(post).fetchOne();
+
+            return new PageImpl<>(posts, pageable, total);
+        }
+
+        String sql = "SELECT p.id, p.title, u.name AS author, p.updated_at AS time, c.name AS category_name " +
+                "FROM posts p " +
+                "LEFT JOIN users u ON p.user_id = u.id " +
+                "LEFT JOIN post_categories c ON c.id = p.post_category_id " +
+                "WHERE MATCH(p.title) AGAINST (? IN BOOLEAN MODE) " +
+                "ORDER BY p.updated_at DESC, p.id DESC LIMIT ? OFFSET ?";
+
+        List<Object[]> rows = em.createNativeQuery(sql)
+                .setParameter(1, searchText)
+                .setParameter(2, pageable.getPageSize())
+                .setParameter(3, pageable.getOffset())
+                .getResultList();
+
+        List<PostListResponseDTO> posts = rows.stream()
+                .map(row -> PostListResponseDTO.builder()
+                        .id(row[0] == null ? null : ((Number) row[0]).longValue())
+                        .title((String) row[1])
+                        .author((String) row[2])
+                        .time(row[3] == null ? null : ((Timestamp) row[3]).toLocalDateTime())
+                        .categoryName((String) row[4])
+                        .build()
+                )
+                .collect(Collectors.toList());
+
+        String countSql = "SELECT COUNT(*) FROM posts WHERE MATCH(title) AGAINST (? IN BOOLEAN MODE)";
+        Number total = (Number) em.createNativeQuery(countSql)
+                .setParameter(1, searchText)
+                .getSingleResult();
+
+        return new PageImpl<>(posts, pageable, total.longValue());
+    }
+
+
 }

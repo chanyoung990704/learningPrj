@@ -27,7 +27,7 @@
             </thead>
             <tbody>
                 <tr th:each="post : ${posts.content}">
-                    <td th:text="${post.category.getName()}">카테고리</td>
+                    <td th:text="${post.categoryName}">카테고리</td>
                     <td><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">제목</a></td>
                     <td th:text="${post.author}">작성자</td>
                     <td th:text="${#temporals.format(post.time, 'yyyy-MM-dd HH:mm')}">작성일</td>

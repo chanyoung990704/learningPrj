@@ -130,14 +130,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional(readOnly = true)
     public Page<PostListResponseDTO> getPostList(PostSearchRequestDTO requestDTO, Pageable pageable) {
-        Page<Post> postPage = postRepository.findPostsBySearchWithUserAndCategory(pageable, requestDTO);
-        return postPage.map(post -> new PostListResponseDTO(
-                post.getId(),
-                post.getTitle(),
-                post.getUser() != null ? post.getUser().getName() : null, // Handle potential null user
-                post.getUpdatedAt(), // Assuming 'time' in DTO maps to updatedAt
-                post.getCategory()
-        ));
+        return postRepository.findPostsListBySearchWithUserAndCategory(pageable, requestDTO);
     }
 
     @Override

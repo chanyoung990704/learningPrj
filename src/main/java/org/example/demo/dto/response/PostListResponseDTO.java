@@ -15,5 +15,5 @@ public class PostListResponseDTO {
     String title;
     String author;
     LocalDateTime time;
-    PostCategory category;
+    String categoryName;
 }

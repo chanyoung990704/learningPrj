@@ -1,6 +1,7 @@
 package org.example.demo.repository;
 
 import org.example.demo.domain.Comment;
+import org.example.demo.dto.response.CommentListResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,6 +23,14 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("SELECT c FROM Comment c JOIN FETCH c.user u JOIN FETCH c.post p " +
             "WHERE c.post.id = :id ORDER BY c.createdAt DESC, c.id DESC")
     Page<Comment> findCommentsByPostIdWithUserAndPost(@Param("id") Long id, Pageable pageable);
+
+    @Query("SELECT new org.example.demo.dto.response.CommentListResponseDTO(" +
+            "c.id, c.content, u.name, u.email, u.id, c.createdAt) " +
+            "FROM Comment c " +
+            "JOIN c.user u " +
+            "WHERE c.post.id = :id " +
+            "ORDER BY c.createdAt DESC, c.id DESC")
+    Page<CommentListResponseDTO> findCommentDTOsByPostId(@Param("id") Long id, Pageable pageable);
 
 
 }

@@ -13,7 +13,8 @@
   <div class="post-info">
     <span class="post-category" th:text="${post.category?.name} ?: #{post.category.unclassified}">Category</span>
     <span class="post-author" th:text="${post.author} ?: #{post.author.unknown}">Author Name</span>
-    <span class="post-time" th:text="${#temporals.format(post.time, 'yyyy.MM.dd HH:mm')}">21:15</span>
+    <span class="post-time" th:with="postTime=${post.time != null} ? ${#temporals.format(post.time, 'yyyy.MM.dd HH:mm')} : ''" 
+          th:text="${postTime}">21:15</span>
   </div>
 
   <!-- 게시글 내용 -->
@@ -42,7 +43,7 @@
       <ul class="attachment-list">
         <li th:each="file : ${post.otherAttachments}" class="attachment-item">
           <a th:href="@{/posts/uploads/files/{id}(id=${file.id})}" class="file-download-link">
-            <span class="file-icon">📎</span>
+            <span class="file-icon" th:text="#{file.icon}">📎</span>
             <span class="file-name" th:text="${file.originalName}">file.pdf</span>
             <span class="file-size" th:text="${#numbers.formatDecimal(file.fileSize / 1024, 0, 2)} + ' ' + #{post.file.size.kb}">123 KB</span>
           </a>
@@ -68,23 +69,26 @@
   <div class="comments-section">
     <h2>
       <span th:text="#{comment.title}">Comments</span>
-      <span class="comments-count" th:text="${commentPage.totalElements}">0</span>
+      <span class="comments-count" 
+            th:text="${post.comments.totalElements}">
+        0
+      </span>
     </h2>
 
     <!-- 댓글이 없는 경우 -->
-    <div class="no-comments" th:if="${commentPage.empty}">
+    <div class="no-comments" th:if="${post.comments.empty}">
       <p th:text="#{comment.empty}">아직 댓글이 없습니다. 첫 댓글을 작성해보세요!</p>
     </div>
 
     <!-- 댓글 목록 -->
-    <ul class="comments-list" th:if="${!commentPage.empty}">
-      <li th:each="comment : ${commentPage.content}" class="comment-item" th:id="'comment-' + ${comment.id}">
+    <ul class="comments-list" th:if="${post.comments.hasContent()}">
+      <li th:each="comment : ${post.comments.content}" class="comment-item" th:id="'comment-' + ${comment.id}">
         <div class="comment-header">
-          <span class="comment-author" th:text="${comment.author} ?: #{comment.author.unknown}">Commenter Name</span>
-          <span class="comment-time" th:text="${#temporals.format(comment.time, 'yyyy.MM.dd HH:mm')}">21:20</span>
-
+          <span class="comment-author" th:text="${comment.userName} ?: #{comment.author.unknown}">Commenter Name</span>
+          <span class="comment-time" th:text="${#temporals.format(comment.createdAt, 'yyyy.MM.dd HH:mm')}">21:20</span>
           <!-- 댓글 작성자만 수정/삭제 가능 -->
-          <div class="comment-actions" th:if="${#authorization.expression('isAuthenticated()') && comment.email == #authentication.name}">
+          <div class="comment-actions"
+               th:if="${#authorization.expression('isAuthenticated()') and (comment.userEmail == #authentication.principal.email)}">
             <button class="btn-edit-comment" th:attr="data-comment-id=${comment.id}" th:text="#{button.edit}">수정</button>
             <form th:action="@{/posts/{postId}/comments/{commentId}(postId=${post.id},commentId=${comment.id})}"
                   method="post" style="display:inline;">
@@ -94,13 +98,11 @@
             </form>
           </div>
         </div>
-
-        <!-- 댓글 내용 (일반 모드) -->
+        <!-- 댓글 내용 -->
         <div class="comment-content" th:id="'comment-content-' + ${comment.id}" th:text="${comment.content}">
           Sample comment content...
         </div>
-
-        <!-- 댓글 수정 폼 (편집 모드) -->
+        <!-- 댓글 수정 폼(편집 모드) -->
         <div class="comment-edit-form" th:id="'comment-edit-form-' + ${comment.id}" style="display:none;">
           <form th:action="@{/posts/{postId}/comments/{commentId}(postId=${post.id},commentId=${comment.id})}"
                 method="post" th:object="${commentEditRequest}">
@@ -118,25 +120,20 @@
     </ul>
 
     <!-- 페이지네이션 UI -->
-    <div class="comment-pagination" th:if="${commentPage.totalPages > 1}">
+    <div class="comment-pagination" th:if="${post.comments.totalPages > 1}">
       <ul class="pagination">
-        <!-- 이전 페이지 -->
-        <li class="page-item" th:classappend="${commentPage.first} ? 'disabled'">
-          <a class="page-link" th:href="@{/posts/{id}(id=${post.id},commentPage=${commentPage.number - 1})}" 
-            th:text="#{pagination.prev}" aria-label="Previous">이전</a>
+        <li class="page-item" th:classappend="${post.comments.first} ? 'disabled'">
+          <a class="page-link" th:href="@{/posts/{id}(id=${post.id},commentPage=${post.comments.number - 1})}"
+             th:text="#{pagination.prev}" aria-label="Previous">이전</a>
         </li>
-        
-        <!-- 페이지 번호 -->
-        <li class="page-item" th:each="pageNumber : ${#numbers.sequence(0, commentPage.totalPages - 1)}"
-            th:classappend="${pageNumber == commentPage.number} ? 'active'">
-          <a class="page-link" th:href="@{/posts/{id}(id=${post.id},commentPage=${pageNumber})}" 
-            th:text="${pageNumber + 1}">1</a>
+        <li class="page-item" th:each="pageNumber : ${#numbers.sequence(0, post.comments.totalPages - 1)}"
+            th:classappend="${pageNumber == post.comments.number} ? 'active'">
+          <a class="page-link" th:href="@{/posts/{id}(id=${post.id},commentPage=${pageNumber})}"
+             th:text="${pageNumber + 1}">1</a>
         </li>
-        
-        <!-- 다음 페이지 -->
-        <li class="page-item" th:classappend="${commentPage.last} ? 'disabled'">
-          <a class="page-link" th:href="@{/posts/{id}(id=${post.id},commentPage=${commentPage.number + 1})}" 
-            th:text="#{pagination.next}" aria-label="Next">다음</a>
+        <li class="page-item" th:classappend="${post.comments.last} ? 'disabled'">
+          <a class="page-link" th:href="@{/posts/{id}(id=${post.id},commentPage=${post.comments.number + 1})}"
+             th:text="#{pagination.next}" aria-label="Next">다음</a>
         </li>
       </ul>
     </div>
@@ -144,10 +141,8 @@
     <!-- 댓글 작성 폼 (로그인 사용자만 표시) -->
     <div class="comment-form" th:if="${#authorization.expression('isAuthenticated()')}">
       <form th:action="@{/posts/{id}/comments(id=${post.id})}" method="post" th:object="${commentAddRequest}">
-        <!-- 댓글 내용 -->
-        <textarea name="content" th:placeholder="#{comment.placeholder}" placeholder="Write your comment here..." th:field="*{content}"></textarea>
+        <textarea name="content" th:placeholder="#{comment.placeholder}" th:attr="placeholder=#{comment.placeholder}" th:field="*{content}"></textarea>
         <p class="error-message" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></p>
-        <!-- 제출 버튼 -->
         <button type="submit" class="btn comment-submit-btn" th:text="#{button.write}">등록</button>
       </form>
     </div>
@@ -160,7 +155,8 @@
         <span th:text="#{comment.login.suffix}">이 필요합니다.</span>
       </p>
     </div>
-  </div> <!-- comments-section 닫는 태그 추가 -->
+  </div>
+
 </main>
 
 <!-- 이미지 뷰어 모달 -->

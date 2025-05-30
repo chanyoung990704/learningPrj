@@ -3,6 +3,8 @@ package org.example.demo.dto.response;
 import lombok.*;
 import org.example.demo.domain.File;
 import org.example.demo.domain.PostCategory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,7 +25,7 @@ public class PostDetailResponseDTO {
     String content;     // 본문 내용
 
     @Builder.Default
-    List<CommentToPostResponseDTO> comments = new ArrayList<>(); // 댓글
+    Page<CommentListResponseDTO> comments = new PageImpl<>(new ArrayList<>()); // 댓글
     @Builder.Default
     List<File> imageAttachments = new ArrayList<>(); // 이미지 파일
     @Builder.Default
