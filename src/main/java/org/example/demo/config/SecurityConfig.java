@@ -1,5 +1,6 @@
 package org.example.demo.config;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.example.demo.oauth2.CustomOAuth2UserService;
 import org.example.demo.oauth2.OAuth2LoginSuccessHandler;
@@ -18,7 +19,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
-@Profile({"dev", "prod"}) 
+@Profile({"dev", "prod"})
 public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
@@ -27,36 +28,42 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // .csrf(csrf -> csrf.disable()) // CSRF 비활성화
                 .authorizeHttpRequests(authz -> authz
-                        // 게시글 조회 및 검색 허용
+                        // 기존 경로 설정 유지
                         .requestMatchers(HttpMethod.GET, "/posts/{id:[0-9]+}", "/posts", "/posts/search").permitAll()
-                        // 게시글 내 이미지 조회 허용
                         .requestMatchers(HttpMethod.GET, "/posts/uploads/images/{filename}").permitAll()
-                        // 파일 다운로드는 인증 필요
                         .requestMatchers(HttpMethod.GET, "/posts/uploads/files/{id}").authenticated()
-                        // 공개 URL
                         .requestMatchers("/", "/register", "/error", "/error-page", "/oauth2-info").permitAll()
-                        // 정적 리소스
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                        // 나머지 요청은 인증 필요
                         .anyRequest().authenticated()
                 )
-                // 폼 로그인 설정
+                // 폼 로그인 설정 수정
                 .formLogin(login ->
                         login.loginPage("/login")
-                                .defaultSuccessUrl("/", false)
-                                .permitAll())
-                // OAuth2 로그인 설정
+                                .defaultSuccessUrl("/", true) // 항상 성공 URL로 리다이렉트
+                                .successHandler((request, response, authentication) -> {
+                                    // 로그인 성공 후 세션에서 리다이렉트 URL 확인
+                                    HttpSession session = request.getSession(false);
+                                    String redirectUrl = session != null ? (String) session.getAttribute("REDIRECT_URI") : null;
+
+                                    if (redirectUrl != null && !redirectUrl.isEmpty()) {
+                                        session.removeAttribute("REDIRECT_URI");
+                                        response.sendRedirect(redirectUrl);
+                                    } else {
+                                        response.sendRedirect("/");
+                                    }
+                                })
+                                .failureUrl("/login?error=true") // 로그인 실패 시 URL
+                                .permitAll()
+                )
+                // 나머지 설정은 유지
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService))
                         .successHandler(oAuth2LoginSuccessHandler)
                         .failureHandler((request, response, exception) -> {
-                            // OAuth2 로그인 실패 시 로깅
                             System.out.println("OAuth2 로그인 실패: " + exception.getMessage());
-                            // 로그인 페이지로 리다이렉트
                             response.sendRedirect("/login?error=oauth2");
                         })
                         .permitAll())
@@ -66,7 +73,6 @@ public class SecurityConfig {
                 .httpBasic(withDefaults())
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint((request, response, authException) -> {
-                            // 인증 실패 시 로그인 페이지로 리다이렉트
                             response.sendRedirect("/login?error=auth");
                         })
                         .accessDeniedPage("/error-page"));
