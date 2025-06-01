@@ -7,8 +7,8 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class CommentToPostRequestDTO {
-
+public class CommentCreationRequestDTO {
+    // "CommentToPostRequest" -> "CommentCreationRequest" 로 rename
     @NotEmpty
     String content;
 

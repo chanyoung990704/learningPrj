@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="reply(replies, post, replyAddRequest)" th:remove="tag">
+    <div th:each="reply : ${replies}" class="comment-item reply-comment" th:id="'comment-' + ${reply.id}">
+        <div class="comment-header">
+            <span class="comment-author" th:text="${reply.userName} ?: #{comment.author.unknown}">Reply Author</span>
+            <span class="comment-time" th:text="${#temporals.format(reply.createdAt, 'yyyy.MM.dd HH:mm')}">21:25</span>
+            <button type="button" class="btn-reply"
+                    th:attr="data-comment-id=${reply.id},data-comment-author=${reply.userName}">답글</button>
+            <div class="comment-actions"
+                 th:if="${#authorization.expression('isAuthenticated()') and (reply.userEmail == #authentication.principal.email)}">
+                <button type="button" class="btn-edit-comment"
+                        th:attr="data-comment-id=${reply.id}">수정</button>
+                <form th:action="@{/posts/{postId}/comments/{commentId}(postId=${post.id},commentId=${reply.id})}"
+                      method="post" style="display:inline;">
+                    <input type="hidden" name="_method" value="DELETE"/>
+                    <button type="submit" class="btn-delete-comment" th:text="#{button.delete}">삭제</button>
+                </form>
+            </div>
+        </div>
+        <div class="comment-content" th:id="'comment-content-' + ${reply.id}" th:text="${reply.content}">Sample reply content...</div>
+        <form
+                th:action="@{/posts/{postId}/comments/{commentId}(postId=${post.id},commentId=${reply.id})}"
+                method="post"
+                th:id="'comment-edit-form-' + ${reply.id}"
+                class="edit-form"
+                style="display:none;">
+            <input type="hidden" name="_method" value="put"/>
+            <textarea class="edit-textarea" name="content" required></textarea>
+            <div class="edit-actions">
+                <button type="button" class="btn-cancel-edit" th:attr="data-comment-id=${reply.id}">취소</button>
+                <button type="submit" class="btn-save-edit">저장</button>
+            </div>
+        </form>
+        <div class="reply-form" th:id="'reply-form-' + ${reply.id}" style="display: none;">
+            <form th:action="@{/posts/{postId}/comments/{parentId}/replies(postId=${post.id},parentId=${reply.id})}"
+                  method="post" th:object="${replyAddRequest}">
+                <input type="hidden" name="parentId" th:value="${reply.id}">
+                <textarea name="content"
+                          th:placeholder="'@' + ${reply.userName} + ' ' + #{comment.reply.placeholder}"
+                          th:field="*{content}"></textarea>
+                <div class="reply-actions">
+                    <button type="button" class="btn-cancel-reply" th:attr="data-comment-id=${reply.id}">취소</button>
+                    <button type="submit" class="btn-submit-reply">답글</button>
+                </div>
+            </form>
+        </div>
+        <div class="replies-container" th:if="${not #lists.isEmpty(reply.replies)}">
+            <ul class="replies-list">
+                <li th:replace="~{fragments/reply :: reply(${reply.replies}, ${post}, ${replyAddRequest})}"></li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>

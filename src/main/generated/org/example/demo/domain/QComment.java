@@ -24,6 +24,8 @@ public class QComment extends EntityPathBase<Comment> {
 
     public final org.example.demo.domain.base.QUserAuditableEntity _super = new org.example.demo.domain.base.QUserAuditableEntity(this);
 
+    public final ListPath<Comment, QComment> children = this.<Comment, QComment>createList("children", Comment.class, QComment.class, PathInits.DIRECT2);
+
     public final StringPath content = createString("content");
 
     //inherited
@@ -33,6 +35,8 @@ public class QComment extends EntityPathBase<Comment> {
     public final StringPath createdBy = _super.createdBy;
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
+
+    public final QComment parent;
 
     public final QPost post;
 
@@ -62,6 +66,7 @@ public class QComment extends EntityPathBase<Comment> {
 
     public QComment(Class<? extends Comment> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.parent = inits.isInitialized("parent") ? new QComment(forProperty("parent"), inits.get("parent")) : null;
         this.post = inits.isInitialized("post") ? new QPost(forProperty("post"), inits.get("post")) : null;
         this.user = inits.isInitialized("user") ? new QUser(forProperty("user"), inits.get("user")) : null;
     }

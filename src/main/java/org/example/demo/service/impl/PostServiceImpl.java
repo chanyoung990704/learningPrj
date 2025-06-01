@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.demo.domain.Post;
 import org.example.demo.domain.PostCategory;
 import org.example.demo.domain.User;
-import org.example.demo.dto.request.PostRequestDTO;
+import org.example.demo.dto.request.PostCreationRequestDTO;
 import org.example.demo.dto.request.PostSearchRequestDTO;
 import org.example.demo.dto.response.PostEditResponseDTO;
 import org.example.demo.dto.response.PostListResponseDTO;
@@ -38,10 +38,10 @@ public class PostServiceImpl implements PostService {
 
     @Transactional
     @Override
-    public Long save(PostRequestDTO requestDTO, String email, Long categoryId) {
+    public Long save(PostCreationRequestDTO requestDTO, String email, Long categoryId) {
         User user = userService.findByEmail(email);
         PostCategory category = postCategoryService.findById(categoryId);
-        Post post = PostRequestDTO.toPost(requestDTO, user, category);
+        Post post = PostCreationRequestDTO.toPost(requestDTO, user, category);
 
         // 파일 업로드 처리
         uploadFiles(requestDTO.getFiles(), post);

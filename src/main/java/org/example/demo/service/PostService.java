@@ -1,7 +1,7 @@
 package org.example.demo.service;
 
 import org.example.demo.domain.Post;
-import org.example.demo.dto.request.PostRequestDTO;
+import org.example.demo.dto.request.PostCreationRequestDTO;
 import org.example.demo.dto.request.PostSearchRequestDTO;
 import org.example.demo.dto.response.PostEditResponseDTO;
 import org.example.demo.dto.response.PostListResponseDTO;
@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface PostService extends BaseService<Post> {
     @Transactional
-    Long save(PostRequestDTO requestDTO, String email, Long categoryId);
+    Long save(PostCreationRequestDTO requestDTO, String email, Long categoryId);
 
     List<Post> findPostsWithUser();
 

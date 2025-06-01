@@ -5,7 +5,7 @@ import org.example.demo.SpringBootTestWithProfile;
 import org.example.demo.domain.Post;
 import org.example.demo.domain.PostCategory;
 import org.example.demo.domain.User;
-import org.example.demo.dto.request.PostRequestDTO;
+import org.example.demo.dto.request.PostCreationRequestDTO;
 import org.example.demo.repository.PostCategoryRepository;
 import org.example.demo.repository.PostRepository;
 import org.example.demo.repository.UserRepository;
@@ -92,7 +92,7 @@ public class PostApiControllerIntegrationTest {
     @WithMockUser(username = "test@example.com")
     void testCreatePost() throws Exception {
         // Given
-        PostRequestDTO requestDTO = PostRequestDTO.builder()
+        PostCreationRequestDTO requestDTO = PostCreationRequestDTO.builder()
                 .title("New Post")
                 .content("New Content")
                 .categoryId(testCategory.getId())

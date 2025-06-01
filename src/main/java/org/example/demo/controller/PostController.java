@@ -5,13 +5,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.demo.aop.TimeTrace;
 import org.example.demo.aop.VerifyPostOwner;
-import org.example.demo.domain.Comment;
 import org.example.demo.domain.File;
 import org.example.demo.domain.Post;
-import org.example.demo.dto.request.CommentToPostRequestDTO;
-import org.example.demo.dto.request.PostRequestDTO;
+import org.example.demo.dto.request.CommentCreationRequestDTO;
+import org.example.demo.dto.request.PostCreationRequestDTO;
 import org.example.demo.dto.request.PostSearchRequestDTO;
-import org.example.demo.dto.response.CommentToPostResponseDTO;
 import org.example.demo.dto.response.PostDetailResponseDTO;
 import org.example.demo.dto.response.PostEditResponseDTO;
 import org.example.demo.dto.response.PostListResponseDTO;
@@ -39,9 +37,6 @@ import org.springframework.web.util.UriUtils;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -56,19 +51,19 @@ public class PostController {
 
     // ====== 게시글 폼 및 저장 ======
     @GetMapping("/new")
-    public String saveForm(@ModelAttribute("postRequestDTO") PostRequestDTO postRequestDTO) {
+    public String saveForm(@ModelAttribute("postRequestDTO") PostCreationRequestDTO postCreationRequestDTO) {
         return "post/post-form";
     }
 
     @PostMapping
     public String save(@AuthenticationPrincipal Object principal,
-                       @Validated @ModelAttribute("postRequestDTO") PostRequestDTO postRequestDTO, BindingResult bindingResult,
+                       @Validated @ModelAttribute("postRequestDTO") PostCreationRequestDTO postCreationRequestDTO, BindingResult bindingResult,
                        HttpServletResponse response) throws IOException {
         if (bindingResult.hasErrors()) {
             return "post/post-form";
         }
         String email = SecurityUtils.extractEmailFromPrincipal(principal);
-        Long postId = postService.save(postRequestDTO, email, postRequestDTO.getCategoryId());
+        Long postId = postService.save(postCreationRequestDTO, email, postCreationRequestDTO.getCategoryId());
         return "redirect:/posts/" + postId;
     }
 
@@ -145,8 +140,9 @@ public class PostController {
     // ====== 내부 변환/유틸 ======
     private void registerPostDetailModelAttributes(Model model, PostDetailResponseDTO postResponseDTO) {
         model.addAttribute("post", postResponseDTO);
-        model.addAttribute("commentAddRequest", CommentToPostRequestDTO.builder().build());
-        model.addAttribute("commentEditRequest", CommentToPostRequestDTO.builder().build());
+        model.addAttribute("commentAddRequest", CommentCreationRequestDTO.builder().build());
+        model.addAttribute("replyAddRequest", CommentCreationRequestDTO.builder().build());
+        model.addAttribute("commentEditRequest", CommentCreationRequestDTO.builder().build());
     }
 
     // extractEmailFromPrincipal 메서드는 SecurityUtils 클래스로 이동됨

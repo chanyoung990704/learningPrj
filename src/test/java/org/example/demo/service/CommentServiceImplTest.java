@@ -4,7 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.example.demo.SpringBootTestWithProfile;
 import org.example.demo.domain.*;
-import org.example.demo.dto.request.CommentToPostRequestDTO;
+import org.example.demo.dto.request.CommentCreationRequestDTO;
 import org.example.demo.repository.CommentRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -96,7 +96,7 @@ class CommentServiceImplTest {
                 .build();
         postService.save(post);
 
-        CommentToPostRequestDTO requestDTO = CommentToPostRequestDTO.builder()
+        CommentCreationRequestDTO requestDTO = CommentCreationRequestDTO.builder()
                 .content("A comment for the post.")
                 .build();
 

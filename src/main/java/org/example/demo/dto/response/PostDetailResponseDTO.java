@@ -25,7 +25,7 @@ public class PostDetailResponseDTO {
     String content;     // 본문 내용
 
     @Builder.Default
-    Page<CommentListResponseDTO> comments = new PageImpl<>(new ArrayList<>()); // 댓글
+    Page<CommentResponseDTO> comments = new PageImpl<>(new ArrayList<>()); // 댓글
     @Builder.Default
     List<File> imageAttachments = new ArrayList<>(); // 이미지 파일
     @Builder.Default

@@ -15,7 +15,8 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class PostRequestDTO {
+
+public class PostCreationRequestDTO {
 
     @NotEmpty
     private String title;
@@ -27,7 +28,7 @@ public class PostRequestDTO {
     @Builder.Default
     private List<MultipartFile> files = new ArrayList<>();
 
-    public static Post toPost(PostRequestDTO dto, User user, PostCategory postCategory) {
+    public static Post toPost(PostCreationRequestDTO dto, User user, PostCategory postCategory) {
         return Post.builder()
                 .title(dto.getTitle())
                 .content(dto.getContent())

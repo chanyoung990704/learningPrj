@@ -7,7 +7,7 @@
 
 <main class="main-content post-form-page">
     <h1 th:text="#{post.create}">글쓰기</h1>
-    <form th:action="@{/posts}" th:object="${postRequestDTO}" method="post" class="styled-form" enctype="multipart/form-data">
+    <form th:action="@{/posts}" th:object="${postCreationRequestDTO}" method="post" class="styled-form" enctype="multipart/form-data">
         <div class="form-group">
             <label for="title" th:text="#{post.title}">제목</label>
             <input type="text" id="title" th:field="*{title}" th:placeholder="#{post.title.placeholder}" />

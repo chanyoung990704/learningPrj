@@ -3,7 +3,7 @@ package org.example.demo.api;
 import lombok.*;
 import org.example.demo.aop.TimeTrace;
 import org.example.demo.domain.Post;
-import org.example.demo.dto.request.PostRequestDTO;
+import org.example.demo.dto.request.PostCreationRequestDTO;
 import org.example.demo.dto.request.PostSearchRequestDTO;
 import org.example.demo.repository.PostRepository;
 import org.example.demo.service.CommentService;
@@ -38,9 +38,9 @@ public class PostApiController {
     @PostMapping
     public ResponseEntity<Long> createPost(
             @AuthenticationPrincipal UserDetails userDetails,
-            @Validated @RequestBody PostRequestDTO postRequestDTO) {
+            @Validated @RequestBody PostCreationRequestDTO postCreationRequestDTO) {
 
-        Long postId = postService.save(postRequestDTO, userDetails.getUsername(), postRequestDTO.getCategoryId());
+        Long postId = postService.save(postCreationRequestDTO, userDetails.getUsername(), postCreationRequestDTO.getCategoryId());
         return ResponseEntity.status(HttpStatus.CREATED).body(postId);
     }
 
