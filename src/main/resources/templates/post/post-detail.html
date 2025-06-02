@@ -22,6 +22,14 @@
   </div>
   <!-- 첨부파일, 갤러리 등(필요시 추가)... -->
 
+  <!-- 좋아요 버튼 -->
+  <div class="like-section" th:if="${#authorization.expression('isAuthenticated()')}">
+    <button id="likeButton" type="button" class="like-button">
+      <span class="like-icon">❤️</span>
+      <span id="likeCount" th:text="${post.likeCount}">0</span>
+    </button>
+  </div>
+
   <!-- 게시글 액션 버튼 -->
   <div class="post-actions">
     <a th:href="@{/posts}" class="btn btn-secondary" th:text="#{button.back}">목록으로</a>
@@ -74,7 +82,6 @@
                 method="post" th:object="${replyAddRequest}">
             <input type="hidden" name="parentId" th:value="${comment.id}">
             <textarea name="content"
-                      th:placeholder="'@' + ${comment.userName} + ' ' + #{comment.reply.placeholder}"
                       th:field="*{content}"></textarea>
             <div class="reply-actions">
               <button type="button" class="btn-cancel-reply" th:attr="data-comment-id=${comment.id}">취소</button>
@@ -127,5 +134,61 @@
 </main>
 <div th:replace="~{footer :: footer}"></div>
 <script src="/js/comments.js"></script>
+
+<script th:inline="javascript">
+  document.addEventListener('DOMContentLoaded', function() {
+    const likeButton = document.getElementById('likeButton');
+    const likeCount = document.getElementById('likeCount');
+
+    // CSRF 토큰 가져오기
+    const csrfToken = /*[[${_csrf.token}]]*/ '';
+    const csrfHeader = /*[[${_csrf.headerName}]]*/ 'X-CSRF-TOKEN';
+
+    // 게시글 ID 가져오기
+    const postId = /*[[${post.id}]]*/ '0';
+
+    // 디버깅을 위한 로그
+    console.log('Like button element:', likeButton);
+    console.log('CSRF Token:', csrfToken ? 'Found' : 'Not found');
+    console.log('Post ID:', postId);
+
+    if (likeButton) {
+      likeButton.addEventListener('click', async function() {
+        try {
+          console.log('Sending like request for post ID:', postId);
+          const response = await fetch(`/posts/${postId}/like`, {
+            method: 'POST',
+            headers: {
+              [csrfHeader]: csrfToken
+            },
+            credentials: 'same-origin'
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Server responded with:', errorText);
+            throw new Error(`Network response was not ok: ${response.status} - ${errorText}`);
+          }
+
+          const result = await response.json();
+          console.log('Like API response:', result);
+
+          if (result.success) {
+            likeButton.classList.toggle('liked', result.isLiked);
+            likeCount.textContent = result.likeCount;
+          } else {
+            alert(/*[[#{error.like.failed}]]*/ '좋아요 처리 중 오류가 발생했습니다.');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert(/*[[#{error.occurred}]]*/ '오류가 발생했습니다. 다시 시도해주세요.');
+        }
+      });
+    } else {
+      console.error('Like button not found');
+    }
+  });
+</script>
+
 </body>
 </html>

@@ -1,6 +1,7 @@
 package org.example.demo.util;
 
 import org.example.demo.oauth2.CustomOAuth2User;
+import org.example.demo.security.CustomUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -17,8 +18,8 @@ public class SecurityUtils {
             throw new IllegalArgumentException("인증 정보가 없습니다.");
         }
         
-        if (principal instanceof UserDetails) {
-            return ((UserDetails) principal).getUsername();
+        if (principal instanceof CustomUserDetails) {
+            return ((CustomUserDetails) principal).getEmail();
         } else if (principal instanceof CustomOAuth2User) {
             return ((CustomOAuth2User) principal).getEmail();
         } else if (principal instanceof OAuth2User) {

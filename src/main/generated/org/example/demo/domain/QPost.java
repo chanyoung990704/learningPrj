@@ -40,6 +40,8 @@ public class QPost extends EntityPathBase<Post> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final SetPath<PostLike, QPostLike> likes = this.<PostLike, QPostLike>createSet("likes", PostLike.class, QPostLike.class, PathInits.DIRECT2);
+
     public final StringPath title = createString("title");
 
     //inherited
@@ -49,6 +51,8 @@ public class QPost extends EntityPathBase<Post> {
     public final StringPath updatedBy = _super.updatedBy;
 
     public final QUser user;
+
+    public final NumberPath<Long> viewCount = createNumber("viewCount", Long.class);
 
     public QPost(String variable) {
         this(Post.class, forVariable(variable), INITS);

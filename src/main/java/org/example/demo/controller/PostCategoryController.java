@@ -23,12 +23,6 @@ public class PostCategoryController {
 
     private final PostCategoryService postCategoryService;
 
-    @ModelAttribute("categories")
-    public List<PostCategory> getCategories() {
-        return postCategoryService.findAll();
-    }
-
-
     // 카테고리 등록 폼 제공
     @GetMapping("/new")
     public String createForm(Model model) {

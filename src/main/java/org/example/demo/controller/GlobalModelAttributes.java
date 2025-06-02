@@ -20,4 +20,5 @@ public class GlobalModelAttributes {
     public List<PostCategory> getCategories() {
         return postCategoryService.findAll();
     }
+
 }

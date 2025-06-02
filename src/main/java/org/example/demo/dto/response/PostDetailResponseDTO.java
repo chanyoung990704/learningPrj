@@ -23,6 +23,8 @@ public class PostDetailResponseDTO {
     String email;      // 가입 이메일
     LocalDateTime time; // 수정 시간
     String content;     // 본문 내용
+    @Builder.Default
+    Long likeCount = 0L; // 좋아요 수
 
     @Builder.Default
     Page<CommentResponseDTO> comments = new PageImpl<>(new ArrayList<>()); // 댓글

@@ -6,6 +6,8 @@ import org.example.demo.domain.base.UserAuditableEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 @Entity
 @Getter @Setter
@@ -42,6 +44,15 @@ public class Comment extends UserAuditableEntity {
     @Builder.Default
     private List<Comment> children = new ArrayList<>();
 
+    // 좋아요 목록
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<CommentLike> likes = new HashSet<>();
+
+    @Transient
+    @Builder.Default
+    private boolean likedByCurrentUser = false;
+
     // 답글 추가 메서드
     public void addChildComment(Comment childComment) {
         if (childComment == this) {
@@ -59,4 +70,37 @@ public class Comment extends UserAuditableEntity {
         this.parent = parent;
     }
 
+    // 좋아요 수 조회
+    public int getLikeCount() {
+        return likes.size();
+    }
+
+    // 좋아요 추가
+    public void addLike(CommentLike like) {
+        if (like == null) {
+            throw new IllegalArgumentException("Like cannot be null");
+        }
+        if (!likes.contains(like)) {
+            likes.add(like);
+            like.setComment(this);
+        }
+    }
+
+    // 좋아요 제거
+    public void removeLike(CommentLike like) {
+        if (like != null && likes.contains(like)) {
+            likes.remove(like);
+            like.setComment(null);
+        }
+    }
+
+    // 현재 사용자의 좋아요 여부 설정
+    public void setLikedByCurrentUser(boolean liked) {
+        this.likedByCurrentUser = liked;
+    }
+
+    // 현재 사용자의 좋아요 여부 확인
+    public boolean isLikedByCurrentUser() {
+        return likedByCurrentUser;
+    }
 }

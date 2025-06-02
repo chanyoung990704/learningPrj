@@ -37,7 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                // 폼 로그인 설정 수정
+                // 폼 로그인 설정
                 .formLogin(login ->
                         login.loginPage("/login")
                                 .defaultSuccessUrl("/", true) // 항상 성공 URL로 리다이렉트
@@ -56,7 +56,6 @@ public class SecurityConfig {
                                 .failureUrl("/login?error=true") // 로그인 실패 시 URL
                                 .permitAll()
                 )
-                // 나머지 설정은 유지
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
                         .userInfoEndpoint(userInfo -> userInfo
@@ -73,7 +72,12 @@ public class SecurityConfig {
                 .httpBasic(withDefaults())
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint((request, response, authException) -> {
-                            response.sendRedirect("/login?error=auth");
+                            String error = request.getParameter("error");
+                            if (error != null && error.equals("auth")) {
+                                response.sendRedirect("/login");
+                            } else {
+                                response.sendRedirect("/login?error=auth");
+                            }
                         })
                         .accessDeniedPage("/error-page"));
 

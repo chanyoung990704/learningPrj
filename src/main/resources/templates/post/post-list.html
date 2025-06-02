@@ -10,7 +10,8 @@
             <input type="hidden" name="page" value="0">
             <input type="hidden" name="size" th:value="${posts.size}">
             <div class="search-container">
-                <input type="text" name="searchText" th:value="${searchRequestDTO?.searchText ?: ''}" th:placeholder="#{post.search.placeholder}" class="search-input" autocomplete="off">                <button type="submit" class="btn btn-secondary" th:text="#{button.search}">검색</button>
+                <input type="text" name="searchText" th:value="${searchRequestDTO?.searchText ?: ''}" th:placeholder="#{post.search.placeholder}" class="search-input" autocomplete="off">
+                <button type="submit" class="btn btn-secondary" th:text="#{button.search}">검색</button>
                 <a th:href="@{/posts/new}" class="btn btn-primary" th:text="#{button.post.write}">글쓰기</a>
             </div>
         </form>
@@ -23,6 +24,8 @@
                     <th th:text="#{post.title}">제목</th>
                     <th th:text="#{post.author}">작성자</th>
                     <th th:text="#{post.time}">작성일</th>
+                    <th th:text="#{post.views}">조회수</th>
+                    <th th:text="#{post.likes}">좋아요</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,6 +34,8 @@
                     <td><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">제목</a></td>
                     <td th:text="${post.author}">작성자</td>
                     <td th:text="${#temporals.format(post.time, 'yyyy-MM-dd HH:mm')}">작성일</td>
+                    <td th:text="${post.viewCount == null ? 0 : post.viewCount}">0</td>
+                    <td th:text="${post.likeCount == null ? 0 : post.likeCount}">좋아요</td>
                 </tr>
             </tbody>
         </table>

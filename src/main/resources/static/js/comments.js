@@ -11,9 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // 열기
             if (replyForm) {
                 replyForm.style.display = 'block';
-                if (!textarea.value.startsWith('@' + commentAuthor + ' ')) {
-                    textarea.value = '@' + commentAuthor + ' ';
-                }
+                textarea.value = ''; // 항상 비우기
                 textarea.focus();
             }
             document.querySelectorAll('.edit-form').forEach(f => f.style.display = 'none');

@@ -37,9 +37,8 @@
             <form th:action="@{/posts/{postId}/comments/{parentId}/replies(postId=${post.id},parentId=${reply.id})}"
                   method="post" th:object="${replyAddRequest}">
                 <input type="hidden" name="parentId" th:value="${reply.id}">
-                <textarea name="content"
-                          th:placeholder="'@' + ${reply.userName} + ' ' + #{comment.reply.placeholder}"
-                          th:field="*{content}"></textarea>
+                <textarea th:field="*{content}"
+                          th:attr="placeholder=#{comment.reply.placeholder}"></textarea>
                 <div class="reply-actions">
                     <button type="button" class="btn-cancel-reply" th:attr="data-comment-id=${reply.id}">취소</button>
                     <button type="submit" class="btn-submit-reply">답글</button>

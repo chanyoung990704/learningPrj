@@ -7,6 +7,8 @@ import org.example.demo.domain.base.UserAuditableEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 @Entity
 @Getter @Setter
@@ -45,6 +47,13 @@ public class Post extends UserAuditableEntity {
     @Builder.Default
     private List<File> files = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<PostLike> likes = new HashSet<>();
+
+    @Column(nullable = false, columnDefinition = "bigint default 0")
+    @Builder.Default
+    private Long viewCount = 0L;
 
     /**
      * 연관 관계 메서드
@@ -114,5 +123,37 @@ public class Post extends UserAuditableEntity {
         }
         files.remove(attachment);
         attachment.setPost(null);
+    }
+
+    // 좋아요 수 조회
+    public int getLikeCount() {
+        return likes.size();
+    }
+
+    // 좋아요 추가
+    public void addLike(PostLike like) {
+        if (like == null) {
+            throw new IllegalArgumentException("Like cannot be null");
+        }
+        if (!likes.contains(like)) {
+            likes.add(like);
+            like.setPost(this);
+        }
+    }
+
+    // 좋아요 제거
+    public void removeLike(PostLike like) {
+        if (like != null && likes.contains(like)) {
+            likes.remove(like);
+            like.setPost(null);
+        }
+    }
+
+    public void increaseViewCount() {
+        this.viewCount++;
+    }
+
+    public Long getViewCount() {
+        return viewCount;
     }
 }

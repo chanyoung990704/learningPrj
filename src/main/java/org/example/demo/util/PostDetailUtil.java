@@ -39,7 +39,7 @@ public class PostDetailUtil {
                                                              CommentService commentService, Model model,
                                                              int commentPageNumber) {
         // 게시글 조회 (사용자, 카테고리, 파일 정보 포함)
-        Post post = postService.findPostWithUserAndCategoryAndFiles(postId);
+        Post post = postService.getPostDetailsAndIncreaseViews(postId);
 
         // 댓글 페이징 정보 설정 (생성일자 내림차순, ID 내림차순)
         Pageable pageable = PageRequest.of(commentPageNumber, DEFAULT_COMMENT_PAGE_SIZE,
@@ -53,8 +53,8 @@ public class PostDetailUtil {
                 .collect(Collectors.partitioningBy(file -> file.getFileType().startsWith("image")));
 
         // PostDetailResponseDTO 생성
-        PostDetailResponseDTO postResponseDTO = buildPostDetailResponse(post, commentPage, fileClassification);
-
+// PostDetailResponseDTO 생성
+        PostDetailResponseDTO postResponseDTO = buildPostDetailResponse(post, commentPage, fileClassification, postService);
         // 모델에 추가
         model.addAttribute("post", postResponseDTO);
 
@@ -83,9 +83,10 @@ public class PostDetailUtil {
      * @param fileClassification 분류된 파일 맵 (이미지/기타)
      * @return PostDetailResponseDTO 객체
      */
-    private static PostDetailResponseDTO buildPostDetailResponse(Post post, 
-                                                               Page<CommentResponseDTO> commentPage,
-                                                               Map<Boolean, List<File>> fileClassification) {
+    private static PostDetailResponseDTO buildPostDetailResponse(Post post,
+                                                                 Page<CommentResponseDTO> commentPage,
+                                                                 Map<Boolean, List<File>> fileClassification,
+                                                                 PostService postService) {
         return PostDetailResponseDTO.builder()
                 .id(post.getId())
                 .title(post.getTitle())
@@ -97,6 +98,7 @@ public class PostDetailUtil {
                 .comments(commentPage)
                 .imageAttachments(fileClassification.get(true))
                 .otherAttachments(fileClassification.get(false))
+                .likeCount(postService.getLikeCount(post.getId()))
                 .build();
     }
 }

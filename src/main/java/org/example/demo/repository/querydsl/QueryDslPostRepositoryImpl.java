@@ -39,7 +39,6 @@ public class QueryDslPostRepositoryImpl implements QueryDslPostRepository {
     @PersistenceContext
     private EntityManager em;
 
-    @Override
     public Page<Post> findPostsBySearchWithUserAndCategory(Pageable pageable, PostSearchRequestDTO requestDTO) {
         String searchText = requestDTO.getSearchText();
         if (searchText == null || searchText.trim().isEmpty()) {
@@ -94,7 +93,6 @@ public class QueryDslPostRepositoryImpl implements QueryDslPostRepository {
         return new PageImpl<>(posts, pageable, total.longValue());
     }
 
-    @Override
     public Page<PostListResponseDTO> findPostsBySearchWithUserAndCategoryV2(Pageable pageable, PostSearchRequestDTO requestDTO) {
         JPAQuery<PostListResponseDTO> query = queryFactory
                 .select(Projections.constructor(PostListResponseDTO.class,
@@ -146,7 +144,8 @@ public class QueryDslPostRepositoryImpl implements QueryDslPostRepository {
                             post.title,
                             post.user.name,
                             post.updatedAt,
-                            post.category.name
+                            post.category.name,
+                            post.viewCount
                     ))
                     .from(post)
                     .leftJoin(post.user)
@@ -160,8 +159,8 @@ public class QueryDslPostRepositoryImpl implements QueryDslPostRepository {
 
             return new PageImpl<>(posts, pageable, total);
         }
-
-        String sql = "SELECT p.id, p.title, u.name AS author, p.updated_at AS time, c.name AS category_name " +
+        // 수정된 부분: view_count 컬럼 추가
+        String sql = "SELECT p.id, p.title, u.name AS author, p.updated_at AS time, c.name AS category_name, p.view_count AS viewCount " +
                 "FROM posts p " +
                 "LEFT JOIN users u ON p.user_id = u.id " +
                 "LEFT JOIN post_categories c ON c.id = p.post_category_id " +
@@ -181,6 +180,7 @@ public class QueryDslPostRepositoryImpl implements QueryDslPostRepository {
                         .author((String) row[2])
                         .time(row[3] == null ? null : ((Timestamp) row[3]).toLocalDateTime())
                         .categoryName((String) row[4])
+                        .viewCount(row[5] == null ? 0L : ((Number) row[5]).longValue()) // viewCount 추가
                         .build()
                 )
                 .collect(Collectors.toList());
@@ -192,6 +192,4 @@ public class QueryDslPostRepositoryImpl implements QueryDslPostRepository {
 
         return new PageImpl<>(posts, pageable, total.longValue());
     }
-
-
 }

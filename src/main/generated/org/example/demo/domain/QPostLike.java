@@ -11,22 +11,18 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QComment is a Querydsl query type for Comment
+ * QPostLike is a Querydsl query type for PostLike
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QComment extends EntityPathBase<Comment> {
+public class QPostLike extends EntityPathBase<PostLike> {
 
-    private static final long serialVersionUID = -1566973966L;
+    private static final long serialVersionUID = 27634980L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QComment comment = new QComment("comment");
+    public static final QPostLike postLike = new QPostLike("postLike");
 
     public final org.example.demo.domain.base.QUserAuditableEntity _super = new org.example.demo.domain.base.QUserAuditableEntity(this);
-
-    public final ListPath<Comment, QComment> children = this.<Comment, QComment>createList("children", Comment.class, QComment.class, PathInits.DIRECT2);
-
-    public final StringPath content = createString("content");
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
@@ -35,10 +31,6 @@ public class QComment extends EntityPathBase<Comment> {
     public final StringPath createdBy = _super.createdBy;
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
-
-    public final SetPath<CommentLike, QCommentLike> likes = this.<CommentLike, QCommentLike>createSet("likes", CommentLike.class, QCommentLike.class, PathInits.DIRECT2);
-
-    public final QComment parent;
 
     public final QPost post;
 
@@ -50,25 +42,24 @@ public class QComment extends EntityPathBase<Comment> {
 
     public final QUser user;
 
-    public QComment(String variable) {
-        this(Comment.class, forVariable(variable), INITS);
+    public QPostLike(String variable) {
+        this(PostLike.class, forVariable(variable), INITS);
     }
 
-    public QComment(Path<? extends Comment> path) {
+    public QPostLike(Path<? extends PostLike> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QComment(PathMetadata metadata) {
+    public QPostLike(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QComment(PathMetadata metadata, PathInits inits) {
-        this(Comment.class, metadata, inits);
+    public QPostLike(PathMetadata metadata, PathInits inits) {
+        this(PostLike.class, metadata, inits);
     }
 
-    public QComment(Class<? extends Comment> type, PathMetadata metadata, PathInits inits) {
+    public QPostLike(Class<? extends PostLike> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.parent = inits.isInitialized("parent") ? new QComment(forProperty("parent"), inits.get("parent")) : null;
         this.post = inits.isInitialized("post") ? new QPost(forProperty("post"), inits.get("post")) : null;
         this.user = inits.isInitialized("user") ? new QUser(forProperty("user"), inits.get("user")) : null;
     }
