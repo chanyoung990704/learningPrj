@@ -49,3 +49,5 @@ out/
 ### etc.. ###
 **/test/**/Main.java
 
+**/resources/oauth2.properties
+
