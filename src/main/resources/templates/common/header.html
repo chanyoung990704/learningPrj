@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="head-common">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} ?: #{title.default}">My Awesome Site</title>
+
+    <!-- CSRF 토큰 메타 태그 추가 -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <!-- 공통 폰트 및 핵심 스타일시트 -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/components/nav.css}">
+
+    <!-- 다크모드 초기화 스크립트 (FOUC 방지) -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+
+            document.documentElement.setAttribute('data-bs-theme', theme);
+        })();
+    </script>
+
+    <!-- 공통 스크립트 (테마 변경 등) -->
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            /* 테마 변경 기능 */
+            const root = document.documentElement;
+            const themeBtn = document.getElementById('theme-toggle-btn');
+
+            if (themeBtn) {
+                const setTheme = (mode) => {
+                    console.log('Setting theme to:', mode);
+
+                    if (mode === 'dark') {
+                        root.setAttribute('data-bs-theme', 'dark');
+                        themeBtn.textContent = '☀️';
+                        themeBtn.setAttribute('title', '[[#{button.theme.light}]]');
+                        localStorage.setItem('theme', 'dark');
+                    } else {
+                        root.setAttribute('data-bs-theme', 'light');
+                        themeBtn.textContent = '🌙';
+                        themeBtn.setAttribute('title', '[[#{button.theme.dark}]]');
+                        localStorage.setItem('theme', 'light');
+                    }
+                };
+
+                themeBtn.addEventListener('click', function(e) {
+                    console.log('Theme button clicked');
+                    e.preventDefault();
+
+                    const currentTheme = root.getAttribute('data-bs-theme');
+                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                    setTheme(newTheme);
+                });
+
+                const savedTheme = localStorage.getItem('theme');
+                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const currentTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+                setTheme(currentTheme);
+
+                if (window.matchMedia) {
+                    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+                        if (!localStorage.getItem('theme')) {
+                            setTheme(e.matches ? 'dark' : 'light');
+                        }
+                    });
+                }
+            } else {
+                console.warn('Theme toggle button not found');
+            }
+
+            /* 로그아웃 기능 개선 */
+            const logoutForm = document.getElementById('logout-form');
+            if (logoutForm) {
+                logoutForm.addEventListener('submit', function(e) {
+                    // 로그아웃 확인 다이얼로그
+                    const confirmMessage = /*[[#{confirm.logout}]]*/ '정말 로그아웃하시겠습니까?';
+                    if (!confirm(confirmMessage)) {
+                        e.preventDefault();
+                        return false;
+                    }
+
+                    // 로그아웃 버튼 비활성화 (중복 클릭 방지)
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.textContent = /*[[#{button.logout.processing}]]*/ '로그아웃 중...';
+                    }
+
+                    // 로그아웃 시 로컬 스토리지 정리 (선택사항)
+                    try {
+                        // 테마 설정은 유지하고 사용자 관련 데이터만 정리
+                        localStorage.removeItem('user-preferences');
+                        sessionStorage.clear();
+                    } catch (error) {
+                        console.warn('Error clearing storage:', error);
+                    }
+
+                    // 폼 제출은 그대로 진행 (Spring Security가 처리)
+                    return true;
+                });
+            }
+        });
+    </script>
+</head>
+
+<body>
+
+<div class="nav-container" th:fragment="top-banner">
+    <nav class="nav-bar">
+        <div class="nav-logo">
+            <a th:href="@{/}" class="nav-link logo-text">
+                <span class="nav-icon">🌊</span> <span class="nav-text" th:text="#{site.name}">MySite</span>
+            </a>
+        </div>
+        <ul class="nav-menu">
+            <!-- 언어 선택기 -->
+            <li class="language-selector">
+                <button class="nav-link language-button" id="language-toggle">
+                    <span class="language-flag">🌐</span>
+                    <span class="language-text" th:text="#{language.current}">Language</span>
+                </button>
+                <ul class="language-dropdown">
+                    <li><a href="?lang=ko" class="nav-link" th:classappend="${#locale.language == 'ko'} ? 'active' : ''"><span class="language-flag">🇰🇷</span> 한국어</a></li>
+                    <li><a href="?lang=en" class="nav-link" th:classappend="${#locale.language == 'en'} ? 'active' : ''"><span class="language-flag">🇺🇸</span> English</a></li>
+                </ul>
+            </li>
+            <!-- 테마 변경 버튼 -->
+            <li><button id="theme-toggle-btn" class="nav-link" type="button" th:title="#{button.theme.toggle.title}">🌙</button></li>
+
+            <!-- 로그인/로그아웃 버튼 개선 -->
+            <li th:if="!${#authorization.expression('isAuthenticated()')}">
+                <a class="nav-link" th:href="@{/login}" th:text="#{button.login}">로그인</a>
+            </li>
+            <li th:if="${#authorization.expression('isAuthenticated()')}">
+                <form id="logout-form" th:action="@{/logout}" method="post" style="display:inline;">
+                    <!-- CSRF 토큰 (Thymeleaf가 자동으로 처리하지만 명시적으로 추가) -->
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <!-- 불필요한 logoutSuccessUrl 제거 (SecurityConfig에서 이미 설정됨) -->
+                    <button type="submit" class="nav-link logout-btn" th:text="#{button.logout}">로그아웃</button>
+                </form>
+            </li>
+
+            <!-- 기타 메뉴 -->
+            <li><a class="nav-link" th:href="@{/register}" th:text="#{button.user.register}">회원가입</a></li>
+            <!-- 게시판 드롭다운 메뉴 -->
+            <li class="nav-dropdown">
+                <a class="nav-link" href="#" th:text="#{button.board}">게시판</a>
+                <ul class="nav-dropdown-list">
+                    <li th:each="category : ${allCategories}">
+                        <a class="nav-link" th:href="@{/posts/{category}(category=${category.name})}" th:text="${category.name}"></a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+</body>
+</html>

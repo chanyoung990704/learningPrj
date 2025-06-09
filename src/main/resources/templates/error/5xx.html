@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{header :: head-common}"></head>
+<head th:replace="~{/common/header :: head-common}"></head>
 <body>
 <!-- 헤더 포함 -->
-<div th:replace="~{header :: top-banner}"></div>
+<div th:replace="~{/common/header :: top-banner}"></div>
 
 <div class="error-container">
     <div class="error-content server-error">
@@ -17,6 +17,6 @@
 </div>
 
 <!-- 푸터 포함 -->
-<div th:replace="~{footer :: footer}"></div>
+<div th:replace="~{/common/footer :: footer}"></div>
 </body>
 </html>

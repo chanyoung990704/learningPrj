@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.example.demo.domain.Post;
 import org.example.demo.dto.request.PostSearchRequestDTO;
 import org.example.demo.dto.response.PostListResponseDTO;
-import org.example.demo.repository.PostCategoryRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +21,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +32,6 @@ import static org.example.demo.domain.QPost.post;
 public class QueryDslPostRepositoryImpl implements QueryDslPostRepository {
 
     private final JPAQueryFactory queryFactory;
-    private final PostCategoryRepository postCategoryRepository;
 
     @PersistenceContext
     private EntityManager em;
@@ -75,7 +72,7 @@ public class QueryDslPostRepositoryImpl implements QueryDslPostRepository {
 
         if (!posts.isEmpty()) {
             List<Long> postIds = posts.stream().map(Post::getId).collect(java.util.stream.Collectors.toList());
-            // This query ensures that user and category are fetched for the posts loaded by the native query
+
             queryFactory
                     .selectFrom(post)
                     .leftJoin(post.user).fetchJoin()
@@ -192,4 +189,72 @@ public class QueryDslPostRepositoryImpl implements QueryDslPostRepository {
 
         return new PageImpl<>(posts, pageable, total.longValue());
     }
+
+    @Override
+    public Page<PostListResponseDTO> findPostsListBySearchWithUserAndCategoryV2(Pageable pageable, PostSearchRequestDTO requestDTO) {
+        String searchText = requestDTO.getSearchText();
+        if (searchText == null || searchText.trim().isEmpty()) {
+            List<PostListResponseDTO> posts = queryFactory
+                    .select(Projections.constructor(PostListResponseDTO.class,
+                            post.id,
+                            post.title,
+                            post.user.name,
+                            post.updatedAt,
+                            post.category.name,
+                            post.viewCount
+                    ))
+                    .from(post)
+                    .leftJoin(post.user)
+                    .leftJoin(post.category)
+                    .where(post.category.id.eq(requestDTO.getCategoryId()))
+                    .orderBy(post.updatedAt.desc(), post.id.desc())
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .fetch();
+
+            long total = queryFactory.select(post.count())
+                    .from(post)
+                    .where(post.category.id.eq(requestDTO.getCategoryId()))  // 카테고리 조건 추가
+                    .fetchOne();
+
+            return new PageImpl<>(posts, pageable, total);
+        }
+
+        String sql = "SELECT p.id, p.title, u.name AS author, p.updated_at AS time, c.name AS category_name, p.view_count AS viewCount " +
+                "FROM posts p " +
+                "LEFT JOIN users u ON p.user_id = u.id " +
+                "LEFT JOIN post_categories c ON c.id = p.post_category_id " +
+                "WHERE MATCH(p.title) AGAINST (? IN BOOLEAN MODE) " +
+                "AND c.id = ? " +
+                "ORDER BY p.updated_at DESC, p.id DESC LIMIT ? OFFSET ?";
+
+        List<Object[]> rows = em.createNativeQuery(sql)
+                .setParameter(1, searchText)
+                .setParameter(2, requestDTO.getCategoryId())
+                .setParameter(3, pageable.getPageSize())
+                .setParameter(4, pageable.getOffset())
+                .getResultList();
+
+        List<PostListResponseDTO> posts = rows.stream()
+                .map(row -> PostListResponseDTO.builder()
+                        .id(row[0] == null ? null : ((Number) row[0]).longValue())
+                        .title((String) row[1])
+                        .author((String) row[2])
+                        .time(row[3] == null ? null : ((Timestamp) row[3]).toLocalDateTime())
+                        .categoryName((String) row[4])
+                        .viewCount(row[5] == null ? 0L : ((Number) row[5]).longValue())
+                        .build())
+                .collect(Collectors.toList());
+
+        String countSql = "SELECT COUNT(*) FROM posts p " +
+                "JOIN post_categories c ON c.id = p.post_category_id " +
+                "WHERE MATCH(p.title) AGAINST (? IN BOOLEAN MODE) AND c.id = ?";
+        Number total = (Number) em.createNativeQuery(countSql)
+                .setParameter(1, searchText)
+                .setParameter(2, requestDTO.getCategoryId())
+                .getSingleResult();
+
+        return new PageImpl<>(posts, pageable, total.longValue());
+    }
+
 }

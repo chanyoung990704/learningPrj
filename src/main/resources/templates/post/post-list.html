@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{header :: head-common}"></head>
+<head>
+    <div th:replace="~{/common/header :: head-common}"></div>
+    <link rel="stylesheet" th:href="@{/css/components/post-common.css}">
+    <link rel="stylesheet" th:href="@{/css/components/post-list.css}">
+</head>
 <body>
-<div th:replace="~{header :: top-banner}"></div>
+<div th:replace="~{/common/header :: top-banner}"></div>
 <main class="main-content post-list-page">
     <h1 th:text="#{post.list}">게시글 목록</h1>
     <div class="post-controls">
-        <form th:action="@{/posts}" method="get" class="search-bar">
+        <form th:action="@{/posts/{category}(category=${categoryName})}" method="get" class="search-bar">
             <input type="hidden" name="page" value="0">
             <input type="hidden" name="size" th:value="${posts.size}">
             <div class="search-container">
@@ -31,7 +35,7 @@
             <tbody>
                 <tr th:each="post : ${posts.content}">
                     <td th:text="${post.categoryName}">카테고리</td>
-                    <td><a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}">제목</a></td>
+                    <td><a th:href="@{/posts/{category}/{id}(category=${post.categoryName}, id=${post.id})}" th:text="${post.title}">제목</a></td>
                     <td th:text="${post.author}">작성자</td>
                     <td th:text="${#temporals.format(post.time, 'yyyy-MM-dd HH:mm')}">작성일</td>
                     <td th:text="${post.viewCount == null ? 0 : post.viewCount}">0</td>
@@ -49,25 +53,25 @@
         </div>
         <ul>
             <li th:classappend="${posts.number == 0} ? 'disabled'">
-                <a th:href="@{/posts(page=0, size=${posts.size}, searchText=${searchRequestDTO?.searchText ?: ''})}">&laquo;</a>
+                <a th:href="@{/posts/{category}(category=${categoryName}, page=0, size=${posts.size}, searchText=${searchRequestDTO?.searchText ?: ''})}">&laquo;</a>
             </li>
             <li th:classappend="${posts.number == 0} ? 'disabled'">
-                <a th:href="@{/posts(page=${posts.number - 1}, size=${posts.size}, searchText=${searchRequestDTO?.searchText ?: ''})}">&lt;</a>
+                <a th:href="@{/posts/{category}(category=${categoryName}, page=${posts.number - 1}, size=${posts.size}, searchText=${searchRequestDTO?.searchText ?: ''})}">&lt;</a>
             </li>
             <li th:each="i : ${#numbers.sequence(posts.number - 2 > 0 ? posts.number - 2 : 0, posts.number + 2 < posts.totalPages ? posts.number + 2 : posts.totalPages - 1)}"
                 th:classappend="${posts.number == i} ? 'active'">
-                <a th:href="@{/posts(page=${i}, size=${posts.size}, searchText=${searchRequestDTO?.searchText ?: ''})}" th:text="${i + 1}"></a>
+                <a th:href="@{/posts/{category}(category=${categoryName}, page=${i}, size=${posts.size}, searchText=${searchRequestDTO?.searchText ?: ''})}" th:text="${i + 1}"></a>
             </li>
             <li th:classappend="${posts.number == posts.totalPages - 1} ? 'disabled'">
-                <a th:href="@{/posts(page=${posts.number + 1}, size=${posts.size}, searchText=${searchRequestDTO?.searchText ?: ''})}">&gt;</a>
+                <a th:href="@{/posts/{category}(category=${categoryName}, page=${posts.number + 1}, size=${posts.size}, searchText=${searchRequestDTO?.searchText ?: ''})}">&gt;</a>
             </li>
             <li th:classappend="${posts.number == posts.totalPages - 1} ? 'disabled'">
-                <a th:href="@{/posts(page=${posts.totalPages - 1}, size=${posts.size}, searchText=${searchRequestDTO?.searchText ?: ''})}">&raquo;</a>
+                <a th:href="@{/posts/{category}(category=${categoryName}, page=${posts.totalPages - 1}, size=${posts.size}, searchText=${searchRequestDTO?.searchText ?: ''})}">&raquo;</a>
             </li>
         </ul>
     </div>
 </main>
-<div th:replace="~{footer :: footer}"></div>
+<div th:replace="~{/common/footer :: footer}"></div>
 
 <script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', () => {
@@ -94,6 +98,6 @@
         window.location.href = url.toString();
     }
 </script>
-<div th:replace="~{header :: theme-script}"></div>
+
 </body>
 </html>

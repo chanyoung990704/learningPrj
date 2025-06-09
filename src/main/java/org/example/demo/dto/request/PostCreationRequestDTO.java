@@ -1,7 +1,6 @@
 package org.example.demo.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.example.demo.domain.Post;
 import org.example.demo.domain.PostCategory;
@@ -22,7 +21,7 @@ public class PostCreationRequestDTO {
     private String title;
     @NotEmpty
     private String content;
-    @NotNull
+
     private Long categoryId;
 
     @Builder.Default

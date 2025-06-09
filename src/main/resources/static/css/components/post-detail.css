@@ -1,0 +1,1077 @@
+/* ==========================================================================
+   게시글 상세 페이지 스타일 (main.css + post-common.css 확장)
+   ========================================================================== */
+
+/* 게시글 상세 페이지 전용 변수 */
+:root {
+    /* 게시글 컨텐츠 */
+    --post-max-width: 1000px;
+    --post-content-font-size: 1.125rem;
+    --post-content-line-height: 1.8;
+
+    /* 메타 정보 */
+    --post-meta-gap: 1.5rem;
+    --post-category-radius: 1rem;
+
+    /* 첨부파일 */
+    --attachment-grid-size: 200px;
+    --attachment-image-height: 150px;
+
+    /* 댓글 */
+    --comment-indent: 2rem;
+    --comment-border-width: 2px;
+    --comment-avatar-size: 40px;
+
+    /* 좋아요 버튼 */
+    --like-button-radius: 2rem;
+}
+
+/* ==========================================================================
+   게시글 메인 컨테이너
+   ========================================================================== */
+
+.post-detail-page {
+    max-width: var(--post-max-width);
+    margin: 0 auto;
+    padding: var(--spacing-xl) var(--spacing-lg);
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--card-border-radius);
+    box-shadow: var(--card-box-shadow);
+    color: var(--text-color);
+    position: relative;
+    animation: postFadeIn 0.5s ease-out forwards;
+}
+
+@keyframes postFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==========================================================================
+   게시글 헤더
+   ========================================================================== */
+
+.post-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--border-light);
+    position: relative;
+}
+
+.post-title {
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    font-weight: 700;
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.3;
+    color: var(--text-color);
+    word-break: keep-all;
+    overflow-wrap: break-word;
+}
+
+.post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--post-meta-gap);
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    align-items: center;
+}
+
+.post-meta-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) 0;
+}
+
+.post-meta-item .icon {
+    font-size: 1rem;
+    color: var(--primary-color);
+}
+
+.post-category {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--spacing-xs) var(--spacing-md);
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+    color: var(--text-light);
+    border-radius: var(--post-category-radius);
+    font-weight: 500;
+    font-size: var(--font-size-sm);
+    text-transform: capitalize;
+    box-shadow: var(--box-shadow-sm);
+}
+
+.post-author {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.post-date,
+.post-views {
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+/* ==========================================================================
+   게시글 본문
+   ========================================================================== */
+
+.post-content {
+    font-size: var(--post-content-font-size);
+    line-height: var(--post-content-line-height);
+    margin-bottom: 3rem;
+    color: var(--text-color);
+    word-break: break-word;
+}
+
+.post-content p {
+    margin-bottom: var(--spacing-lg);
+}
+
+.post-content img {
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    border-radius: var(--card-border-radius);
+    margin: var(--spacing-xl) 0;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition-base);
+    cursor: pointer;
+    display: block;
+
+    /* 적당한 크기 제한 추가 */
+    max-height: 600px;
+    object-fit: contain;
+
+    /* 중앙 정렬 */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.post-content img:hover {
+    transform: scale(1.02);
+    box-shadow: var(--box-shadow-lg);
+}
+
+/* 작은 이미지는 원본 크기 유지 */
+.post-content img[width] {
+    max-width: min(100%, attr(width px));
+}
+
+/* 반응형 이미지 */
+@media (max-width: 768px) {
+    .post-content img {
+        max-height: 400px;
+        margin: var(--spacing-lg) 0;
+    }
+}
+
+/* 본문 이미지 클릭시 확대 기능을 위한 추가 스타일 */
+.post-content img[data-lightbox] {
+    cursor: zoom-in;
+}
+
+.post-content img:active {
+    transform: scale(0.98);
+}
+
+/* 이미지 캡션 스타일 */
+.post-content figure {
+    margin: var(--spacing-xl) 0;
+    text-align: center;
+}
+
+.post-content figure img {
+    margin: 0 0 var(--spacing-sm) 0;
+}
+
+.post-content figure figcaption {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    font-style: italic;
+    padding: 0 var(--spacing-md);
+}
+
+
+/* ==========================================================================
+   첨부파일 섹션
+   ========================================================================== */
+
+/* 기존 .image-list, .image-item, .attached-image 관련 코드를 모두 제거하고 아래로 교체 */
+
+/* 첨부파일 - 모든 파일을 동일하게 표시 */
+.attachments-section .file-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: var(--card-bg);
+    border-radius: var(--card-border-radius);
+    overflow: hidden;
+}
+
+.attachments-section .file-list li {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--border-light);
+    transition: var(--transition-base);
+}
+
+.attachments-section .file-list li:last-child {
+    border-bottom: none;
+}
+
+.attachments-section .file-list li:hover {
+    background-color: var(--hover-bg-color);
+}
+
+@media (max-width: 576px) {
+    .attachments-section {
+        padding: var(--spacing-lg);
+        margin: var(--spacing-lg) 0;
+    }
+
+    .attachments-title {
+        font-size: var(--font-size-base);
+        margin-bottom: var(--spacing-md);
+    }
+
+    .file-download-link {
+        padding: var(--spacing-sm);
+        border-radius: var(--btn-border-radius);
+    }
+
+    .file-download-link:hover {
+        background-color: var(--hover-bg-color);
+    }
+}
+
+
+.file-download-link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition-base);
+    width: 100%;
+}
+
+.file-download-link:hover {
+    color: var(--primary-hover);
+    text-decoration: none;
+    transform: translateX(4px);
+}
+
+/* 파일 아이콘 (이미지든 일반파일이든 동일) */
+.file-icon {
+    font-size: 1.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+    color: white;
+    border-radius: var(--btn-border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* 파일 정보 */
+.file-info {
+    flex: 1;
+    min-width: 0; /* 텍스트 오버플로우 방지 */
+}
+
+.file-name {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    color: var(--text-color);
+    word-break: break-all;
+    line-height: 1.4;
+}
+
+.file-size {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+/* 파일 타입별 아이콘 색상 */
+.file-icon.image-file {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.file-icon.document-file {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.file-icon.archive-file {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.file-icon.video-file {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.file-icon.audio-file {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+
+/* ==========================================================================
+   좋아요 섹션
+   ========================================================================== */
+
+.like-section {
+    display: flex;
+    justify-content: center;
+    margin: 3rem 0;
+}
+
+.like-button {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-xl);
+    background: linear-gradient(135deg, var(--card-bg), var(--bg-secondary));
+    border: 2px solid var(--border-light);
+    border-radius: var(--like-button-radius);
+    font-size: 1.125rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.like-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(var(--primary-color-rgb), 0.1), transparent);
+    transition: var(--transition-slow);
+}
+
+.like-button:hover::before {
+    left: 100%;
+}
+
+.like-button:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.like-button.liked {
+    background: linear-gradient(135deg, var(--danger-color), #ff6b6b);
+    border-color: var(--danger-color);
+    color: white;
+}
+
+.like-icon {
+    font-size: 1.25rem;
+    transition: var(--transition-base);
+}
+
+.like-button:hover .like-icon {
+    transform: scale(1.2);
+}
+
+.like-count {
+    font-weight: 600;
+    min-width: 2ch;
+    text-align: center;
+}
+
+/* ==========================================================================
+   게시글 액션 버튼
+   ========================================================================== */
+
+.post-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 3rem 0;
+    padding: var(--spacing-xl) 0;
+    border-top: 2px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+    gap: var(--spacing-lg);
+}
+
+.post-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--btn-padding-y) var(--btn-padding-x);
+    border-radius: var(--btn-border-radius);
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: var(--transition-base);
+    border: 1px solid transparent;
+    min-width: 100px;
+    justify-content: center;
+}
+
+.btn-back {
+    background-color: var(--bg-secondary);
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+
+.btn-back:hover {
+    background-color: var(--hover-bg-color);
+    transform: translateX(-2px);
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+.author-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.btn-edit {
+    background: linear-gradient(135deg, var(--info-color), #3b82f6);
+    color: white;
+    border-color: var(--info-color);
+}
+
+.btn-edit:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--box-shadow);
+    text-decoration: none;
+    color: white;
+}
+
+.btn-delete {
+    background: linear-gradient(135deg, var(--danger-color), #ef4444);
+    color: white;
+    border-color: var(--danger-color);
+}
+
+.btn-delete:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--box-shadow);
+    text-decoration: none;
+    color: white;
+}
+
+/* ==========================================================================
+   댓글 섹션
+   ========================================================================== */
+
+.comments-section {
+    margin-top: 3rem;
+}
+
+.comments-section h3 {
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-xl);
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.comments-count {
+    font-size: 0.9rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: var(--post-category-radius);
+    font-weight: 500;
+    min-width: 2ch;
+    text-align: center;
+}
+
+.comment-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem 0;
+}
+
+.comment-item {
+    padding: var(--spacing-xl) 0;
+    border-bottom: 1px solid var(--border-light);
+    position: relative;
+    transition: var(--transition-base);
+}
+
+.comment-item:hover {
+    background-color: var(--hover-bg-color);
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+    border-radius: var(--card-border-radius);
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.comment-user {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.comment-avatar {
+    width: var(--comment-avatar-size);
+    height: var(--comment-avatar-size);
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.comment-author {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.comment-time {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.comment-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    opacity: 0;
+    transition: var(--transition-base);
+}
+
+.comment-item:hover .comment-actions {
+    opacity: 1;
+}
+
+.comment-actions button {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--btn-border-radius);
+    transition: var(--transition-base);
+}
+
+.comment-actions button:hover {
+    color: var(--primary-color);
+    background-color: var(--bg-tertiary);
+}
+
+.comment-content {
+    line-height: var(--post-content-line-height);
+    margin-bottom: var(--spacing-md);
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: var(--text-color);
+    padding: var(--spacing-sm) 0;
+}
+
+/* 대댓글 스타일 */
+.replies-container {
+    margin-top: var(--spacing-xl);
+    margin-left: var(--comment-indent);
+    padding-left: var(--spacing-lg);
+    border-left: var(--comment-border-width) solid var(--primary-color);
+    position: relative;
+}
+
+.replies-container::before {
+    content: '';
+    position: absolute;
+    left: calc(var(--comment-border-width) * -1);
+    top: 0;
+    bottom: 0;
+    width: var(--comment-border-width);
+    background: linear-gradient(to bottom, var(--primary-color), transparent);
+}
+
+.replies-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.replies-container .comment-item {
+    font-size: 0.95rem;
+}
+
+/* ==========================================================================
+   댓글 작성 폼
+   ========================================================================== */
+
+.comment-form {
+    margin-top: 2.5rem;
+    padding: var(--spacing-xl);
+    background: linear-gradient(135deg, var(--bg-secondary), var(--card-bg));
+    border-radius: var(--card-border-radius);
+    border: 1px solid var(--border-light);
+    position: relative;
+}
+
+.comment-form::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color), var(--info-color));
+    border-radius: var(--card-border-radius) var(--card-border-radius) 0 0;
+}
+
+.comment-form h4 {
+    margin-top: 0;
+    margin-bottom: var(--spacing-lg);
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.comment-form h4::before {
+    content: '💬';
+    font-size: 1.2em;
+}
+
+.comment-form textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: var(--spacing-lg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--input-border-radius);
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    resize: vertical;
+    margin-bottom: var(--spacing-lg);
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    transition: var(--transition-base);
+}
+
+.comment-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: var(--input-focus-shadow);
+    background-color: var(--input-bg);
+}
+
+.comment-form textarea::placeholder {
+    color: var(--text-secondary);
+}
+
+.comment-submit-btn {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+    color: white;
+    border: none;
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--btn-border-radius);
+    font-weight: 500;
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    transition: var(--transition-base);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.comment-submit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--box-shadow);
+}
+
+.comment-submit-btn:active {
+    transform: translateY(0);
+}
+
+/* 로그인 안내 */
+.login-prompt {
+    text-align: center;
+    padding: var(--spacing-xl);
+    background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+    border-radius: var(--card-border-radius);
+    margin-top: 2rem;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+}
+
+.login-prompt p {
+    margin-bottom: var(--spacing-md);
+    font-size: 1.1rem;
+}
+
+.login-prompt a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--btn-border-radius);
+    transition: var(--transition-base);
+}
+
+.login-prompt a:hover {
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   반응형 디자인
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .post-detail-page {
+        padding: var(--spacing-lg) var(--spacing-md);
+        margin: var(--spacing-md);
+    }
+
+    .post-title {
+        font-size: 1.75rem;
+        margin-bottom: var(--spacing-md);
+    }
+
+    .post-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+
+    .post-content {
+        font-size: var(--font-size-base);
+    }
+
+    .post-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--spacing-md);
+    }
+
+    .author-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .author-actions .btn {
+        width: 100%;
+    }
+
+    .image-list {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: var(--spacing-md);
+    }
+
+    .replies-container {
+        margin-left: var(--spacing-md);
+        padding-left: var(--spacing-sm);
+    }
+
+    .comment-form {
+        padding: var(--spacing-lg);
+    }
+
+    .attachments-section {
+        padding: var(--spacing-lg);
+    }
+}
+
+/* ==========================================================================
+   모바일에서 첨부파일 목록 개선 (기존 코드 수정)
+   ========================================================================== */
+
+@media (max-width: 480px) {
+    .post-detail-page {
+        padding: var(--spacing-md) var(--spacing-sm);
+    }
+
+    .post-title {
+        font-size: 1.5rem;
+    }
+
+    .like-button {
+        padding: var(--spacing-sm) var(--spacing-lg);
+        font-size: var(--font-size-base);
+    }
+
+    .comment-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+    }
+
+    /* ✨ 추가: 모바일 첨부파일 최적화 */
+    .attachments-section .file-list li {
+        padding: var(--spacing-md);
+    }
+
+    .file-download-link {
+        gap: var(--spacing-sm);
+    }
+
+    .file-icon {
+        width: 2rem;
+        height: 2rem;
+        font-size: 1.2rem;
+    }
+
+    .file-name {
+        font-size: var(--font-size-sm);
+    }
+
+    .file-size {
+        font-size: 0.75rem;
+    }
+}
+
+/* ==========================================================================
+   첨부파일 섹션 스타일 완전 개선 (기존 코드 교체)
+   ========================================================================== */
+
+.attachments-section {
+    margin: 2.5rem 0;
+    padding: var(--spacing-xl);
+    background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+    border-radius: var(--card-border-radius);
+    border: 1px solid var(--border-light);
+    position: relative;
+}
+
+.attachments-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color), var(--info-color));
+    border-radius: var(--card-border-radius) var(--card-border-radius) 0 0;
+}
+
+.attachments-title {
+    font-size: 1.125rem;
+    margin-bottom: var(--spacing-lg);
+    color: var(--text-color);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+/* HTML의 이모지 아이콘과 연동 */
+.attachments-title::before {
+    content: '📎';
+    font-size: 1.2em;
+}
+
+/* 첨부파일 목록 - HTML 구조와 완전 매칭 */
+.attachments-section .file-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: var(--card-bg);
+    border-radius: var(--card-border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow-sm);
+}
+
+.attachments-section .file-list li {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--border-light);
+    transition: var(--transition-base);
+}
+
+.attachments-section .file-list li:last-child {
+    border-bottom: none;
+}
+
+.attachments-section .file-list li:hover {
+    background-color: var(--hover-bg-color);
+    transform: translateX(2px);
+}
+
+.file-download-link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition-base);
+    width: 100%;
+}
+
+.file-download-link:hover {
+    color: var(--primary-hover);
+    text-decoration: none;
+    transform: translateX(4px);
+}
+
+/* 파일 아이콘 - HTML의 CSS 클래스와 매칭 */
+.file-icon {
+    font-size: 1.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+    color: white;
+    border-radius: var(--btn-border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+}
+
+/* HTML에서 사용하는 이모지 아이콘 스타일링 */
+.file-icon span {
+    font-size: 1.2rem;
+    filter: none;
+}
+
+/* 파일 타입별 배경색 (HTML의 클래스명과 연동) */
+.file-icon.image-file {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.file-icon.document-file {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.file-icon.archive-file {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.file-icon.video-file {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.file-icon.audio-file {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+/* 파일 정보 */
+.file-info {
+    flex: 1;
+    min-width: 0; /* 텍스트 오버플로우 방지 */
+}
+
+.file-name {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    color: var(--text-color);
+    word-break: break-all;
+    line-height: 1.4;
+    font-size: var(--font-size-base);
+}
+
+.file-size {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+
+/* ==========================================================================
+   다크모드 완전 지원
+   ========================================================================== */
+
+[data-bs-theme="dark"] .post-detail-page {
+    background-color: var(--card-bg);
+    border-color: var(--card-border-color);
+}
+
+[data-bs-theme="dark"] .post-title,
+[data-bs-theme="dark"] .post-content,
+[data-bs-theme="dark"] .comment-content {
+    color: var(--text-color);
+}
+
+[data-bs-theme="dark"] .attachments-section,
+[data-bs-theme="dark"] .comment-form,
+[data-bs-theme="dark"] .login-prompt {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
+[data-bs-theme="dark"] .comment-form textarea {
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border-color: var(--input-border);
+}
+
+[data-bs-theme="dark"] .comment-form textarea:focus {
+    border-color: var(--primary-color);
+    background-color: var(--input-bg);
+}
+
+/* ==========================================================================
+   접근성 향상
+   ========================================================================== */
+
+/* 포커스 관리 */
+.like-button:focus,
+.btn:focus,
+.comment-submit-btn:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* 고대비 모드 */
+@media (prefers-contrast: more) {
+    .post-detail-page {
+        border-width: 2px;
+    }
+
+    .comment-item {
+        border-bottom-width: 2px;
+    }
+}
+
+/* 모션 감소 설정 */
+@media (prefers-reduced-motion: reduce) {
+    .post-detail-page,
+    .like-button,
+    .btn,
+    .comment-item,
+    .attached-image {
+        animation: none;
+        transition: none;
+        transform: none;
+    }
+}
+
+/* 인쇄 최적화 */
+@media print {
+    .post-actions,
+    .like-section,
+    .comments-section {
+        display: none;
+    }
+
+    .post-detail-page {
+        box-shadow: none;
+        border: 1px solid #000;
+    }
+}

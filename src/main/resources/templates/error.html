@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{header :: head-common}"></head>
+<head th:replace="~{/common/header :: head-common}"></head>
 <body>
 <!-- 헤더 포함 -->
-<div th:replace="~{header :: top-banner}"></div>
+<div th:replace="~{/common/header :: top-banner}"></div>
 
 <main class="main-content error-page">
     <section class="error-container">
@@ -12,23 +12,29 @@
 
         <!-- 에러 상세 정보 -->
         <div class="error-details">
-            <p><strong th:text="#{error.details.status.label}">Status:</strong> <span th:text="${status} ?: #{error.details.status.default}">Status</span></p>
-            <p><strong th:text="#{error.details.error.label}">Error:</strong> <span th:text="${error} ?: #{error.details.error.default}">Error</span></p>
-            <p><strong th:text="#{error.details.message.label}">Message:</strong> <span th:text="${message} ?: #{error.details.message.default}">Message</span></p>
+            <p>
+                <strong th:text="#{error.details.status.label}">Status:</strong>
+                <span th:text="${status} ?: #{error.details.status.default}">Status</span>
+            </p>
+            <p>
+                <strong th:text="#{error.details.error.label}">Error:</strong>
+                <span th:text="${error} ?: #{error.details.error.default}">Error</span>
+            </p>
+            <p>
+                <strong th:text="#{error.details.message.label}">Message:</strong>
+                <span th:text="${message} ?: #{error.details.message.default}">Message</span>
+            </p>
         </div>
 
         <!-- 홈으로 돌아가기 버튼 -->
         <div class="error-actions">
-            <a th:href="@{/}" class="btn btn-primary" th:text="#{button.home}">홈으로 돌아가기</a>
+            <a th:href="@{/'/'}" class="btn btn-primary" th:text="#{button.home}">홈으로 돌아가기</a>
             <a href="#" onclick="history.back()" class="btn btn-secondary" th:text="#{button.back}">이전 페이지로</a>
         </div>
     </section>
 </main>
 
 <!-- 푸터 포함 -->
-<div th:replace="~{footer :: footer}"></div>
-
-<!-- 테마 스크립트 -->
-<div th:replace="~{header :: theme-script}"></div>
+<div th:replace="~{/common/footer :: footer}"></div>
 </body>
 </html>

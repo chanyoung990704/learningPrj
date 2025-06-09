@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{header :: head-common}"></head>
+<head>
+    <div th:replace="~{/common/header :: head-common}"></div>
+    <link rel="stylesheet" th:href="@{/css/components/post-common.css}">
+    <link rel="stylesheet" th:href="@{/css/components/post-form.css}">
+</head>
 <body>
 <!-- 헤더 포함 -->
-<div th:replace="~{header :: top-banner}"></div>
+<div th:replace="~{/common/header :: top-banner}"></div>
 
 <main class="main-content post-form-page">
     <h1 th:text="#{post.create}">글쓰기</h1>
-    <form th:action="@{/posts}" th:object="${postCreationRequestDTO}" method="post" class="styled-form" enctype="multipart/form-data">
+    <form th:action="@{/posts}" th:object="${postRequestDTO}" method="post" class="styled-form" enctype="multipart/form-data">
         <div class="form-group">
             <label for="title" th:text="#{post.title}">제목</label>
             <input type="text" id="title" th:field="*{title}" th:placeholder="#{post.title.placeholder}" />
@@ -17,7 +21,7 @@
             <label for="parent" th:text="#{post.category}">카테고리</label>
             <select id="parent" th:field="*{categoryId}" required>
                 <option value="" disabled selected th:text="#{option.select}">선택하세요</option>
-                <option th:each="category : ${categories}" th:value="${category.getId()}" th:text="${category.name}"></option>
+                <option th:each="category : ${allCategories}" th:value="${category.getId()}" th:text="${category.name}"></option>
             </select>
             <p class="error-message" th:if="${#fields.hasErrors('categoryId')}" th:errors="*{categoryId}"></p>
         </div>
@@ -53,7 +57,7 @@
 </main>
 
 <!-- 푸터 포함 -->
-<div th:replace="~{footer :: footer}"></div>
+<footer th:replace="~{/common/footer :: footer}"></footer>
 
 <!-- Localized units for JavaScript -->
 <script th:inline="javascript">
@@ -150,7 +154,5 @@
     });
 </script>
 
-<!-- 테마 스크립트 -->
-<div th:replace="~{header :: theme-script}"></div>
 </body>
 </html>

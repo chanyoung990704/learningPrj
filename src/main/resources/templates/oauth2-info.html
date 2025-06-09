@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{header :: head-common}"></head>
+<head th:replace="~{/common/header :: head-common}">
+    <link rel="stylesheet" th:href="@{/css/components/oauth2-info.css}">
+</head>
 <body>
 <!-- 헤더 포함 -->
-<div th:replace="~{header :: top-banner}"></div>
+<div th:replace="~{/common/header :: top-banner}"></div>
 
 <main class="main-content">
     <section class="content-section">
         <h2 class="section-title">OAuth2 사용자 정보</h2>
-        
+
         <div class="info-container" th:if="${name != null}">
             <div class="info-card">
                 <div class="user-info">
@@ -28,7 +30,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="info-container" th:if="${attributes != null}">
             <div class="info-card">
                 <div class="attributes-info">
@@ -36,23 +38,23 @@
                     <div class="attributes-list">
                         <table class="attributes-table">
                             <thead>
-                                <tr>
-                                    <th>키</th>
-                                    <th>값</th>
-                                </tr>
+                            <tr>
+                                <th>키</th>
+                                <th>값</th>
+                            </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="attr : ${attributes}">
-                                    <td th:text="${attr.key}">키</td>
-                                    <td th:text="${attr.value}">값</td>
-                                </tr>
+                            <tr th:each="attr : ${attributes}">
+                                <td th:text="${attr.key}">키</td>
+                                <td th:text="${attr.value}">값</td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <div class="not-logged-in" th:if="${name == null and attributes == null}">
             <p>OAuth2로 로그인되어 있지 않습니다.</p>
             <a th:href="@{/login}" class="btn btn-primary">로그인 페이지로 이동</a>
@@ -61,64 +63,6 @@
 </main>
 
 <!-- 푸터 포함 -->
-<div th:replace="~{footer :: footer}"></div>
-
-<!-- 테마 스크립트 -->
-<div th:replace="~{header :: theme-script}"></div>
-
-<style>
-    .info-container {
-        margin: 2rem 0;
-    }
-    
-    .info-card {
-        background-color: var(--card-bg);
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        padding: 1.5rem;
-    }
-    
-    .user-info h3, .attributes-info h3 {
-        margin-top: 0;
-        margin-bottom: 1rem;
-        color: var(--primary-color);
-        font-size: 1.3rem;
-    }
-    
-    .info-item {
-        margin-bottom: 1rem;
-        display: flex;
-    }
-    
-    .info-label {
-        font-weight: bold;
-        width: 120px;
-    }
-    
-    .attributes-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    
-    .attributes-table th, .attributes-table td {
-        text-align: left;
-        padding: 0.7rem;
-        border-bottom: 1px solid var(--border-color);
-    }
-    
-    .attributes-table th {
-        background-color: var(--table-header-bg);
-    }
-    
-    .not-logged-in {
-        text-align: center;
-        margin: 3rem 0;
-    }
-    
-    .not-logged-in p {
-        margin-bottom: 1.5rem;
-        font-size: 1.1rem;
-    }
-</style>
+<div th:replace="~{/common/footer :: footer}"></div>
 </body>
 </html>

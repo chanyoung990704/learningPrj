@@ -1,0 +1,18 @@
+<footer class="footer" th:fragment="footer">
+    <div class="container">
+        <div class="card">
+            <div class="card-body text-center">
+                <p class="mb-3" th:text="#{footer.copyright} + ' ' + ${T(java.time.Year).now().value}">
+                    2024 Our Site
+                </p>
+                <div class="footer-links">
+                    <a href="#" th:text="#{footer.terms}">이용약관</a>
+                    <span class="mx-2">|</span>
+                    <a href="#" th:text="#{footer.privacy}">개인정보처리방침</a>
+                    <span class="mx-2">|</span>
+                    <a href="#" th:text="#{footer.contact}">문의하기</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

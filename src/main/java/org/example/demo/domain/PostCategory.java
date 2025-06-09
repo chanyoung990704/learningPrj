@@ -14,7 +14,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Table(name = "post_categories")
-@EqualsAndHashCode(callSuper = false)
 @Slf4j
 public class PostCategory extends UserAuditableEntity {
     @Id

@@ -1,7 +1,6 @@
 package org.example.demo.dto.response;
 
 import lombok.*;
-import org.example.demo.domain.PostCategory;
 
 import java.time.LocalDateTime;
 

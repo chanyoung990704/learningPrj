@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.example.demo.domain.File;
-import org.example.demo.domain.PostCategory;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ public class PostEditResponseDTO {
     @NotEmpty
     String content;
     @NotNull
-    PostCategory category;
+    Long categoryId;
 
     @Builder.Default
     List<File> attachments = new ArrayList<>(); // 기존에 업로드된 파일 리스트

@@ -57,9 +57,10 @@ public class PostCategoryServiceImpl implements PostCategoryService {
     }
 
     @Override
-    public PostCategory findByName(String name) {
-        return postCategoryRepository.findByName(name).orElseThrow(() ->
-                new RuntimeException("Postcategory with name " + name + " not found"));
+    public Long findByName(String name) {
+        return postCategoryRepository.findByName(name).orElseThrow(
+                () -> new RuntimeException("PostCategory with name " + name + " not found")
+        ).getId();
     }
 
     @Override

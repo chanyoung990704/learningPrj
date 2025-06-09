@@ -1,0 +1,15 @@
+.post-form-page .styled-form {
+    background: #f8fafc;
+    padding: 2em 1.5em;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(30,60,90,0.04);
+}
+
+.post-form-page .form-group label {
+    font-weight: 600;
+    color: #1976d2;
+}
+
+.post-form-page .form-actions {
+    justify-content: flex-end;
+}

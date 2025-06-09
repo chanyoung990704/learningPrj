@@ -2,7 +2,6 @@ package org.example.demo.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.demo.domain.User;
-import org.example.demo.domain.Role;
 import org.example.demo.repository.UserRepository;
 import org.example.demo.security.CustomUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -16,7 +16,7 @@ public class GlobalModelAttributes {
     private final PostCategoryService postCategoryService;
 
     @Cacheable("categoriesCache")
-    @ModelAttribute("categories")
+    @ModelAttribute("allCategories")
     public List<PostCategory> getCategories() {
         return postCategoryService.findAll();
     }

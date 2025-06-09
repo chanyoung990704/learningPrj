@@ -42,6 +42,11 @@ public class AuthController {
         return "login";
     }
 
+    @GetMapping("/")
+    public String home() {
+        return "index";
+    }
+
     @GetMapping("/register")
     public String registerForm(@ModelAttribute("registerDTO") UserRegisterRequestDTO requestDTO) {
         return "register";

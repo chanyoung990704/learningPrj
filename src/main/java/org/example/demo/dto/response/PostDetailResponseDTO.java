@@ -25,6 +25,9 @@ public class PostDetailResponseDTO {
     String content;     // 본문 내용
     @Builder.Default
     Long likeCount = 0L; // 좋아요 수
+    @Builder.Default
+    Long viewCount = 0L; // 보기 수
+
 
     @Builder.Default
     Page<CommentResponseDTO> comments = new PageImpl<>(new ArrayList<>()); // 댓글

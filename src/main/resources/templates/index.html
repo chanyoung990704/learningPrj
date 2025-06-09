@@ -1,26 +1,36 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{header :: head-common}"></head>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<!--
+    1. 공통 헤더 프래그먼트를 불러옵니다.
+    이 한 줄로 메타 태그, 공통 CSS, 공통 스크립트(테마 변경 등)가 모두 포함됩니다.
+-->
+<head th:replace="~{/common/header :: head-common}"></head>
+
 <body>
 
-<!-- 헤더 포함 (수정된 구문) -->
-<div th:replace="~{header :: top-banner}"></div>
+<!-- 2. 상단 네비게이션 바 프래그먼트를 불러옵니다. -->
+<header th:replace="~{/common/header :: top-banner}"></header>
 
-<!-- 메인 콘텐츠 -->
-<div class="main-content home-hero">
-  <h1 class="hero-title" th:text="#{index.hero.title}">우리 사이트에 오신 것을 환영합니다!</h1>
-  <p class="hero-sub" th:text="#{index.hero.subtitle}">최신 트렌드의 직관적인 커뮤니티, 지금 바로 시작해보세요.</p>
-  <div class="hero-actions">
-    <a th:href="@{/register}" class="btn btn-primary btn-lg" th:text="#{button.user.register}">회원가입</a>
-    <a th:href="@{/posts}" class="btn btn-secondary btn-lg" th:text="#{index.hero.button.exploreBoard}">게시판 둘러보기</a>
+<!-- 메인 콘텐츠: Hero 섹션 -->
+<main class="main-content home-hero">
+  <div class="hero-content">
+    <h1 class="hero-title" th:text="#{index.hero.title}">우리 사이트에 오신 것을 환영합니다!</h1>
+    <p class="hero-subtitle" th:text="#{index.hero.subtitle}">최신 트렌드의 직관적인 커뮤니티, 지금 바로 시작해보세요.</p>
+    <div class="hero-actions">
+      <a th:href="@{/register}" class="btn btn-primary btn-lg" th:text="#{button.user.register}">회원가입</a>
+      <a th:href="@{/posts}" class="btn btn-secondary btn-lg" th:text="#{index.hero.button.exploreBoard}">게시판 둘러보기</a>
+    </div>
   </div>
-</div>
+</main>
 
-<!-- 푸터 포함 (수정된 구문) -->
-<div th:replace="~{footer :: footer}"></div>
+<!-- 푸터 포함 -->
+<footer th:replace="~{/common/footer :: footer}"></footer>
 
-<!-- 테마 스크립트 -->
-<div th:replace="~{header :: theme-script}"></div>
+<!--
+    3. body 하단의 스크립트 호출은 제거합니다.
+    모든 공통 스크립트는 이제 head-common 프래그먼트를 통해 <head>에서 관리됩니다.
+-->
 
 </body>
 </html>

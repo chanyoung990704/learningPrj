@@ -1,7 +1,6 @@
 package org.example.demo.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.demo.domain.PostCategory;
 import org.example.demo.dto.request.PostCategoryRequestDTO;
 import org.example.demo.service.PostCategoryService;
 import org.springframework.cache.annotation.CacheEvict;
@@ -13,8 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/postcategories")

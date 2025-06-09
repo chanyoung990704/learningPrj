@@ -53,10 +53,11 @@ public class PostDetailUtil {
                 .collect(Collectors.partitioningBy(file -> file.getFileType().startsWith("image")));
 
         // PostDetailResponseDTO 생성
-// PostDetailResponseDTO 생성
         PostDetailResponseDTO postResponseDTO = buildPostDetailResponse(post, commentPage, fileClassification, postService);
         // 모델에 추가
         model.addAttribute("post", postResponseDTO);
+        // 전체 댓글 추가
+        model.addAttribute("commentCount", countAllComments(commentPage));
 
         return postResponseDTO;
     }
@@ -99,6 +100,30 @@ public class PostDetailUtil {
                 .imageAttachments(fileClassification.get(true))
                 .otherAttachments(fileClassification.get(false))
                 .likeCount(postService.getLikeCount(post.getId()))
+                .viewCount(post.getViewCount())
                 .build();
     }
+
+    private static long countAllComments(Page<CommentResponseDTO> comments) {
+        return countAllComments(comments.getContent());
+    }
+
+    private static long countAllComments(List<CommentResponseDTO> comments) {
+        long count = 0;
+        for (CommentResponseDTO c : comments) {
+            count += 1 + countRepliesRecursive(c);
+        }
+        return count;
+    }
+
+    private static long countRepliesRecursive(CommentResponseDTO comment) {
+        if (comment.getReplies() == null || comment.getReplies().isEmpty())
+            return 0;
+        long count = 0;
+        for (CommentResponseDTO reply : comment.getReplies()) {
+            count += 1 + countRepliesRecursive(reply);
+        }
+        return count;
+    }
+
 }

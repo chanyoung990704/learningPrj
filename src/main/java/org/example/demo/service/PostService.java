@@ -1,6 +1,7 @@
 package org.example.demo.service;
 
 import org.example.demo.domain.Post;
+import org.example.demo.domain.PostCategory;
 import org.example.demo.dto.request.PostCreationRequestDTO;
 import org.example.demo.dto.request.PostSearchRequestDTO;
 import org.example.demo.dto.response.PostEditResponseDTO;
@@ -8,8 +9,6 @@ import org.example.demo.dto.response.PostListResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List; // List import는 현재 사용되지 않지만, 향후 확장성을 위해 남겨둘 수 있습니다.
 
 /**
  * 게시글 관련 비즈니스 로직을 처리하는 서비스 인터페이스
@@ -77,10 +76,13 @@ public interface PostService extends BaseService<Post> {
      * @param responseDTO 수정할 게시글 정보 DTO (PostEditResponseDTO 네이밍은 PostUpdateRequestDTO가 더 적절해 보입니다)
      * @return 수정된 게시글의 ID
      */
-    Long update(PostEditResponseDTO responseDTO); // DTO 네이밍 컨벤션 고려
+
 
 
     // --- 게시글 좋아요 관련 기능 ---
+
+    @Transactional // 쓰기 작업
+    Long update(PostEditResponseDTO responseDTO, PostCategory category);
 
     /**
      * 특정 게시글에 대한 사용자의 좋아요 상태를 토글합니다. (좋아요/좋아요 취소)
@@ -99,4 +101,6 @@ public interface PostService extends BaseService<Post> {
      */
     long getLikeCount(Long postId);
 
+    // 게시글 카테고리
+    String findCategoryName(Long id);
 }

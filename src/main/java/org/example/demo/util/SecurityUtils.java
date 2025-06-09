@@ -2,7 +2,6 @@ package org.example.demo.util;
 
 import org.example.demo.oauth2.CustomOAuth2User;
 import org.example.demo.security.CustomUserDetails;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 public class SecurityUtils {

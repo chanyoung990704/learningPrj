@@ -1,0 +1,72 @@
+/* Footer 스타일 */
+.footer {
+    background-color: #f8f9fa;
+    padding: 2rem 0;
+    margin-top: 3rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.footer .card {
+    border: none;
+    background-color: transparent;
+}
+
+.footer .card-body {
+    padding: 1.5rem;
+}
+
+.footer p {
+    margin-bottom: 1rem;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.footer a {
+    color: #6c757d;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer a:hover {
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* 다크 모드 지원 */
+[data-bs-theme="dark"] .footer {
+    background-color: #212529;
+    border-top-color: #343a40;
+}
+
+[data-bs-theme="dark"] .footer p,
+[data-bs-theme="dark"] .footer a {
+    color: #adb5bd;
+}
+
+[data-bs-theme="dark"] .footer a:hover {
+    color: #0d6efd;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .footer .card-body {
+        padding: 1rem;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .footer-links span {
+        display: none;
+    }
+}

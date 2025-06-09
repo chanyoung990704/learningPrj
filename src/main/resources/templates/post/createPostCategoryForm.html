@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{header :: head-common}"></head>
+<head th:replace="~{/common/header :: head-common}">
+    <link rel="stylesheet" th:href="@{/css/components/category-form.css}">
+</head>
 <body>
-<div th:replace="~{header :: top-banner}"></div>
+<div th:replace="~{/common/header :: top-banner}"></div>
 <main class="main-content category-form-page">
     <h1 th:text="#{title.category.register}">카테고리 등록</h1>
     <form th:action="@{/postcategories/new}" th:object="${requestDTO}" method="post" class="styled-form">
@@ -23,6 +25,6 @@
         </div>
     </form>
 </main>
-<div th:replace="~{footer :: footer}"></div>
+<div th:replace="~{/common/footer :: footer}"></div>
 </body>
 </html>

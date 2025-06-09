@@ -1,0 +1,439 @@
+/* ==========================================================================
+   로그인 페이지 스타일 (main.css + post-common.css 확장)
+   ========================================================================== */
+
+/* 로그인 페이지 전용 변수 (기존 변수 시스템 확장) */
+:root {
+    /* 소셜 로그인 색상 */
+    --google-bg: #ffffff;
+    --google-text: #5f6368;
+    --google-border: #dadce0;
+    --google-hover: #f8f9fa;
+
+    --kakao-bg: #FEE500;
+    --kakao-text: #3c1e1e;
+    --kakao-hover: #f0d700;
+
+    --naver-bg: #03C75A;
+    --naver-text: #ffffff;
+    --naver-hover: #02b84e;
+
+    /* 로그인 폼 전용 */
+    --form-max-width: 500px;
+    --form-border-radius: 12px;
+    --social-icon-size: 24px;
+}
+
+/* 다크모드 소셜 로그인 색상 조정 */
+[data-bs-theme="dark"] {
+    --google-bg: var(--bg-secondary);
+    --google-text: var(--text-color);
+    --google-border: var(--border-color);
+    --google-hover: var(--hover-bg-color);
+
+    --kakao-bg: #FEE500;
+    --kakao-text: #3c1e1e;
+    --kakao-hover: #f0d700;
+
+    --naver-bg: #03C75A;
+    --naver-text: #ffffff;
+    --naver-hover: #02b84e;
+}
+
+/* ==========================================================================
+   로그인 페이지 레이아웃 (기존 post-common.css 확장)
+   ========================================================================== */
+
+/* 로그인 메인 컨테이너 - 중앙 정렬 */
+.main-content.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 180px); /* 헤더/푸터 고려 */
+    padding: var(--spacing-xl) var(--spacing-md);
+    background-color: var(--bg-color);
+}
+
+/* 로그인 폼 박스 */
+.login-form-container {
+    width: 100%;
+    max-width: var(--form-max-width);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--form-border-radius);
+    box-shadow: var(--box-shadow-lg);
+    padding: 2.5rem;
+    transition: var(--transition-base);
+    animation: loginFadeIn 0.4s ease-out forwards;
+}
+
+/* 로딩 애니메이션 */
+@keyframes loginFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 로그인 제목 */
+.login-form-container .form-title {
+    text-align: center;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    font-weight: 700;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+/* ==========================================================================
+   폼 요소 스타일 (기존 스타일 확장)
+   ========================================================================== */
+
+/* 입력 필드 향상 */
+.login-form-container .form-control,
+.login-form-container .input {
+    padding: 0.875rem 1rem;
+    font-size: var(--font-size-base);
+    border-radius: 8px;
+    transition: var(--transition-base);
+}
+
+.login-form-container .form-control:focus,
+.login-form-container .input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    transform: translateY(-1px);
+}
+
+/* 폼 액션 버튼 향상 */
+.login-form-container .form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin-top: 2rem;
+    padding-top: 0; /* 기존 border-top 제거 */
+    border-top: none;
+}
+
+.login-form-container .btn {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    border-radius: 8px;
+    transition: var(--transition-base);
+}
+
+.login-form-container .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--box-shadow);
+}
+
+/* ==========================================================================
+   소셜 로그인 섹션
+   ========================================================================== */
+
+.social-login-section {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-light);
+    position: relative;
+}
+
+/* 구분선과 텍스트 */
+.social-login-title {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    position: relative;
+    background: var(--card-bg);
+    padding: 0 1rem;
+}
+
+.social-login-title::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--border-light);
+    z-index: 1;
+}
+
+.social-login-title span {
+    position: relative;
+    z-index: 2;
+    background: var(--card-bg);
+    padding: 0 1rem;
+}
+
+/* 소셜 로그인 버튼 컨테이너 */
+.social-login-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+}
+
+/* 소셜 로그인 버튼 기본 스타일 */
+.social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.875rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: var(--font-size-base);
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: var(--transition-base);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.social-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--box-shadow);
+    text-decoration: none;
+}
+
+.social-btn:active {
+    transform: translateY(0);
+}
+
+/* 소셜 아이콘 */
+.social-icon {
+    width: var(--social-icon-size);
+    height: var(--social-icon-size);
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+}
+
+/* 구글 버튼 */
+.google-btn {
+    background-color: var(--google-bg);
+    color: var(--google-text);
+    border-color: var(--google-border);
+}
+
+.google-btn:hover {
+    background-color: var(--google-hover);
+    border-color: var(--primary-color);
+    color: var(--google-text);
+}
+
+/* 카카오 버튼 */
+.kakao-btn {
+    background-color: var(--kakao-bg);
+    color: var(--kakao-text);
+    border-color: var(--kakao-bg);
+}
+
+.kakao-btn:hover {
+    background-color: var(--kakao-hover);
+    border-color: var(--kakao-hover);
+    color: var(--kakao-text);
+}
+
+/* 네이버 버튼 */
+.naver-btn {
+    background-color: var(--naver-bg);
+    color: var(--naver-text);
+    border-color: var(--naver-bg);
+}
+
+.naver-btn:hover {
+    background-color: var(--naver-hover);
+    border-color: var(--naver-hover);
+    color: var(--naver-text);
+}
+
+/* ==========================================================================
+   로딩 상태 및 애니메이션
+   ========================================================================== */
+
+/* 버튼 로딩 상태 */
+.btn-loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.8;
+    color: transparent !important;
+}
+
+.btn-loading::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin: -10px 0 0 -10px;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: buttonLoadingSpinner 0.8s linear infinite;
+    color: var(--text-light);
+}
+
+@keyframes buttonLoadingSpinner {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   메시지 스타일 (기존 스타일 확장)
+   ========================================================================== */
+
+.login-form-container .error-message {
+    background-color: rgba(220, 53, 69, 0.1);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    color: var(--danger-color);
+    padding: var(--spacing-md);
+    border-radius: 8px;
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+    font-weight: 500;
+}
+
+.login-form-container .success-message {
+    background-color: rgba(25, 135, 84, 0.1);
+    border: 1px solid rgba(25, 135, 84, 0.3);
+    color: var(--success-color);
+    padding: var(--spacing-md);
+    border-radius: 8px;
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+    font-weight: 500;
+}
+
+/* ==========================================================================
+   반응형 디자인
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .main-content.login-page {
+        padding: var(--spacing-lg) var(--spacing-sm);
+    }
+
+    .login-form-container {
+        padding: 2rem 1.5rem;
+        margin: 0 var(--spacing-sm);
+    }
+
+    .login-form-container .form-title {
+        font-size: 1.75rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .login-form-container {
+        padding: 1.5rem 1rem;
+        border-radius: 8px;
+    }
+
+    .login-form-container .form-title {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .social-login-section {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+    }
+
+    .social-login-title {
+        margin-bottom: 1rem;
+        font-size: var(--font-size-sm);
+    }
+
+    .social-btn {
+        padding: 0.75rem 1rem;
+        font-size: var(--font-size-sm);
+    }
+
+    .social-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 0.5rem;
+    }
+}
+
+/* ==========================================================================
+   다크모드 추가 스타일
+   ========================================================================== */
+
+[data-bs-theme="dark"] .login-form-container {
+    background: var(--card-bg);
+    border-color: var(--card-border-color);
+    box-shadow: var(--box-shadow-lg);
+}
+
+[data-bs-theme="dark"] .login-form-container .form-title {
+    color: var(--text-color);
+    border-bottom-color: var(--primary-color);
+}
+
+[data-bs-theme="dark"] .social-login-title {
+    color: var(--text-secondary);
+    background: var(--card-bg);
+}
+
+[data-bs-theme="dark"] .social-login-title span {
+    background: var(--card-bg);
+}
+
+[data-bs-theme="dark"] .social-login-title::before {
+    background: var(--border-light);
+}
+
+/* 다크모드에서 구글 버튼 조정 */
+[data-bs-theme="dark"] .google-btn {
+    background-color: var(--bg-secondary);
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+
+[data-bs-theme="dark"] .google-btn:hover {
+    background-color: var(--hover-bg-color);
+    color: var(--text-color);
+}
+
+/* ==========================================================================
+   접근성 향상
+   ========================================================================== */
+
+/* 포커스 관리 */
+.social-btn:focus,
+.login-form-container .btn:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* 고대비 모드 지원 */
+@media (prefers-contrast: more) {
+    .login-form-container {
+        border-width: 2px;
+    }
+
+    .social-btn {
+        border-width: 2px;
+    }
+}
+
+/* 모션 감소 설정 */
+@media (prefers-reduced-motion: reduce) {
+    .login-form-container,
+    .btn,
+    .social-btn {
+        animation: none;
+        transition: none;
+    }
+}

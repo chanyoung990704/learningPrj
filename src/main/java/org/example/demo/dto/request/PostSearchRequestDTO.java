@@ -8,4 +8,5 @@ import lombok.*;
 @AllArgsConstructor
 public class PostSearchRequestDTO {
     private String searchText;
+    private Long categoryId;
 }

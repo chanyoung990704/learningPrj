@@ -7,5 +7,5 @@ public interface PostCategoryService extends BaseService<PostCategory> {
 
     void createCategory(PostCategoryRequestDTO requestDTO);
 
-    PostCategory findByName(String name);
+    Long findByName(String name);
 }

@@ -1,6 +1,5 @@
 package org.example.demo.repository.querydsl;
 
-import org.example.demo.domain.Post;
 import org.example.demo.dto.request.PostSearchRequestDTO;
 import org.example.demo.dto.response.PostListResponseDTO;
 import org.springframework.data.domain.Page;
@@ -15,4 +14,6 @@ public interface QueryDslPostRepository {
      */
     Page<PostListResponseDTO> findPostsListBySearchWithUserAndCategory(Pageable pageable, PostSearchRequestDTO requestDTO);
 
+    // 카테고리 조건 추가
+    Page<PostListResponseDTO> findPostsListBySearchWithUserAndCategoryV2(Pageable pageable, PostSearchRequestDTO requestDTO);
 }

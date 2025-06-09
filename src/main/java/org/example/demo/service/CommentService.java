@@ -5,7 +5,6 @@ import org.example.demo.dto.request.CommentCreationRequestDTO;
 import org.example.demo.dto.response.CommentResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional; // 이미 존재
 
 // import java.util.List; // 현재 인터페이스 시그니처에서는 사용되지 않음
 

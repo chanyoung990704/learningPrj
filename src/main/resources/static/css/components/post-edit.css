@@ -1,0 +1,40 @@
+.post-edit-page .styled-form {
+    background: #f8fafc;
+    padding: 2em 1.5em;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(30,60,90,0.04);
+}
+
+.post-edit-page .form-group label {
+    font-weight: 600;
+    color: #1976d2;
+}
+
+.post-edit-page .form-actions {
+    justify-content: flex-end;
+}
+
+.post-edit-page .existing-files {
+    margin-bottom: 2em;
+    background: #f5f5f5;
+    padding: 1em;
+    border-radius: 8px;
+}
+
+.post-edit-page .existing-file-item {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    margin-bottom: 0.7em;
+}
+
+.post-edit-page .file-preview img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.post-edit-page .file-actions {
+    margin-left: auto;
+}
